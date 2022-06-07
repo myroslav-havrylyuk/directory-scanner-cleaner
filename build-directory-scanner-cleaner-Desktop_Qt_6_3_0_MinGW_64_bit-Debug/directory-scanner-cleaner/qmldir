@@ -1,0 +1,4 @@
+module directory-scanner-cleaner
+typeinfo appdirectory-scanner-cleaner.qmltypes
+prefer :/directory-scanner-cleaner/
+
