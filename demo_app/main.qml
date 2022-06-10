@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Controls 2.5
 import QtQuick.Layouts
 import Qt.labs.platform 1.1
 
@@ -80,11 +80,52 @@ Window {
         height: (parent.height - current_directory_path_item.height) * 0.95
         anchors.top: current_directory_path_item.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        color: "yellow"
 
         TreeView {
+            id: tree_view
             anchors.fill: parent
             model: FileManagerModel
+
+            delegate: Item {
+                id: root
+
+                implicitWidth: padding + label.x + label.implicitWidth + padding
+                implicitHeight: label.implicitHeight * 1.5
+
+                readonly property real indent: 20
+                readonly property real padding: 5
+
+                // Assigned to by TreeView:
+                required property TreeView treeView
+                required property bool isTreeNode
+                required property bool expanded
+                required property int hasChildren
+                required property int depth
+
+                TapHandler {
+                    onTapped: {
+                        console.log(row)
+                        treeView.toggleExpanded(row)
+                    }
+                }
+
+                Text {
+                    id: indicator
+                    visible: root.isTreeNode && root.hasChildren
+                    x: padding + (root.depth * root.indent)
+                    text: root.expanded ? "▼" : "▶"
+                }
+
+                Text {
+                    id: label
+                    x: padding + (root.isTreeNode ? (root.depth + 1) * root.indent : 0)
+                    width: root.width - root.padding - x
+                    text: file_name
+                }
+            }
+
+
+
         }
     }
 }

@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QString rootFilePath = app.applicationDirPath();
-    FileManagerModel fileManagerModel(rootFilePath);
+    FileManagerModel fileManagerModel("D:/Eleks_practise/directory-scanner-cleaner");
 
     const QUrl url(u"qrc:/demo_app/main.qml"_qs);
     QQmlContext *mainQmlContext = engine.rootContext();

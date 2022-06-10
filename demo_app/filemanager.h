@@ -4,7 +4,7 @@
 #include "filetreeelement.h"
 
 #include <QList>
-#include <QDirIterator>
+#include <QDir>
 
 class FileManager
 {
@@ -18,26 +18,30 @@ public:
 
         QDir currentDir(rootPath);
         FileTreeElement *fileTreeRoot = new FileTreeElement(rootPath, nullptr);
-        fileTreeRoot->setChildElements(getInnerFiles(rootPath, fileTreeRoot));
+        fileTreeRoot->setChildElements(getInnerFiles(QDir(rootPath), fileTreeRoot));
 
         return fileTreeRoot;
     }
 
 private:
-    QList<FileTreeElement *> getInnerFiles(const QString& currentFilename, FileTreeElement *parent)
+    QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent)
     {
-        QDirIterator it(currentFilename, QDirIterator::Subdirectories);
         QList<FileTreeElement *> innerFiles;
-        while (it.hasNext())
-        {
-             QString currentFilePath = it.next();
-             if (currentFilePath.endsWith(".") || currentFilePath.endsWith(".."))
-                 continue;
 
-             FileTreeElement *fileTreeElement = new FileTreeElement(currentFilePath, parent);
-             if (!QFileInfo(currentFilePath).isFile())
+        for (auto &fileElement : currenDir.entryInfoList())
+        {
+             if (fileElement.isDir())
              {
-                fileTreeElement->setChildElements(getInnerFiles(currentFilePath, fileTreeElement));
+                 if (fileElement.fileName().endsWith(".") || fileElement.fileName().endsWith(".."))
+                     continue;
+             }
+
+             FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), parent);
+
+             if (fileElement.isDir())
+             {
+                 QList<FileTreeElement *> innerFiles = getInnerFiles(QDir(fileElement.absoluteFilePath()), fileTreeElement);
+                 fileTreeElement->setChildElements(innerFiles);
              }
 
              innerFiles.append(fileTreeElement);

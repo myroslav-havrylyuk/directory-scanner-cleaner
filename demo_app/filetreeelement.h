@@ -6,7 +6,7 @@
 #include <QDir>
 
 enum FileColumn {
-    FILE_NAME = 0,
+    FILE_NAME = Qt::UserRole + 1,
     FILE_COLUMNS_SIZE
 };
 
@@ -23,7 +23,7 @@ public:
 
     int getColumnsCount() const
     {
-        return FileColumn::FILE_COLUMNS_SIZE;
+        return 1;
     }
 
     int getRowsCount() const {
@@ -32,8 +32,8 @@ public:
 
     QVariant data(int column) const
     {
-        if (column < 0 || column > FileColumn::FILE_COLUMNS_SIZE ||
-                !QFile::exists(m_FileName))
+        if (column < 0 || column > FileColumn::FILE_COLUMNS_SIZE)
+//                !QFile::exists(m_FileName))
         {
             return QVariant();
         }
@@ -69,6 +69,8 @@ public:
     {
         return m_childFiles;
     }
+
+    const QString &FileName() const;
 
 private:
     QString m_FileName;
