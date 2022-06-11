@@ -3,15 +3,16 @@
 FileManagerModel::FileManagerModel()
     : m_FileTreeRoot(nullptr)
 {
-
 }
 
 FileManagerModel::FileManagerModel(const QString &rootPath)
     : FileManagerModel()
 {
-    if (!QFile::exists(rootPath))
+    if (!QFile::exists(rootPath)){
+        qDebug() << "rootPath for FileManagerModel does not exist";
         return;
-
+    }
+    qDebug() << "Starting model setup";
     setupModel(rootPath);
 }
 
@@ -117,11 +118,20 @@ void FileManagerModel::setRootPath(const QString &rootPath)
     setupModel(rootPath);
 }
 
+QString FileManagerModel::getRootPath()
+{
+    if(m_FileTreeRoot){
+        return m_FileTreeRoot->fileName();
+    }
+    return nullptr;
+}
+
 void FileManagerModel::setupModel(const QString &rootPath)
 {
     FileManager fileManager;
+    emit beginResetModel();
     m_FileTreeRoot = fileManager.generateFileTree(rootPath);
-
+    emit endResetModel();
     if (m_FileTreeRoot != nullptr)
     {
         emit beginInsertRows(createIndex(0, m_FileTreeRoot->getChildsCount() - 1, m_FileTreeRoot),

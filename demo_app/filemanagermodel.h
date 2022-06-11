@@ -26,6 +26,7 @@ public:
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
 
     void setRootPath(const QString &rootPath);
+    QString getRootPath();
 
 
 private:

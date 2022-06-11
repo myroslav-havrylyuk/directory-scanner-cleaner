@@ -11,7 +11,7 @@ class FileManagerController : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString activePath READ ActivePath WRITE setActivePath NOTIFY ActivePathValueChanged)
+    Q_PROPERTY(QString activePath READ ActivePath WRITE setActivePath NOTIFY activePathChanged)
 public:
     FileManagerController(FileManagerModel &fileManagerModel);
     static void registerMe();
@@ -19,9 +19,11 @@ public:
     void setActivePath(const QString &newActivePath);
     const QString &ActivePath() const;
 
+    FileManagerModel fileManagerModel();
+
 signals:
     void activePathInvalid();
-    void ActivePathValueChanged();
+    void activePathChanged();
 
 private:
     QString m_ActivePath;

@@ -7,7 +7,10 @@
 FileManagerController::FileManagerController(FileManagerModel &fileManagerModel)
     : m_FileManagerModel(fileManagerModel)
 {
-
+    QString initialRootPath = fileManagerModel.getRootPath();
+    if(initialRootPath != nullptr){
+        setActivePath(fileManagerModel.getRootPath());
+    }
 }
 
 void FileManagerController::registerMe()
@@ -20,6 +23,7 @@ void FileManagerController::setActivePath(const QString &newActivePath)
     qDebug() << "New active path ahs been set: " << newActivePath;
     QString validActivePath = newActivePath;
     validActivePath.remove(QRegularExpression("file:///"));
+    validActivePath.replace(QRegularExpression("\\\\"), "/");
     qDebug() << "Edited active path ahs been set: " << validActivePath;
 
     QDir activePath(validActivePath);
@@ -27,7 +31,7 @@ void FileManagerController::setActivePath(const QString &newActivePath)
     {
         m_ActivePath = validActivePath;
         m_FileManagerModel.setRootPath(validActivePath);
-        emit ActivePathValueChanged();
+        emit activePathChanged();
     } else {
         emit activePathInvalid();
     }
@@ -35,5 +39,7 @@ void FileManagerController::setActivePath(const QString &newActivePath)
 
 const QString &FileManagerController::ActivePath() const
 {
-    return m_ActivePath;
+    QString *activePath = new QString(m_ActivePath);
+    (*activePath).replace(QRegularExpression("/"), "\\");
+    return *activePath;
 }
