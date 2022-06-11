@@ -21,6 +21,7 @@ Window {
 
             onAccepted: {
                 current_directory_path.directory_path = folder
+                FileManagerController.activePath = current_directory_path.directory_path
             }
         }
 
@@ -123,8 +124,6 @@ Window {
                     text: file_name
                 }
             }
-
-
 
         }
     }

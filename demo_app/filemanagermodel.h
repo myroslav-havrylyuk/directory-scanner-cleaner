@@ -24,9 +24,12 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
-    void setupModel(const QString &rootPath);
+
+    void setRootPath(const QString &rootPath);
+
 
 private:
+    void setupModel(const QString &rootPath);
     FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
 
 private:

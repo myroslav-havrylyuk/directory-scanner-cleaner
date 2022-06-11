@@ -1,9 +1,11 @@
 #include "filemanagercontroller.h"
 
+#include <QRegularExpression>
 #include <QQmlEngine>
 #include <QDir>
 
-FileManagerController::FileManagerController()
+FileManagerController::FileManagerController(FileManagerModel &fileManagerModel)
+    : m_FileManagerModel(fileManagerModel)
 {
 
 }
@@ -15,10 +17,16 @@ void FileManagerController::registerMe()
 
 void FileManagerController::setActivePath(const QString &newActivePath)
 {
-    QDir activePath(newActivePath);
+    qDebug() << "New active path ahs been set: " << newActivePath;
+    QString validActivePath = newActivePath;
+    validActivePath.remove(QRegularExpression("file:///"));
+    qDebug() << "Edited active path ahs been set: " << validActivePath;
+
+    QDir activePath(validActivePath);
     if (activePath.exists())
     {
-        m_ActivePath = newActivePath;
+        m_ActivePath = validActivePath;
+        m_FileManagerModel.setRootPath(validActivePath);
         emit ActivePathValueChanged();
     } else {
         emit activePathInvalid();

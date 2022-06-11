@@ -101,10 +101,33 @@ bool FileManagerModel::hasIndex(int row, int column, const QModelIndex &parent =
             column >= 0 && column < fileTreeElement->getRolesCount());
 }
 
+void FileManagerModel::setRootPath(const QString &rootPath)
+{
+    if (m_FileTreeRoot != nullptr)
+    {
+        emit beginRemoveRows(createIndex(0, m_FileTreeRoot->getChildsCount() - 1, m_FileTreeRoot),
+                             0, m_FileTreeRoot->getChildsCount() - 1);
+
+        delete m_FileTreeRoot;
+        m_FileTreeRoot = nullptr;
+
+        emit endRemoveRows();
+    }
+
+    setupModel(rootPath);
+}
+
 void FileManagerModel::setupModel(const QString &rootPath)
 {
     FileManager fileManager;
     m_FileTreeRoot = fileManager.generateFileTree(rootPath);
+
+    if (m_FileTreeRoot != nullptr)
+    {
+        emit beginInsertRows(createIndex(0, m_FileTreeRoot->getChildsCount() - 1, m_FileTreeRoot),
+                             0, m_FileTreeRoot->getChildsCount() - 1);
+        emit endInsertRows();
+    }
 }
 
 FileTreeElement *FileManagerModel::indexToFileTreeElement(const QModelIndex &index) const
