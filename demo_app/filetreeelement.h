@@ -5,72 +5,26 @@
 #include <QList>
 #include <QDir>
 
-enum FileColumn {
-    FILE_NAME = Qt::UserRole + 1,
-    FILE_COLUMNS_SIZE
+enum FileTreeElementRole {
+    FILE_NAME_ROLE = Qt::UserRole + 1,
+    FILE_ROLES_SIZE
 };
 
 class FileTreeElement
 {
 public:
-    FileTreeElement(const QString &fileName, FileTreeElement *parentElement, QList<FileTreeElement *> childFiles = {})
-        : m_FileName(fileName),
-          m_childFiles(childFiles),
-          m_ParentElement(parentElement)
-    {
+    FileTreeElement(const QString &fileName,
+                    FileTreeElement *parentElement,
+                    QList<FileTreeElement *> childFiles = {});
 
-    }
-
-    int getColumnsCount() const
-    {
-        return 1;
-    }
-
-    int getRowsCount() const {
-        return m_childFiles.count();
-    }
-
-    QVariant data(int column) const
-    {
-        if (column < 0 || column > FileColumn::FILE_COLUMNS_SIZE)
-//                !QFile::exists(m_FileName))
-        {
-            return QVariant();
-        }
-
-        switch(column)
-        {
-            case FileColumn::FILE_NAME:
-                return m_FileName;
-            default:
-                return "Unknown file column";
-        }
-    }
-
-    FileTreeElement *getParent()
-    {
-        return m_ParentElement;
-    }
-
-    FileTreeElement *getChildAt(int row)
-    {
-        if (row < 0 || row > m_childFiles.count())
-            return nullptr;
-
-        return m_childFiles.at(row);
-    }
-
-    void setChildElements(QList<FileTreeElement *> childFiles)
-    {
-        m_childFiles = childFiles;
-    }
-
-    QList<FileTreeElement *> getChildElements() const
-    {
-        return m_childFiles;
-    }
-
-    const QString &FileName() const;
+    int getRolesCount() const;
+    int getChildsCount() const;
+    QVariant getData(int role) const;
+    FileTreeElement *getParent() const;
+    FileTreeElement *getChildAt(int row);
+    void setChildElements(QList<FileTreeElement *> childFiles);
+    QList<FileTreeElement *> getChildElements() const;
+    const QString &fileName() const;
 
 private:
     QString m_FileName;
