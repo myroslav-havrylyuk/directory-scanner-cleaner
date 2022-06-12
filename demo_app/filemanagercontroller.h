@@ -17,7 +17,7 @@ public:
     static void registerMe();
 
     void setActivePath(const QString &newActivePath);
-    const QString &ActivePath() const;
+    QString ActivePath() const;
 
     FileManagerModel fileManagerModel();
 

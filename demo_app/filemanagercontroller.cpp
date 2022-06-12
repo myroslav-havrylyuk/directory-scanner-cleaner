@@ -8,7 +8,7 @@ FileManagerController::FileManagerController(FileManagerModel &fileManagerModel)
     : m_FileManagerModel(fileManagerModel)
 {
     QString initialRootPath = fileManagerModel.getRootPath();
-    if(initialRootPath != nullptr){
+    if(initialRootPath.isEmpty()){
         setActivePath(fileManagerModel.getRootPath());
     }
 }
@@ -37,9 +37,9 @@ void FileManagerController::setActivePath(const QString &newActivePath)
     }
 }
 
-const QString &FileManagerController::ActivePath() const
+QString FileManagerController::ActivePath() const
 {
-    QString *activePath = new QString(m_ActivePath);
-    (*activePath).replace(QRegularExpression("/"), "\\");
-    return *activePath;
+    QString activePath = m_ActivePath;
+    activePath.replace(QRegularExpression("/"), "\\");
+    return activePath;
 }
