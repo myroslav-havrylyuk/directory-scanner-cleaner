@@ -8,7 +8,7 @@ FileManagerController::FileManagerController(FileManagerModel &fileManagerModel)
     : m_FileManagerModel(fileManagerModel)
 {
     QString initialRootPath = fileManagerModel.getRootPath();
-    if(initialRootPath.isEmpty()){
+    if(!initialRootPath.isEmpty()){
         setActivePath(fileManagerModel.getRootPath());
     }
 }
