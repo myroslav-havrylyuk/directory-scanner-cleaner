@@ -106,13 +106,8 @@ void FileManagerModel::setRootPath(const QString &rootPath)
 {
     if (m_FileTreeRoot != nullptr)
     {
-        emit beginRemoveRows(createIndex(0, m_FileTreeRoot->getChildsCount() - 1, m_FileTreeRoot),
-                             0, m_FileTreeRoot->getChildsCount() - 1);
-
         delete m_FileTreeRoot;
         m_FileTreeRoot = nullptr;
-
-        emit endRemoveRows();
     }
 
     setupModel(rootPath);
@@ -129,12 +124,6 @@ void FileManagerModel::setupModel(const QString &rootPath)
     emit beginResetModel();
     m_FileTreeRoot = fileManager.generateFileTree(rootPath);
     emit endResetModel();
-    if (m_FileTreeRoot != nullptr)
-    {
-        emit beginInsertRows(createIndex(0, m_FileTreeRoot->getChildsCount() - 1, m_FileTreeRoot),
-                             0, m_FileTreeRoot->getChildsCount() - 1);
-        emit endInsertRows();
-    }
 }
 
 FileTreeElement *FileManagerModel::indexToFileTreeElement(const QModelIndex &index) const
