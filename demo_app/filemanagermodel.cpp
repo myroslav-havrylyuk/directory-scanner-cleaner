@@ -16,6 +16,12 @@ FileManagerModel::FileManagerModel(const QString &rootPath)
     setupModel(rootPath);
 }
 
+FileManagerModel::~FileManagerModel()
+{
+    if (m_FileTreeRoot != nullptr)
+        delete m_FileTreeRoot;
+}
+
 QHash<int, QByteArray> FileManagerModel::roleNames() const
 {
     QHash<int, QByteArray> roleNames;

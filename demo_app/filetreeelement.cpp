@@ -9,6 +9,17 @@ FileTreeElement::FileTreeElement(const QString &fileName,
 {
 }
 
+FileTreeElement::~FileTreeElement()
+{
+    if (m_childFiles.empty())
+        return;
+
+    for (auto &fileTreeElement : m_childFiles)
+    {
+        delete fileTreeElement;
+    }
+}
+
 int FileTreeElement::getRolesCount() const
 {
     return (FILE_ROLES_SIZE - FILE_NAME_ROLE);

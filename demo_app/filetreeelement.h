@@ -17,6 +17,8 @@ public:
                     FileTreeElement *parentElement,
                     QList<FileTreeElement *> childFiles = {});
 
+    ~FileTreeElement();
+
     int getRolesCount() const;
     int getChildsCount() const;
     QVariant getData(int role) const;

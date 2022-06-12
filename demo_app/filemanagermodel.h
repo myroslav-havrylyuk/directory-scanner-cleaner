@@ -14,6 +14,8 @@ public:
     FileManagerModel();
     FileManagerModel(const QString &rootPath);
 
+    ~FileManagerModel();
+
     // QAbstractItemModel interface
 public:
     QHash<int, QByteArray> roleNames() const;
