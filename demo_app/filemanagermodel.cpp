@@ -106,6 +106,9 @@ void FileManagerModel::setRootPath(const QString &rootPath)
 {
     if (m_FileTreeRoot != nullptr)
     {
+        if (m_FileTreeRoot->fileName() == rootPath)
+            return;
+
         delete m_FileTreeRoot;
         m_FileTreeRoot = nullptr;
     }
