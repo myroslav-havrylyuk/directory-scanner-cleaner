@@ -5,16 +5,19 @@ import Qt.labs.platform 1.1
 
 Window {
     id: main_window
-    width:  640
-    height: 480
+    width:  1280
+    height: 720
     visible: true
-    title: qsTr("Demo")
+    title: qsTr("Directory scanner & cleaner")
+    color: 'lightgrey'
 
-    Rectangle {
-        id: current_directory_path_item
-        width: main_window.width * 0.8
-        height: 100
-        anchors.horizontalCenter: parent.horizontalCenter
+    GridLayout{
+        anchors.fill: parent
+        anchors.margins: 39
+        rows: 4
+        columns: 2
+        rowSpacing: 10
+        columnSpacing: 25
 
         FolderDialog {
             id: folder_dialog
@@ -24,80 +27,263 @@ Window {
             }
         }
 
-        ColumnLayout {
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-
-            Text {
-                id: browse_button
-                anchors.fill: parent
-                text: "Please choose a directory to scan: "
+        Text {
+            id: browse_button
+            Layout.row: 0
+            Layout.column: 0
+            text: "Please choose a directory to scan: "
+            font {
+                bold: true
+                pixelSize: 16
             }
+        }
 
-            RowLayout {
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                anchors.right: parent.right
+        Rectangle {
+            id: current_directory_path
+            property alias directory_path: current_directory_path_text_edit.text
 
-                Rectangle {
-                    property alias directory_path: current_directory_path_text_edit.text
-
-                    id: current_directory_path
-                    Layout.minimumWidth: parent.width - browse_current_directory_path_button.width
-                    Layout.minimumHeight: parent.height
-                    border.color: "black"
-                    border.width: 1
-                    clip: true
-
-                    TextEdit {
-                        id: current_directory_path_text_edit
-                        anchors.fill: parent
-                        anchors.leftMargin: 3
-                        anchors.topMargin: 3
-                        width: parent.width
-                        text: FileManagerController.activePath // could be a different folder for Linux
-
-                        Keys.onReturnPressed: {
-                            FileManagerController.activePath = text
-                        }
-                    }
+            Layout.row: 1
+            Layout.column: 0
+            Layout.fillWidth: true
+            height: 24
+            border.color: "black"
+            border.width: 1
+            clip: true
+            TextEdit {
+                id: current_directory_path_text_edit
+                anchors{
+                    fill: parent
+                    leftMargin: 3
+                    topMargin: 3
                 }
+                text: FileManagerController.activePath // could be a different folder for Linux
 
-                Button {
-                    id: browse_current_directory_path_button
-                    anchors.right: parent.right
-                    text: "Browse folder"
-
-                    onClicked: {
-                        // need to validate folder - need to add controller
-                        folder_dialog.currentFolder = current_directory_path.directory_path
-                        folder_dialog.open()
-                    }
+                Keys.onReturnPressed: {
+                    FileManagerController.activePath = text
                 }
             }
         }
-    }
 
-    Rectangle {
-        width: main_window.width * 0.8
-        height: (parent.height - current_directory_path_item.height) * 0.95
-        anchors.top: current_directory_path_item.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+        Rectangle {
 
-        TreeView {
-            id: tree_view
-            anchors.fill: parent
-            model: FileManagerModel
+            height: include_text.implicitHeight
+            Layout.row: 2
+            Layout.column: 0
+            Layout.fillWidth: true
+            clip: true
+            color: 'lightgrey'
 
-            delegate: TreeViewDelegate {
-                contentItem: Text {
-                    anchors.leftMargin: leftMargin
-                    anchors.rightMargin: rightMargin
-                    text: file_name
+            Row{
+                anchors.fill: parent
+                spacing: 15
+                leftPadding: 5
+                rightPadding: 5
+                clip: true
+
+                Text{
+                    id: include_text
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    verticalAlignment: Text.AlignVCenter
+                    text: "Include:"
+                    font {
+                        bold: true
+                        pixelSize: 16
+                    }
+                }
+                CheckBox{
+
+                    width: 124
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+                    text: "Subdirectories"
+                }
+                CheckBox{
+
+                    width: 124
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
+
+                    text: "Equal files"
                 }
             }
+        }
 
+        Rectangle {
+
+            Layout.row: 3
+            Layout.column: 0
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            TreeView {
+                id: tree_view
+                anchors{
+                    fill: parent
+                    margins: 10
+                }
+
+                model: FileManagerModel
+                clip: true
+
+                delegate: TreeViewDelegate {
+                    contentItem: Text {
+                        anchors.leftMargin: leftMargin
+                        anchors.rightMargin: rightMargin
+                        text: file_name
+                    }
+                }
+
+            }
+        }
+
+        Button {
+            id: browse_current_directory_path_button
+
+            Layout.row: 1
+            Layout.column: 1
+            width: 89
+
+            text: "Browse folder"
+            onClicked: {
+                folder_dialog.currentFolder = current_directory_path.directory_path
+                folder_dialog.open()
+            }
+        }
+
+        Rectangle {
+
+            width: 89
+            Layout.row: 3
+            Layout.column: 1
+            Layout.fillHeight: true
+            clip: true
+
+            color: 'lightgrey'
+
+
+            Column {
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                    topMargin: 5
+                    bottomMargin: 5
+                }
+
+                spacing: 5
+                Text {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    text: qsTr("Filters")
+                    font {
+                        pixelSize: 18
+                        bold: true
+                    }
+                }
+
+                Text {
+                    text: qsTr("Older then:")
+                }
+                Rectangle {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    height: 24
+                    border.color: "black"
+                    border.width: 1
+                    clip: true
+                    TextEdit{
+                        anchors{
+                            fill: parent
+                            leftMargin: 3
+                            topMargin: 3
+                        }
+                    }
+                }
+                Text {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    text: qsTr("Larger then:")
+                }
+                Rectangle {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    height: 24
+                    border.color: "black"
+                    border.width: 1
+                    clip: true
+                    TextEdit{
+                        anchors{
+                            fill: parent
+                            leftMargin: 3
+                            topMargin: 3
+                        }
+                    }
+                }
+                Text {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+                    text: qsTr("By pattern:")
+                }
+                Rectangle {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    height: 24
+                    border.color: "black"
+                    border.width: 1
+                    clip: true
+                    TextEdit{
+                        anchors{
+                            fill: parent
+                            leftMargin: 3
+                            topMargin: 3
+                        }
+                    }
+                }
+                Button{
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    height: 24
+
+                    text: qsTr("Filter")
+                }
+
+
+            }
+            Button{
+
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                }
+                height: 24
+
+                text: qsTr("Delete")
+            }
         }
     }
 }
