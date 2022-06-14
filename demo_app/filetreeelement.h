@@ -4,9 +4,12 @@
 #include <QVariant>
 #include <QList>
 #include <QDir>
+#include <QLocale>
 
 enum FileTreeElementRole {
     FILE_NAME_ROLE = Qt::UserRole + 1,
+    FILE_INNER_FILES_ROLE,
+    FILE_SIZE_ROLE,
     FILE_ROLES_SIZE
 };
 
@@ -14,6 +17,7 @@ class FileTreeElement
 {
 public:
     FileTreeElement(const QString &fileName,
+                    quint64 fileSize,
                     FileTreeElement *parentElement,
                     QList<FileTreeElement *> childFiles = {});
 
@@ -25,11 +29,15 @@ public:
     FileTreeElement *getParent() const;
     FileTreeElement *getChildAt(int row);
     void setChildElements(QList<FileTreeElement *> childFiles);
+    void setFileSize(quint64 fileSize);
     QList<FileTreeElement *> getChildElements() const;
-    const QString &fileName() const;
+    const QString &getFileName() const;
+    quint64 getFileSize() const;
+    QString formattedSize() const;
 
 private:
     QString m_FileName;
+    quint64 m_FileSize;
     QList<FileTreeElement *> m_childFiles;
     FileTreeElement *m_ParentElement;
 };
