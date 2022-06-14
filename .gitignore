@@ -103,3 +103,4 @@ build*
 # --------
 *.dll
 *.exe
+demo_app/CMakeLists.txt.user
