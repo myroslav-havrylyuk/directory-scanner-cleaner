@@ -73,7 +73,7 @@ QList<FileTreeElement *> FileTreeElement::getChildElements() const
     return m_childFiles;
 }
 
-const QString &FileTreeElement::fileName() const
+const QString &FileTreeElement::getFileName() const
 {
     return m_FileName;
 }

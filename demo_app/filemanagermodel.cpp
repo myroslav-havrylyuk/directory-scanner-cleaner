@@ -113,7 +113,7 @@ void FileManagerModel::setRootPath(const QString &rootPath)
 {
     if (m_FileTreeRoot != nullptr)
     {
-        if (m_FileTreeRoot->fileName() == rootPath)
+        if (m_FileTreeRoot->getFileName() == rootPath)
             return;
 
         delete m_FileTreeRoot;
@@ -125,7 +125,7 @@ void FileManagerModel::setRootPath(const QString &rootPath)
 
 QString FileManagerModel::getRootPath()
 {
-    return m_FileTreeRoot ? m_FileTreeRoot->fileName() : QString();
+    return m_FileTreeRoot ? m_FileTreeRoot->getFileName() : QString();
 }
 
 void FileManagerModel::setupModel(const QString &rootPath)
