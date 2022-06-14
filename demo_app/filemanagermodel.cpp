@@ -27,6 +27,7 @@ QHash<int, QByteArray> FileManagerModel::roleNames() const
     QHash<int, QByteArray> roleNames;
     roleNames[FileTreeElementRole::FILE_NAME_ROLE] = "file_name";
 
+    roleNames[FileTreeElementRole::FILE_INNER_FILES_ROLE] = "inner_files";
     return roleNames;
 }
 

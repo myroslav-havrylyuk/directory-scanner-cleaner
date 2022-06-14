@@ -136,6 +136,11 @@ Window {
                         anchors.leftMargin: leftMargin
                         anchors.rightMargin: rightMargin
                         text: file_name
+                        text: {
+                            if (column === 0)
+                                file_name
+                            else if (column === 1)
+                                inner_files
                     }
                 }
 
