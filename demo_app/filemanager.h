@@ -40,14 +40,8 @@ private:
     {
         QList<FileTreeElement *> innerFiles;
 
-        for (auto &fileElement : currenDir.entryInfoList())
+        for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
         {
-             if (fileElement.isDir())
-             {
-                 if (fileElement.fileName().endsWith(".") || fileElement.fileName().endsWith(".."))
-                     continue;
-             }
-
              FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
 
              if (fileElement.isDir())
