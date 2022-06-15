@@ -6,7 +6,7 @@
 #include <QDir>
 
 #include "filetreeelement.h"
-#include "filesystemmanager.h"
+#include "sources/filesystemmanager.h"
 
 class FileSystemModel : public QAbstractItemModel
 {

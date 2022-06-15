@@ -8,18 +8,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 6.3 COMPONENTS Quick REQUIRED)
 
 qt_add_executable(appdirectory-scanner-cleaner
-    main.cpp
-    filesystemcontroller.cpp
-    filesystemmanager.cpp
-    filesystemmodel.cpp
-    filetreeelement.cpp
+	sources/main.cpp
+	sources/filesystemmanager.cpp
+	controllers/filesystemcontroller.cpp
+	models/filesystemmodel.cpp
+	models/filetreeelement.cpp
 )
 
 qt_add_qml_module(appdirectory-scanner-cleaner
     URI directory-scanner-cleaner
     VERSION 1.0
-    QML_FILES main.qml 
-	warningmessage.qml
+	QML_FILES
+	views/main.qml
+	views/warningmessage.qml
 )
 
 set_target_properties(appdirectory-scanner-cleaner PROPERTIES

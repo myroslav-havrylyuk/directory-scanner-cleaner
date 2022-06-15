@@ -1,5 +1,5 @@
 #include "filesystemcontroller.h"
-#include "filesystemmodel.h"
+#include "models/filesystemmodel.h"
 
 #include <QRegularExpression>
 #include <QQmlEngine>

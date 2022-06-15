@@ -1,7 +1,7 @@
 #ifndef FILEMANAGER_H
 #define FILEMANAGER_H
 
-#include "filetreeelement.h"
+#include "models/filetreeelement.h"
 
 #include <QList>
 #include <QDir>

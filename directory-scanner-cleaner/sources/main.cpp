@@ -1,5 +1,5 @@
-#include "filesystemcontroller.h"
-#include "filesystemmodel.h"
+#include "controllers/filesystemcontroller.h"
+#include "models/filesystemmodel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
