@@ -9,6 +9,10 @@ find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
 
 qt_add_executable(appdirectory-scanner-cleaner
     main.cpp
+    filesystemcontroller.cpp
+    filesystemmanager.cpp
+    filesystemmodel.cpp
+    filetreeelement.cpp
 )
 
 qt_add_qml_module(appdirectory-scanner-cleaner
