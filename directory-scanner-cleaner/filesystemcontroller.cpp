@@ -4,6 +4,7 @@
 #include <QRegularExpression>
 #include <QQmlEngine>
 #include <QDir>
+#include <QQuickView>
 
 FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     : m_FileSystemModel(fileSystemModel)
@@ -29,6 +30,14 @@ void FileSystemController::setActivePath(const QString &newActivePath)
         m_FileSystemModel.setRootPath(m_ActivePath);
         emit activePathChanged();
     } else {
+        //show warning message
+        QQmlEngine engine;
+        const QUrl url(u"qrc:/directory-scanner-cleaner/warningmessage.qml"_qs);
+        QQmlComponent component(&engine, url);
+        QObject *object = component.create();
+        /*QQuickView view;
+        view.setSource(QUrl::fromLocalFile(u"qrc:/directory-scanner-cleaner/warningmessage.qml"_qs));
+        view.show();*/
         emit activePathInvalid();
     }
 }

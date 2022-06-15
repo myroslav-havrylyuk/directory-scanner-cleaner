@@ -19,6 +19,7 @@ qt_add_qml_module(appdirectory-scanner-cleaner
     URI directory-scanner-cleaner
     VERSION 1.0
     QML_FILES main.qml 
+	warningmessage.qml
 )
 
 set_target_properties(appdirectory-scanner-cleaner PROPERTIES
