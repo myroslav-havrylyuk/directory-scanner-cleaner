@@ -103,3 +103,4 @@ build*
 # --------
 *.dll
 *.exe
+*.txt.user
