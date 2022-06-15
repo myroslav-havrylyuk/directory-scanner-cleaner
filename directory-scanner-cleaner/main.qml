@@ -64,6 +64,38 @@ Window {
             }
         }
 
+        Rectangle {
+            Layout.row: 3
+            Layout.column: 0
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            TreeView {
+                id: tree_view
+                anchors{
+                    fill: parent
+                    margins: 10
+                }
+
+                model: FileSystemModel
+                clip: true
+
+                delegate: TreeViewDelegate {
+                    contentItem: Text {
+                        anchors.leftMargin: leftMargin
+                        anchors.rightMargin: rightMargin
+                        text: {
+                            if (column === 0)
+                                file_name
+                            else
+                                file_size
+                        }
+                    }
+                }
+
+            }
+        }
+
+
         Button {
             id: browse_current_directory_path_button
 

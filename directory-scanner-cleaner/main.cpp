@@ -1,4 +1,5 @@
 #include "filesystemcontroller.h"
+#include "filesystemmodel.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -10,11 +11,14 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     QString rootFilePath = app.applicationDirPath();
-    FileSystemController fileSystemController;
+
+    FileSystemModel fileSystemModel(rootFilePath);
+    FileSystemController fileSystemController(fileSystemModel);
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/main.qml"_qs);
     QQmlContext *mainQmlContext = engine.rootContext();
 
+    mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
     mainQmlContext->setContextProperty("FileSystemController", &fileSystemController);
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

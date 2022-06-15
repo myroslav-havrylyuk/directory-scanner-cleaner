@@ -1,11 +1,17 @@
 #include "filesystemcontroller.h"
+#include "filesystemmodel.h"
 
 #include <QRegularExpression>
 #include <QQmlEngine>
 #include <QDir>
 
-FileSystemController::FileSystemController()
+FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
+    : m_FileSystemModel(fileSystemModel)
 {
+    QString initialRootPath = fileSystemModel.getRootPath();
+    if(!initialRootPath.isEmpty()){
+        setActivePath(fileSystemModel.getRootPath());
+    }
 }
 
 void FileSystemController::setActivePath(const QString &newActivePath)
@@ -20,6 +26,7 @@ void FileSystemController::setActivePath(const QString &newActivePath)
     if (activePath.exists())
     {
         m_ActivePath = validActivePath;
+        m_FileSystemModel.setRootPath(m_ActivePath);
         emit activePathChanged();
     } else {
         emit activePathInvalid();

@@ -5,13 +5,15 @@
 #include <QQuickItem>
 #include <QString>
 
+class FileSystemModel;
+
 class FileSystemController : public QQuickItem
 {
     Q_OBJECT
 
     Q_PROPERTY(QString activePath READ ActivePath WRITE setActivePath NOTIFY activePathChanged)
 public:
-    FileSystemController();
+    FileSystemController(FileSystemModel &fileSystemModel);
 
     void setActivePath(const QString &newActivePath);
     QString ActivePath() const;
@@ -22,6 +24,7 @@ signals:
 
 private:
     QString m_ActivePath;
+    FileSystemModel &m_FileSystemModel;
 };
 
 #endif // FILEMANAGERCONTROLLER_H
