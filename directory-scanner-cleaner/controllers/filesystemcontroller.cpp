@@ -32,7 +32,7 @@ void FileSystemController::setActivePath(const QString &newActivePath)
     } else {
         //show warning message
         QQmlEngine engine;
-        const QUrl url(u"qrc:/directory-scanner-cleaner/warningmessage.qml"_qs);
+        const QUrl url(u"qrc:/directory-scanner-cleaner/views/warningmessage.qml"_qs);
         QQmlComponent component(&engine, url);
         QObject *object = component.create();
         /*QQuickView view;

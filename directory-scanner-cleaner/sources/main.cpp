@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     FileSystemModel fileSystemModel(rootFilePath);
     FileSystemController fileSystemController(fileSystemModel);
 
-    const QUrl url(u"qrc:/directory-scanner-cleaner/main.qml"_qs);
+    const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlContext *mainQmlContext = engine.rootContext();
 
     mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
