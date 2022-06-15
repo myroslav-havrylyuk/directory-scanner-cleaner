@@ -88,6 +88,8 @@ Window {
                                 file_name
                             else if (column === 1)
                                 inner_files
+                            else
+                                file_size
                         }
                     }
                 }
