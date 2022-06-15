@@ -86,8 +86,8 @@ Window {
                         text: {
                             if (column === 0)
                                 file_name
-                            else
-                                file_size
+                            else if (column === 1)
+                                inner_files
                         }
                     }
                 }

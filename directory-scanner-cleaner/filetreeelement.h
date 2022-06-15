@@ -7,6 +7,7 @@
 
 enum FileTreeElementRole {
     FILE_NAME_ROLE = Qt::UserRole + 1,
+    FILE_INNER_FILES_ROLE,
     FILE_ROLES_SIZE
 };
 

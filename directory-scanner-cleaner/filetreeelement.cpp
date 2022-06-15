@@ -36,6 +36,8 @@ QVariant FileTreeElement::getData(int role) const
     {
         case FileTreeElementRole::FILE_NAME_ROLE:
             return m_FileName;
+        case FileTreeElementRole::FILE_INNER_FILES_ROLE:
+            return this->getChildsCount();
         default:
             return "Unknown role for file tree element";
     }
