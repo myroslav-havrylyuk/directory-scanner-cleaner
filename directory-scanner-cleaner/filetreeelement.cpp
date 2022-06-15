@@ -1,9 +1,11 @@
 #include "filetreeelement.h"
 
 FileTreeElement::FileTreeElement(const QString &fileName,
+                quint64 fileSize,
                 FileTreeElement *parentElement,
                 QList<FileTreeElement *> childFiles)
     : m_FileName(fileName),
+      m_FileSize(fileSize),
       m_childFiles(childFiles),
       m_ParentElement(parentElement)
 {
@@ -38,9 +40,27 @@ QVariant FileTreeElement::getData(int role) const
             return m_FileName;
         case FileTreeElementRole::FILE_INNER_FILES_ROLE:
             return this->getChildsCount();
+        case FileTreeElementRole::FILE_SIZE_ROLE:
+            return this->formattedSize();
         default:
             return "Unknown role for file tree element";
     }
+}
+
+quint64 FileTreeElement::getFileSize() const
+{
+    return m_FileSize;
+}
+
+void FileTreeElement::setFileSize(quint64 fileSize)
+{
+    m_FileSize = fileSize;
+}
+
+QString FileTreeElement::formattedSize() const
+{
+    QLocale locale;
+    return locale.formattedDataSize(m_FileSize, 2, QLocale::DataSizeTraditionalFormat);
 }
 
 FileTreeElement *FileTreeElement::getParent() const
