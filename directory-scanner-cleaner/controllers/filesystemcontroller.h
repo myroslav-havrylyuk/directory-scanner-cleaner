@@ -25,6 +25,7 @@ signals:
 private:
     QString m_ActivePath;
     FileSystemModel &m_FileSystemModel;
+    QObject *m_warningMessage;
 };
 
 #endif // FILEMANAGERCONTROLLER_H

@@ -1,14 +1,18 @@
 #include "filesystemcontroller.h"
 #include "models/filesystemmodel.h"
 
+#include <QQmlApplicationEngine>
 #include <QRegularExpression>
 #include <QQmlEngine>
 #include <QDir>
 #include <QQuickView>
 
+extern QQmlApplicationEngine *gEngine;
+
 FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     : m_FileSystemModel(fileSystemModel)
 {
+    m_warningMessage  = nullptr;
     QString initialRootPath = fileSystemModel.getRootPath();
     if(!initialRootPath.isEmpty()){
         setActivePath(fileSystemModel.getRootPath());
@@ -31,13 +35,12 @@ void FileSystemController::setActivePath(const QString &newActivePath)
         emit activePathChanged();
     } else {
         //show warning message
-        QQmlEngine engine;
         const QUrl url(u"qrc:/directory-scanner-cleaner/views/warningmessage.qml"_qs);
-        QQmlComponent component(&engine, url);
-        QObject *object = component.create();
-        /*QQuickView view;
-        view.setSource(QUrl::fromLocalFile(u"qrc:/directory-scanner-cleaner/warningmessage.qml"_qs));
-        view.show();*/
+        QQmlComponent component(gEngine, url);
+        if(m_warningMessage != nullptr){
+            delete m_warningMessage;
+        }
+        m_warningMessage = component.create();
         emit activePathInvalid();
     }
 }
