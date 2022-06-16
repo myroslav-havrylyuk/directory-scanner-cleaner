@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import Qt.labs.platform 1.1
 
 Window {
+    id: warning_window
     visible: true
     width: 700
     height: 150
@@ -39,6 +40,10 @@ Window {
             Layout.row: 1
             Layout.alignment: Qt.AlignRight
             text: qsTr("Close")
+            onClicked: {
+                console.log('close button pressed')
+                warning_window.close()
+            }
         }
     }
 }
