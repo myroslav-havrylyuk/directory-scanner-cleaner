@@ -7,7 +7,7 @@ Window {
     id: warning_window
     visible: true
     width: 700
-    height: 150
+    height: 100
     title: qsTr("No such directory")
     color: 'lightgrey'
     GridLayout{
