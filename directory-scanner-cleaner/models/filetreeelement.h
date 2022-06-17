@@ -37,7 +37,7 @@ public:
 private:
     QString m_FileName;
     quint64 m_FileSize;
-    QList<FileTreeElement *> m_childFiles;
+    QList<FileTreeElement *> m_ChildFiles;
     FileTreeElement *m_ParentElement;
 };
 

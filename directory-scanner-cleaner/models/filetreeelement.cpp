@@ -6,14 +6,14 @@ FileTreeElement::FileTreeElement(const QString &fileName,
                 QList<FileTreeElement *> childFiles)
     : m_FileName(fileName),
       m_FileSize(fileSize),
-      m_childFiles(childFiles),
+      m_ChildFiles(childFiles),
       m_ParentElement(parentElement)
 {
 }
 
 FileTreeElement::~FileTreeElement()
 {
-    for (auto &fileTreeElement : m_childFiles)
+    for (auto &fileTreeElement : m_ChildFiles)
     {
         delete fileTreeElement;
     }
@@ -26,7 +26,7 @@ int FileTreeElement::getRolesCount() const
 
 int FileTreeElement::getChildsCount() const
 {
-    return m_childFiles.count();
+    return m_ChildFiles.count();
 }
 
 QVariant FileTreeElement::getData(int role) const
@@ -70,20 +70,20 @@ FileTreeElement *FileTreeElement::getParent() const
 
 FileTreeElement *FileTreeElement::getChildAt(int row)
 {
-    if (row < 0 || row > m_childFiles.count())
+    if (row < 0 || row > m_ChildFiles.count())
         return nullptr;
 
-    return m_childFiles.at(row);
+    return m_ChildFiles.at(row);
 }
 
 void FileTreeElement::setChildElements(QList<FileTreeElement *> childFiles)
 {
-    m_childFiles = childFiles;
+    m_ChildFiles = childFiles;
 }
 
 QList<FileTreeElement *> FileTreeElement::getChildElements() const
 {
-    return m_childFiles;
+    return m_ChildFiles;
 }
 
 const QString &FileTreeElement::fileName() const
