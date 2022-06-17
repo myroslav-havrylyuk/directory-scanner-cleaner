@@ -1,5 +1,5 @@
-#ifndef FILEMANAGERCONTROLLER_H
-#define FILEMANAGERCONTROLLER_H
+#ifndef FILESYSTEMCONTROLLER_H
+#define FILESYSTEMCONTROLLER_H
 
 #include <QObject>
 #include <QQuickItem>
@@ -28,4 +28,4 @@ private:
     QObject *m_warningMessage;
 };
 
-#endif // FILEMANAGERCONTROLLER_H
+#endif // FILESYSTEMCONTROLLER_H

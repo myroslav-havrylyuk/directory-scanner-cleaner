@@ -1,5 +1,5 @@
-#ifndef FILEMANAGER_H
-#define FILEMANAGER_H
+#ifndef FILESYSTEMMANAGER_H
+#define FILESYSTEMMANAGER_H
 
 #include "models/filetreeelement.h"
 
@@ -18,4 +18,4 @@ private:
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
 };
 
-#endif // FILEMANAGER_H
+#endif // FILESYSTEMMANAGER_H

@@ -1,5 +1,5 @@
-#ifndef FILEMANAGERMODEL_H
-#define FILEMANAGERMODEL_H
+#ifndef FILESYSTEMMODEL_H
+#define FILESYSTEMMODEL_H
 
 #include <QAbstractItemModel>
 #include <QFileInfo>
@@ -40,4 +40,4 @@ private:
     FileTreeElement *m_FileTreeRoot;
 };
 
-#endif // FILEMANAGERMODEL_H
+#endif // FILESYSTEMMODEL_H
