@@ -24,7 +24,7 @@ void FileSystemController::setActivePath(const QString &newActivePath)
     qDebug() << "New active path has been set: " << newActivePath;
     QString validActivePath = newActivePath;
     validActivePath.remove(QRegularExpression("file:///"));
-    validActivePath.replace(QRegularExpression("\\\\"), "/");
+    validActivePath = QDir::cleanPath(validActivePath);
     qDebug() << "Edited active path has been set: " << validActivePath;
 
     QDir activePath(validActivePath);
@@ -47,7 +47,5 @@ void FileSystemController::setActivePath(const QString &newActivePath)
 
 QString FileSystemController::ActivePath() const
 {
-    QString activePath = m_ActivePath;
-    activePath.replace(QRegularExpression("/"), "\\");
-    return activePath;
+    return QDir::toNativeSeparators(m_ActivePath);
 }
