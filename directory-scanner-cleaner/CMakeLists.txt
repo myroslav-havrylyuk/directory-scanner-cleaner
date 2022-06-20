@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 6.3 COMPONENTS Quick REQUIRED)
 
 qt_add_executable(appdirectory-scanner-cleaner
-	sources/main.cpp
-	sources/filesystemmanager.cpp
+	main.cpp
+	tools/filesystemmanager.cpp
 	controllers/filesystemcontroller.cpp
 	models/filesystemmodel.cpp
 	models/filetreeelement.cpp
