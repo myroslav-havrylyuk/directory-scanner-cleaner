@@ -9,12 +9,13 @@ FileSystemManager::FileSystemManager()
 
 FileTreeElement *FileSystemManager::generateFileTree(const QString &rootPath)
 {
-    if (!QFile::exists(rootPath))
+    QString normalizedRootPath = QDir::cleanPath(rootPath);
+    if (!QFile::exists(normalizedRootPath))
         return {};
 
-    QDir currentDir(rootPath);
-    FileTreeElement *fileTreeRoot = new FileTreeElement(rootPath, getDirectorySize(currentDir.absolutePath()), nullptr);
-    fileTreeRoot->setChildElements(getInnerFiles(QDir(rootPath), fileTreeRoot));
+    QDir currentDir(normalizedRootPath);
+    FileTreeElement *fileTreeRoot = new FileTreeElement(normalizedRootPath, getDirectorySize(currentDir.absolutePath()), nullptr);
+    fileTreeRoot->setChildElements(getInnerFiles(QDir(normalizedRootPath), fileTreeRoot));
 
     return fileTreeRoot;
 }

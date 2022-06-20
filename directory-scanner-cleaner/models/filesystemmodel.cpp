@@ -7,7 +7,8 @@ FileSystemModel::FileSystemModel()
 
 FileSystemModel::FileSystemModel(const QString &rootPath)
 {
-    if (!QFile::exists(rootPath)){
+    QString normalizedRootPath = QDir::cleanPath(rootPath);
+    if (!QFile::exists(normalizedRootPath)){
         qDebug() << "rootPath for FileSystemModel does not exist";
         return;
     }
@@ -113,7 +114,8 @@ void FileSystemModel::setRootPath(const QString &rootPath)
 {
     if (m_FileTreeRoot != nullptr)
     {
-        if (m_FileTreeRoot->fileName() == rootPath)
+        QString normalizedRootPath = QDir::cleanPath(rootPath);
+        if (m_FileTreeRoot->fileName() == normalizedRootPath)
             return;
 
         delete m_FileTreeRoot;
@@ -132,6 +134,7 @@ void FileSystemModel::setupModel(const QString &rootPath)
 {
     FileSystemManager fileSystemManager;
     emit beginResetModel();
+    QString normalizedRootPath = QDir::cleanPath(rootPath);
     m_FileTreeRoot = fileSystemManager.generateFileTree(rootPath);
     emit endResetModel();
 }
