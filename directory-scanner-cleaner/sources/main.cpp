@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
 
     QString rootFilePath = app.applicationDirPath();
 
-    FileSystemModel fileSystemModel(rootFilePath);
+    QItemSelectionModel testItemSelectionModel;
+    FileSystemModel fileSystemModel(&testItemSelectionModel, "D:/GL");
     FileSystemController fileSystemController(fileSystemModel);
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
 
     mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
     mainQmlContext->setContextProperty("FileSystemController", &fileSystemController);
+    mainQmlContext->setContextProperty("TestItemSelectionModel", &testItemSelectionModel);
 
     QObject::connect(gEngine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

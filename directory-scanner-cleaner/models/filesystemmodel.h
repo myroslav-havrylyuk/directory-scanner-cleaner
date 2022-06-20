@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QFileInfo>
 #include <QDir>
+#include <QItemSelectionModel>
 
 #include "filetreeelement.h"
 #include "sources/filesystemmanager.h"
@@ -13,8 +14,8 @@ class FileSystemModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    FileSystemModel();
-    FileSystemModel(const QString &rootPath);
+    FileSystemModel(QItemSelectionModel *itemSelectionModel);
+    FileSystemModel(QItemSelectionModel *itemSelectionModel, const QString &rootPath);
 
     ~FileSystemModel();
 
@@ -29,6 +30,8 @@ public:
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
 
+    void addToSelection(const QModelIndex &index);
+
     void setRootPath(const QString &rootPath);
     QString getRootPath();
 
@@ -38,6 +41,7 @@ private:
 
 private:
     FileTreeElement *m_FileTreeRoot;
+    QItemSelectionModel *m_ItemSelectionModel;
 };
 
 #endif // FILESYSTEMMODEL_H

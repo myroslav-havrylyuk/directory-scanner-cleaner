@@ -21,7 +21,7 @@ FileTreeElement::~FileTreeElement()
 
 int FileTreeElement::getRolesCount() const
 {
-    return (FILE_ROLES_SIZE - FILE_NAME_ROLE);
+    return 1;
 }
 
 int FileTreeElement::getChildsCount() const

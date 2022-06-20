@@ -1,11 +1,13 @@
 #include "filesystemmodel.h"
 
-FileSystemModel::FileSystemModel()
-    : m_FileTreeRoot(nullptr)
+FileSystemModel::FileSystemModel(QItemSelectionModel *itemSelectionModel)
+    : m_FileTreeRoot(nullptr),
+      m_ItemSelectionModel(itemSelectionModel)
 {
 }
 
-FileSystemModel::FileSystemModel(const QString &rootPath)
+FileSystemModel::FileSystemModel(QItemSelectionModel *itemSelectionModel, const QString &rootPath)
+    : FileSystemModel(itemSelectionModel)
 {
     if (!QFile::exists(rootPath)){
         qDebug() << "rootPath for FileSystemModel does not exist";
@@ -13,6 +15,7 @@ FileSystemModel::FileSystemModel(const QString &rootPath)
     }
     qDebug() << "Starting model setup";
     setupModel(rootPath);
+    itemSelectionModel->setModel(this);
 }
 
 FileSystemModel::~FileSystemModel()
@@ -107,6 +110,13 @@ bool FileSystemModel::hasIndex(int row, int column, const QModelIndex &parent = 
 
     return (row >= 0 && row < fileTreeElement->getChildsCount() &&
             column >= 0 && column < fileTreeElement->getRolesCount());
+}
+
+void FileSystemModel::addToSelection(const QModelIndex &index) {
+    if (!index.isValid())
+        return;
+
+    m_ItemSelectionModel->select(index, (QItemSelectionModel::Select | QItemSelectionModel::Toggle));
 }
 
 void FileSystemModel::setRootPath(const QString &rootPath)

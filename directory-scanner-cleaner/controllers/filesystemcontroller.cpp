@@ -51,3 +51,25 @@ QString FileSystemController::ActivePath() const
     activePath.replace(QRegularExpression("/"), "\\");
     return activePath;
 }
+
+void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {
+    if (!currentRow.isValid())
+        return;
+
+    m_CurrentRow = currentRow;
+    emit currentlySelectedIndexChanged();
+
+    m_FileSystemModel.addToSelection(m_CurrentRow);
+
+    selected = true;
+    emit selectedChanged();
+}
+
+QModelIndex FileSystemController::getCurrentlySelectedIndex() const {
+    return m_CurrentRow;
+}
+
+bool FileSystemController::getSelected() const {
+    return true;
+}
+
