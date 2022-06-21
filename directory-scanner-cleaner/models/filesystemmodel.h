@@ -33,10 +33,9 @@ public:
     QString getRootPath();
 
 private:
+    FileSystemManager m_FileSystemManager;
     void setupModel(const QString &rootPath);
-    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
-
-private:
+    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;\
     FileTreeElement *m_FileTreeRoot;
 };
 

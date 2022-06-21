@@ -132,10 +132,9 @@ QString FileSystemModel::getRootPath()
 
 void FileSystemModel::setupModel(const QString &rootPath)
 {
-    FileSystemManager fileSystemManager;
     emit beginResetModel();
     QString normalizedRootPath = QDir::cleanPath(rootPath);
-    m_FileTreeRoot = fileSystemManager.generateFileTree(rootPath);
+    m_FileTreeRoot = m_FileSystemManager.generateFileTree(rootPath);
     emit endResetModel();
 }
 
