@@ -7,6 +7,8 @@
 #include <QDir>
 #include <QPromise>
 #include <QObject>
+#include <QFutureWatcher>
+#include <QFuture>
 
 class FileSystemManager : public QObject
 {
@@ -18,7 +20,13 @@ public:
     quint64 getDirectorySize(const QString &directory);
 
 private:
+    QFutureWatcher<FileTreeElement *> watcher;
+    QFuture<FileTreeElement *> future;
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
+    void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
+public slots:
+    void progressLog(int progress);
+    void handleFinished();
 };
 
 #endif // FILESYSTEMMANAGER_H

@@ -18,6 +18,9 @@ FileTreeElement *FileSystemManager::generateFileTree(const QString &rootPath)
     QDir currentDir(normalizedRootPath);
     FileTreeElement *fileTreeRoot = new FileTreeElement(normalizedRootPath, getDirectorySize(currentDir.absolutePath()), nullptr);
     future = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, fileTreeRoot);
+    QObject::connect(&watcher, &QFutureWatcher<FileTreeElement *>::progressValueChanged, this, &FileSystemManager::progressLog);
+    QObject::connect(&watcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleFinished);
+    watcher.setFuture(future);
 
     fileTreeRoot->setChildElements(future.results());
     return fileTreeRoot;
@@ -48,6 +51,9 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
 {
     qDebug() << "Getting inner files in thread:" << QThread::currentThread();
     QList<FileTreeElement *> innerFiles;
+    promise.setProgressRange(0, currenDir.count());
+    int counter = 0;
+    promise.setProgressValue(counter);
     for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
     {
          FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
@@ -62,7 +68,19 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
 
          //innerFiles.append(fileTreeElement);
          promise.addResult(fileTreeElement);
+         promise.setProgressValue(++counter);
+         qDebug() << "files/folders read:" << counter;
     }
+}
+
+void FileSystemManager::progressLog(int progress)
+{
+    qDebug() << "current progress:" << progress << "thread of this message:" << QThread::currentThread();
+}
+
+void FileSystemManager::handleFinished()
+{
+    qDebug() << "finished";
 }
 
 quint64 FileSystemManager::getDirectorySize(const QString &directory)
