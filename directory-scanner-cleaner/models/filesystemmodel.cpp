@@ -1,4 +1,5 @@
 #include "filesystemmodel.h"
+#include <QThread>
 
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr)
@@ -12,7 +13,6 @@ FileSystemModel::FileSystemModel(const QString &rootPath)
         qDebug() << "rootPath for FileSystemModel does not exist";
         return;
     }
-    qDebug() << "Starting model setup";
     setupModel(rootPath);
 }
 

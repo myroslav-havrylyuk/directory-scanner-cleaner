@@ -4,12 +4,16 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QThread>
 
 QQmlApplicationEngine *gEngine;
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
+
+    qDebug() << "Main thread: " << QThread::currentThread();
+
     gEngine = new QQmlApplicationEngine();
 
     QString rootFilePath = app.applicationDirPath();

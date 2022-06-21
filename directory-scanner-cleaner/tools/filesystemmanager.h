@@ -5,6 +5,7 @@
 
 #include <QList>
 #include <QDir>
+#include <QPromise>
 #include <QObject>
 
 class FileSystemManager : public QObject
