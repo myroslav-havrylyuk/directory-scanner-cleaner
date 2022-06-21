@@ -5,11 +5,13 @@
 
 #include <QList>
 #include <QDir>
+#include <QObject>
 
-class FileSystemManager
+class FileSystemManager : public QObject
 {
+    Q_OBJECT
 public:
-    FileSystemManager();
+    explicit FileSystemManager(QObject *parent = nullptr);
 
     FileTreeElement *generateFileTree(const QString &rootPath);
     quint64 getDirectorySize(const QString &directory);

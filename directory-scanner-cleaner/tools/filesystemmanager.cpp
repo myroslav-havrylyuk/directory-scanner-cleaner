@@ -2,7 +2,8 @@
 
 #include <QDirIterator>
 
-FileSystemManager::FileSystemManager()
+FileSystemManager::FileSystemManager(QObject *parent)
+    : QObject{parent}
 {
 
 }
