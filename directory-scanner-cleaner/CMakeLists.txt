@@ -10,7 +10,9 @@ find_package(Qt6 6.3 COMPONENTS Quick REQUIRED)
 qt_add_executable(appdirectory-scanner-cleaner
 	sources/main.cpp
 	sources/filesystemmanager.cpp
+        sources/configfilehandler.cpp
 	controllers/filesystemcontroller.cpp
+        controllers/settingscontroller.cpp
 	models/filesystemmodel.cpp
 	models/filetreeelement.cpp
 )
@@ -20,7 +22,8 @@ qt_add_qml_module(appdirectory-scanner-cleaner
     VERSION 1.0
 	QML_FILES
 	views/main.qml
-	views/warningmessage.qml
+        views/settingswindow.qml
+        views/warningmessage.qml
 )
 
 set_target_properties(appdirectory-scanner-cleaner PROPERTIES

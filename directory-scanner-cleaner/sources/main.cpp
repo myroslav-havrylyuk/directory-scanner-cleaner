@@ -1,5 +1,7 @@
 #include "controllers/filesystemcontroller.h"
 #include "models/filesystemmodel.h"
+#include "controllers/settingscontroller.h"
+#include "sources/configfilehandler.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -16,12 +18,15 @@ int main(int argc, char *argv[])
 
     FileSystemModel fileSystemModel(rootFilePath);
     FileSystemController fileSystemController(fileSystemModel);
+    ConfigFileHandler handler;
+    SettingsController settingsController(handler);
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlContext *mainQmlContext = gEngine->rootContext();
 
     mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
     mainQmlContext->setContextProperty("FileSystemController", &fileSystemController);
+    mainQmlContext->setContextProperty("SettingsController", &settingsController);
 
     QObject::connect(gEngine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
