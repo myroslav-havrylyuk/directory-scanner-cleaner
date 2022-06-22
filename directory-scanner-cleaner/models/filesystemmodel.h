@@ -14,12 +14,11 @@ class FileSystemModel : public QAbstractItemModel
 
 public:
     FileSystemModel();
-    FileSystemModel(const QString &rootPath);
+    //FileSystemModel(const QString &rootPath);
 
     ~FileSystemModel();
 
     // QAbstractItemModel interface
-public:
     QHash<int, QByteArray> roleNames() const;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
     virtual QModelIndex parent(const QModelIndex &child) const;
@@ -28,15 +27,21 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
-
-    void setRootPath(const QString &rootPath);
+    void setupModel(const QString &rootPath);
     QString getRootPath();
 
 private:
     FileSystemManager m_FileSystemManager;
-    void setupModel(const QString &rootPath);
     FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;\
     FileTreeElement *m_FileTreeRoot;
+    void connectToFileSystemManager();
+
+signals:
+    void modelSetupStarted(const QString &rootPath);
+    void modelSetupFinished();
+
+public slots:
+    void fileTreeGeneratedHandler(FileTreeElement * fileTreeRoot);
 };
 
 #endif // FILESYSTEMMODEL_H

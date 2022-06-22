@@ -5,6 +5,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QThread>
+#include <QQuickStyle>
 
 QQmlApplicationEngine *gEngine;
 
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qDebug() << "Main thread: " << QThread::currentThread();
+    QQuickStyle::setStyle("Material");
 
     gEngine = new QQmlApplicationEngine();
 

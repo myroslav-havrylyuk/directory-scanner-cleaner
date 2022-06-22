@@ -17,13 +17,26 @@ FileTreeElement *FileSystemManager::generateFileTree(const QString &rootPath)
 
     QDir currentDir(normalizedRootPath);
     FileTreeElement *fileTreeRoot = new FileTreeElement(normalizedRootPath, getDirectorySize(currentDir.absolutePath()), nullptr);
-    future = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, fileTreeRoot);
-    QObject::connect(&watcher, &QFutureWatcher<FileTreeElement *>::progressValueChanged, this, &FileSystemManager::progressLog);
-    QObject::connect(&watcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleFinished);
-    watcher.setFuture(future);
+    fileTreeRoot->setChildElements(getInnerFiles(QDir(normalizedRootPath), fileTreeRoot));
 
-    fileTreeRoot->setChildElements(future.results());
     return fileTreeRoot;
+}
+
+void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
+{
+    QString normalizedRootPath = QDir::cleanPath(rootPath);
+    if (!QFile::exists(normalizedRootPath))
+        return ;
+
+    QDir currentDir(normalizedRootPath);
+    m_FileTreeRoot = new FileTreeElement(normalizedRootPath, 0, nullptr);
+    //getting inner files of root
+    m_GetInnerFiles = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, m_FileTreeRoot);
+    QObject::connect(&m_GetInnerFilesWatcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleGetInnerFilesFinished);
+    m_GetInnerFilesWatcher.setFuture(m_GetInnerFiles);
+    //getting root directory size
+    m_GetRootElementSizeFuture = QtConcurrent::run(&FileSystemManager::getDirectorySize, this, currentDir.absolutePath());
+    connect(&m_GetRootElementSizeWatcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleGetRootElementSizeFinished);
 }
 
 QList<FileTreeElement *> FileSystemManager::getInnerFiles(const QDir &currenDir, FileTreeElement *parent)
@@ -50,10 +63,7 @@ QList<FileTreeElement *> FileSystemManager::getInnerFiles(const QDir &currenDir,
 void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent)
 {
     qDebug() << "Getting inner files in thread:" << QThread::currentThread();
-    QList<FileTreeElement *> innerFiles;
-    promise.setProgressRange(0, currenDir.count());
     int counter = 0;
-    promise.setProgressValue(counter);
     for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
     {
          FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
@@ -65,22 +75,31 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
              fileTreeElement->setChildElements(innerFiles);
              fileTreeElement->setFileSize(getDirectorySize(fileElement.absoluteFilePath()));
          }
-
-         //innerFiles.append(fileTreeElement);
          promise.addResult(fileTreeElement);
-         promise.setProgressValue(++counter);
-         qDebug() << "files/folders read:" << counter;
+         qDebug() << "files/folders read:" << ++counter;
     }
 }
 
-void FileSystemManager::progressLog(int progress)
+void FileSystemManager::handleGetInnerFilesFinished()
 {
-    qDebug() << "current progress:" << progress << "thread of this message:" << QThread::currentThread();
+    m_FileTreeRoot->setChildElements(m_GetInnerFiles.results());
+    m_FileTreeGenerationFlags.setGotInnerFilesFlag(true);
+    if(m_FileTreeGenerationFlags.isAllFlagsSet()){
+        emit fileTreeGenerated(m_FileTreeRoot);
+        m_FileTreeGenerationFlags.resetFlags();
+    }
+    qDebug() << "finished getting inner files";
 }
 
-void FileSystemManager::handleFinished()
+void FileSystemManager::handleGetRootElementSizeFinished()
 {
-    qDebug() << "finished";
+    m_FileTreeRoot->setFileSize(m_GetRootElementSizeFuture.result());
+     m_FileTreeGenerationFlags.setGotDirectorySizeFlag(true);
+     if(m_FileTreeGenerationFlags.isAllFlagsSet()){
+         emit fileTreeGenerated(m_FileTreeRoot);
+         m_FileTreeGenerationFlags.resetFlags();
+     }
+    qDebug() << "finished getting root element size";
 }
 
 quint64 FileSystemManager::getDirectorySize(const QString &directory)

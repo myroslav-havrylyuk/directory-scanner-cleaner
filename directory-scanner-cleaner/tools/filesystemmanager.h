@@ -17,16 +17,46 @@ public:
     explicit FileSystemManager(QObject *parent = nullptr);
 
     FileTreeElement *generateFileTree(const QString &rootPath);
+    void generateFileTreeAsync(const QString &rootPath);
     quint64 getDirectorySize(const QString &directory);
 
 private:
-    QFutureWatcher<FileTreeElement *> watcher;
-    QFuture<FileTreeElement *> future;
+    class FILE_TREE_GENERATION_FLAGS{
+    private:
+        bool m_GotInnerFiles;
+        bool m_GotDirectorySize;
+    public:
+        void resetFlags(){
+            m_GotInnerFiles = false;
+            m_GotDirectorySize = false;
+        }
+        bool isAllFlagsSet(){
+            if(m_GotInnerFiles == m_GotDirectorySize == true){
+                return true;
+            }
+            return false;
+        }
+        void setGotInnerFilesFlag(bool value){
+            m_GotInnerFiles = value;
+        }
+        void setGotDirectorySizeFlag(bool value){
+            m_GotDirectorySize = value;
+        }
+    };
+    FILE_TREE_GENERATION_FLAGS m_FileTreeGenerationFlags;
+    QFutureWatcher<FileTreeElement *> m_GetInnerFilesWatcher;
+    QFutureWatcher<quint64> m_GetRootElementSizeWatcher;
+    QFuture<FileTreeElement *> m_GetInnerFiles;
+    QFuture<quint64> m_GetRootElementSizeFuture;
+    FileTreeElement *m_FileTreeRoot;
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
     void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
+    FileTreeElement *generateFileTreeElementAsync(const QString &rootPath);
 public slots:
-    void progressLog(int progress);
-    void handleFinished();
+    void handleGetInnerFilesFinished();
+    void handleGetRootElementSizeFinished();
+signals:
+    void fileTreeGenerated(FileTreeElement * fileTreeRoot);
 };
 
 #endif // FILESYSTEMMANAGER_H
