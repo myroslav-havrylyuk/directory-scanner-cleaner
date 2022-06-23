@@ -14,6 +14,8 @@ FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     if(!initialRootPath.isEmpty()){
         setActivePath(initialRootPath);
     }
+    connect(this, &FileSystemController::cancelSetupModel, &m_FileSystemModel, &FileSystemModel::cancelSetupModelHandler);
+    connect(&m_FileSystemModel, &FileSystemModel::setupModelCanceled, this, &FileSystemController::setupModelCanceledHandler);
 }
 
 void FileSystemController::setActivePath(const QString &newActivePath)
@@ -37,6 +39,18 @@ void FileSystemController::setActivePath(const QString &newActivePath)
             emit activePathInvalid();
         }
     }
+}
+
+void FileSystemController::cancelSetupModelHandler()
+{
+    emit cancelSetupModel();
+    qDebug() << "cancel setup model handler in FileSystemController";
+}
+
+void FileSystemController::setupModelCanceledHandler()
+{
+    emit setupModelCanceled();
+    qDebug() << "setup model canceled handler in FileSystemController";
 }
 
 QString FileSystemController::ActivePath() const

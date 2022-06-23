@@ -13,10 +13,14 @@ ApplicationWindow {
     //color: 'lightgrey'
     Material.theme: Material.Dark
 
+
     Connections {
         target: FileSystemController
         function onActivePathInvalid(){
             warning_dialog.open();
+        }
+        function onSetupModelCanceled(){
+            progress_dialog.close();
         }
     }
 
@@ -154,6 +158,7 @@ ApplicationWindow {
 
     Dialog {
         id: progress_dialog
+        objectName: "progress_dialog"
         anchors.centerIn: parent
         closePolicy: Popup.CloseOnEсscape
         title: qsTr("Scanning files...")
@@ -162,6 +167,12 @@ ApplicationWindow {
             }
         modal: true
         standardButtons: Dialog.Cancel
-        onRejected: console.log("Cancel clicked")
+
+        signal cancelSetupModel()
+
+        onRejected: {
+            progress_dialog.cancelSetupModel();
+            console.log("Cancel clicked");
+        }
     }
 }

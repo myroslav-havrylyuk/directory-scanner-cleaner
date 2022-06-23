@@ -6,8 +6,10 @@
 #include <QQmlContext>
 #include <QThread>
 #include <QQuickStyle>
+#include <QQuickView>
 
 QQmlApplicationEngine *gEngine;
+QObject *mainWindow;
 
 int main(int argc, char *argv[])
 {
@@ -29,12 +31,22 @@ int main(int argc, char *argv[])
     mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
     mainQmlContext->setContextProperty("FileSystemController", &fileSystemController);
 
-    QObject::connect(gEngine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
+    /*QObject::connect(gEngine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url, &mainWindow](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl)
             QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
-    gEngine->load(url);
+        mainWindow = obj;
+    }, Qt::QueuedConnection);*/
+            QQmlComponent mainWindowComponent(gEngine, url);
+
+            mainWindow = mainWindowComponent.create();
+
+            QObject *progressDialog = mainWindow->findChild<QObject*>("progress_dialog");
+            QObject::connect(progressDialog, SIGNAL(cancelSetupModel()),
+                             &fileSystemController, SLOT(cancelSetupModelHandler()));
+            //                 &fileSystemController, SLOT(cancelOperation()));
+
+    //gEngine->load(url);
 
     return app.exec();
 }

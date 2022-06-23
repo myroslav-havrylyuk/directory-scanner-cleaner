@@ -19,6 +19,7 @@ public:
     FileTreeElement *generateFileTree(const QString &rootPath);
     void generateFileTreeAsync(const QString &rootPath);
     quint64 getDirectorySize(const QString &directory);
+    void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);
 
 private:
     class FILE_TREE_GENERATION_FLAGS{
@@ -46,7 +47,7 @@ private:
     FILE_TREE_GENERATION_FLAGS m_FileTreeGenerationFlags;
     QFutureWatcher<FileTreeElement *> m_GetInnerFilesWatcher;
     QFutureWatcher<quint64> m_GetRootElementSizeWatcher;
-    QFuture<FileTreeElement *> m_GetInnerFiles;
+    QFuture<FileTreeElement *> m_GetInnerFilesFuture;
     QFuture<quint64> m_GetRootElementSizeFuture;
     FileTreeElement *m_FileTreeRoot;
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
@@ -55,8 +56,10 @@ private:
 public slots:
     void handleGetInnerFilesFinished();
     void handleGetRootElementSizeFinished();
+    void cancelSetupModelHandler();
 signals:
     void fileTreeGenerated(FileTreeElement * fileTreeRoot);
+    void setupModelCanceled();
 };
 
 #endif // FILESYSTEMMANAGER_H

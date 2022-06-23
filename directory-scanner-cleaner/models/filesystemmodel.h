@@ -39,9 +39,14 @@ private:
 signals:
     void modelSetupStarted(const QString &rootPath);
     void modelSetupFinished();
+    void cancelSetupModel();
+    void setupModelCanceled();
+
 
 public slots:
     void fileTreeGeneratedHandler(FileTreeElement * fileTreeRoot);
+    void cancelSetupModelHandler();
+    void setupModelCanceledHandler();
 };
 
 #endif // FILESYSTEMMODEL_H
