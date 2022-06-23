@@ -7,7 +7,7 @@ import QtQuick.Dialogs
 ApplicationWindow {
     id: main_window
     width:  1280
-    height: 320
+    height: 720
     visible: true
     title: qsTr("Directory scanner & cleaner")
     //color: 'lightgrey'
@@ -43,6 +43,27 @@ ApplicationWindow {
         columns: 2
         rowSpacing: 10
         columnSpacing: 25
+
+        MenuBar{
+                Menu{
+                    title:  "&Options"
+                    MenuItem{
+                        property variant win
+                        property bool clicked: false
+                        text: "&Settings"
+                        onTriggered: {
+                            if(!clicked)
+                            {
+                                var component = Qt.createComponent("settingswindow.qml")
+                                win = component.createObject(main_window)
+                                clicked = true
+                            }
+                            SettingsController.state = 1
+                            win.show()
+                        }
+                    }
+                }
+            }
 
         Platform.FolderDialog {
             id: folder_dialog
@@ -122,7 +143,6 @@ ApplicationWindow {
                         }
                     }
                 }
-
             }
         }
 
@@ -160,7 +180,7 @@ ApplicationWindow {
         id: progress_dialog
         objectName: "progress_dialog"
         anchors.centerIn: parent
-        closePolicy: Popup.CloseOnEсscape
+        closePolicy: Popup.CloseOnEscape
         title: qsTr("Scanning files...")
         contentItem: ProgressBar {
                 indeterminate: true
