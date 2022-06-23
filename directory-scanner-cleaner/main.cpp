@@ -1,7 +1,7 @@
 #include "controllers/filesystemcontroller.h"
 #include "models/filesystemmodel.h"
 #include "controllers/settingscontroller.h"
-#include "sources/configfilehandler.h"
+#include "tools/configfilehandler.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>

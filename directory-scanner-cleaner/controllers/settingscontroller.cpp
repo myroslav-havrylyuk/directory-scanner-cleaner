@@ -1,5 +1,5 @@
 #include "settingscontroller.h"
-#include "sources/configfilehandler.h"
+#include "tools/configfilehandler.h"
 
 #include <QQmlApplicationEngine>
 #include <QRegularExpression>
