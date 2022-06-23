@@ -11,7 +11,10 @@ ApplicationWindow {
     visible: true
     title: qsTr("Directory scanner & cleaner")
     //color: 'lightgrey'
-    Material.theme: Material.Dark
+    //Material.theme: Material.Dark
+    palette.highlight: "blue"
+    palette.buttonText: "blue"
+
 
 
     Connections {
@@ -36,34 +39,47 @@ ApplicationWindow {
         }
     }
 
+    MenuBar{
+        id: main_window_menu_bar
+            Menu{
+                title:  "&Options"
+                font {
+                    pixelSize: 10
+                }
+                MenuItem{
+                    property variant win
+                    property bool clicked: false
+                    text: "&Settings"
+                    font {
+                        pixelSize: 10
+                    }
+                    onTriggered: {
+                        if(!clicked)
+                        {
+                            var component = Qt.createComponent("settingswindow.qml")
+                            win = component.createObject(main_window)
+                            clicked = true
+                        }
+                        SettingsController.state = 1
+                        win.show()
+                    }
+                }
+            }
+        }
+
     GridLayout{
-        anchors.fill: parent
+        anchors{
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            top: main_window_menu_bar.bottom
+        }
+
         anchors.margins: 39
         rows: 4
         columns: 2
         rowSpacing: 10
         columnSpacing: 25
-
-        MenuBar{
-                Menu{
-                    title:  "&Options"
-                    MenuItem{
-                        property variant win
-                        property bool clicked: false
-                        text: "&Settings"
-                        onTriggered: {
-                            if(!clicked)
-                            {
-                                var component = Qt.createComponent("settingswindow.qml")
-                                win = component.createObject(main_window)
-                                clicked = true
-                            }
-                            SettingsController.state = 1
-                            win.show()
-                        }
-                    }
-                }
-            }
 
         Platform.FolderDialog {
             id: folder_dialog
@@ -88,7 +104,7 @@ ApplicationWindow {
         Rectangle {
             id: current_directory_path
             property alias directory_path: current_directory_path_text_edit.text
-            color: '#3fcccccc'
+            //color: '#3fcccccc'
             Layout.row: 1
             Layout.column: 0
             Layout.fillWidth: true

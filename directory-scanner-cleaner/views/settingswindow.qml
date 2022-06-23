@@ -11,6 +11,8 @@ Window {
     title: qsTr("Settings")
     color: 'lightgrey'
     modality: Qt.ApplicationModal
+    palette.highlight: "blue"
+    palette.buttonText: "blue"
 
     FolderDialog {
         id: folder_dialog

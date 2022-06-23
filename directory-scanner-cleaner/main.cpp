@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     qDebug() << "Main thread: " << QThread::currentThread();
-    QQuickStyle::setStyle("Material");
+    QQuickStyle::setStyle("Fusion");
 
     gEngine = new QQmlApplicationEngine();
 
@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
             QObject *progressDialog = mainWindow->findChild<QObject*>("progress_dialog");
             QObject::connect(progressDialog, SIGNAL(cancelSetupModel()),
                              &fileSystemController, SLOT(cancelSetupModelHandler()));
+            //QObject::connect(mainWindow, SIGNAL(setupModelCanceled()),
             //                 &fileSystemController, SLOT(cancelOperation()));
 
     //gEngine->load(url);
