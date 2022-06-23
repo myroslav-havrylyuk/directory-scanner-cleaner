@@ -24,10 +24,12 @@ int main(int argc, char *argv[])
 
     QString rootFilePath = app.applicationDirPath();
 
-    FileSystemModel fileSystemModel(rootFilePath);
+    FileSystemModel fileSystemModel;
+    //FileSystemModel fileSystemModel(rootFilePath);
     FileSystemController fileSystemController(fileSystemModel);
     ConfigFileHandler handler;
     SettingsController settingsController(handler);
+    fileSystemController.setActivePath("C:\\My\\Study\\My_3_course\\2_term\\ZPKG");
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlContext *mainQmlContext = gEngine->rootContext();
