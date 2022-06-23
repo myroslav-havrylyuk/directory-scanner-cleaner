@@ -23,7 +23,6 @@ qt_add_qml_module(appdirectory-scanner-cleaner
 	QML_FILES
 	views/main.qml
 	views/settingswindow.qml
-	views/warningmessage.qml
 )
 
 set_target_properties(appdirectory-scanner-cleaner PROPERTIES
