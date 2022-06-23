@@ -7,42 +7,50 @@
 #include <QDir>
 #include <QQuickView>
 
-extern QQmlApplicationEngine *gEngine;
-
 FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     : m_FileSystemModel(fileSystemModel)
 {
-    m_warningMessage  = nullptr;
     QString initialRootPath = fileSystemModel.getRootPath();
     if(!initialRootPath.isEmpty()){
-        setActivePath(fileSystemModel.getRootPath());
+        setActivePath(initialRootPath);
     }
+    connect(this, &FileSystemController::cancelSetupModel, &m_FileSystemModel, &FileSystemModel::cancelSetupModelHandler);
+    connect(&m_FileSystemModel, &FileSystemModel::setupModelCanceled, this, &FileSystemController::setupModelCanceledHandler);
 }
 
 void FileSystemController::setActivePath(const QString &newActivePath)
 {
-    qDebug() << "New active path has been set: " << newActivePath;
+    qDebug() << "setActivePath function has been called";
     QString validActivePath = newActivePath;
     validActivePath.remove(QRegularExpression("file:///"));
     validActivePath = QDir::cleanPath(validActivePath);
-    qDebug() << "Edited active path has been set: " << validActivePath;
+    if(m_ActivePath != validActivePath){
+        qDebug() << "New active path has been set: " << newActivePath;
+        qDebug() << "Edited active path has been set: " << validActivePath;
 
-    QDir activePath(validActivePath);
-    if (activePath.exists())
-    {
-        m_ActivePath = validActivePath;
-        m_FileSystemModel.setRootPath(m_ActivePath);
-        emit activePathChanged();
-    } else {
-        //show warning message
-        const QUrl url(u"qrc:/directory-scanner-cleaner/views/warningmessage.qml"_qs);
-        QQmlComponent component(gEngine, url);
-        if(m_warningMessage != nullptr){
-            delete m_warningMessage;
+        QDir activePath(validActivePath);
+        if (activePath.exists())
+        {
+            m_ActivePath = validActivePath;
+            m_FileSystemModel.setupModel(m_ActivePath);
+            emit activePathChanged();
+        } else {
+            qDebug() << "invalid path has been entered";
+            emit activePathInvalid();
         }
-        m_warningMessage = component.create();
-        emit activePathInvalid();
     }
+}
+
+void FileSystemController::cancelSetupModelHandler()
+{
+    emit cancelSetupModel();
+    qDebug() << "cancel setup model handler in FileSystemController";
+}
+
+void FileSystemController::setupModelCanceledHandler()
+{
+    emit setupModelCanceled();
+    qDebug() << "setup model canceled handler in FileSystemController";
 }
 
 QString FileSystemController::ActivePath() const

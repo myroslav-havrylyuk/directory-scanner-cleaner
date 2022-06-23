@@ -15,17 +15,22 @@ class FileSystemController : public QQuickItem
 public:
     FileSystemController(FileSystemModel &fileSystemModel);
 
-    void setActivePath(const QString &newActivePath);
     QString ActivePath() const;
+    void setActivePath(const QString &newActivePath);
+
+public slots:
+    void cancelSetupModelHandler();
+    void setupModelCanceledHandler();
 
 signals:
     void activePathInvalid();
     void activePathChanged();
+    void cancelSetupModel();
+    void setupModelCanceled();
 
 private:
     QString m_ActivePath;
     FileSystemModel &m_FileSystemModel;
-    QObject *m_warningMessage;
 };
 
 #endif // FILESYSTEMCONTROLLER_H

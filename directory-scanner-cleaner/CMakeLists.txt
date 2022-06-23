@@ -5,7 +5,7 @@ project(directory-scanner-cleaner VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.3 COMPONENTS Quick REQUIRED)
+find_package(Qt6 6.3 COMPONENTS Quick REQUIRED QuickControls2 )
 
 qt_add_executable(appdirectory-scanner-cleaner
 	main.cpp
@@ -37,4 +37,5 @@ set_target_properties(appdirectory-scanner-cleaner PROPERTIES
 target_compile_definitions(appdirectory-scanner-cleaner
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(appdirectory-scanner-cleaner
-    PRIVATE Qt6::Quick)
+	PRIVATE Qt6::Quick
+	PRIVATE Qt6::QuickControls2)
