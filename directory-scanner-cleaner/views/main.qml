@@ -19,6 +19,27 @@ Window {
         rowSpacing: 10
         columnSpacing: 25
 
+        MenuBar{
+                Menu{
+                    title:  "&Options"
+                    MenuItem{
+                        property variant win
+                        property bool clicked: false
+                        text: "&Settings"
+                        onTriggered: {
+                            if(!clicked)
+                            {
+                                var component = Qt.createComponent("settingswindow.qml")
+                                win = component.createObject(main_window)
+                                clicked = true
+                            }
+                            SettingsController.state = 1
+                            win.show()
+                        }
+                    }
+                }
+            }
+
         FolderDialog {
             id: folder_dialog
 
@@ -93,7 +114,6 @@ Window {
                         }
                     }
                 }
-
             }
         }
 
