@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
             QObject *progressDialog = mainWindow->findChild<QObject*>("progress_dialog");
             QObject::connect(progressDialog, SIGNAL(cancelSetupModel()),
-                             &fileSystemController, SLOT(cancelSetupModelHandler()));
+                             &fileSystemModel, SLOT(cancelSetupModelHandler()));
             //QObject::connect(mainWindow, SIGNAL(setupModelCanceled()),
             //                 &fileSystemController, SLOT(cancelOperation()));
 

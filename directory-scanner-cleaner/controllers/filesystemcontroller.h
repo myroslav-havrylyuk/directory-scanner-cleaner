@@ -18,15 +18,9 @@ public:
     QString ActivePath() const;
     void setActivePath(const QString &newActivePath);
 
-public slots:
-    void cancelSetupModelHandler();
-    void setupModelCanceledHandler();
-
 signals:
     void activePathInvalid();
     void activePathChanged();
-    void cancelSetupModel();
-    void setupModelCanceled();
 
 private:
     QString m_ActivePath;

@@ -4,7 +4,6 @@
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr)
 {
-    connectToFileSystemManager();
 }
 
 //Probably should not be used, as it may cause unhandled signals.
@@ -123,28 +122,34 @@ QString FileSystemModel::getRootPath()
 void FileSystemModel::setupModel(const QString &rootPath)
 {
     QString normalizedRootPath = QDir::cleanPath(rootPath);
+    emit modelSetupStarted(normalizedRootPath);
     if (m_FileTreeRoot != nullptr)
     {
-        if (m_FileTreeRoot->fileName() == normalizedRootPath){
+        /*if (m_FileTreeRoot->fileName() == normalizedRootPath){
             return;
-        }
+        }*/
+        delete m_FileTreeRoot;
+        m_FileTreeRoot = nullptr;
     }
-    emit modelSetupStarted(normalizedRootPath);
-    delete m_FileTreeRoot;
-    m_FileTreeRoot = nullptr;
-    m_FileSystemManager.generateFileTreeAsync(normalizedRootPath);
+    if(m_FileSystemManager != nullptr){
+        delete m_FileSystemManager;
+        m_FileSystemManager = nullptr;
+    }
+    m_FileSystemManager = new FileSystemManager();
+    connectToFileSystemManager();
+    m_FileSystemManager->generateFileTreeAsync(normalizedRootPath);
 }
 
 void FileSystemModel::connectToFileSystemManager()
 {
-    connect(&m_FileSystemManager, &FileSystemManager::fileTreeGenerated, this, &FileSystemModel::fileTreeGeneratedHandler);
-    connect(&m_FileSystemManager, &FileSystemManager::setupModelCanceled, this, &FileSystemModel::setupModelCanceledHandler);
-    connect(this, &FileSystemModel::cancelSetupModel, &m_FileSystemManager, &FileSystemManager::cancelSetupModelHandler);
+    connect(m_FileSystemManager, &FileSystemManager::fileTreeGenerated, this, &FileSystemModel::fileTreeGeneratedHandler);
+    connect(m_FileSystemManager, &FileSystemManager::setupModelCanceled, this, &FileSystemModel::setupModelCanceledHandler);
+    connect(this, &FileSystemModel::cancelSetupModel, m_FileSystemManager, &FileSystemManager::cancelSetupModelHandler);
 }
 
 void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
 {
-    qDebug() << "handled fileTreeGenerated signal in FileSystemModel";
+    qDebug() << QTime::currentTime() << "handled fileTreeGenerated signal in FileSystemModel";
     emit beginResetModel();
     m_FileTreeRoot = fileTreeRoot;
     emit endResetModel();
@@ -153,14 +158,14 @@ void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
 
 void FileSystemModel::cancelSetupModelHandler()
 {
-    qDebug() << "cancel setup model handler in FileSystemModel";
+    qDebug() << QTime::currentTime() <<"FileSystemModel: cancel setup model handler";
     emit cancelSetupModel();
 }
 
 void FileSystemModel::setupModelCanceledHandler()
 {
     emit setupModelCanceled();
-    qDebug() << "setup model canceled handler in FileSystemModel";
+    qDebug() << QTime::currentTime() <<"setup model canceled handler in FileSystemModel";
 }
 
 FileTreeElement *FileSystemModel::indexToFileTreeElement(const QModelIndex &index) const

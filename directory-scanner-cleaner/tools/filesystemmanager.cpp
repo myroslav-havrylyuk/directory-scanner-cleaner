@@ -112,7 +112,7 @@ void FileSystemManager::handleGetInnerFilesFinished()
         emit fileTreeGenerated(m_FileTreeRoot);
         m_FileTreeGenerationFlags.resetFlags();
     }
-    qDebug() << "finished getting inner files";
+    qDebug() << QTime::currentTime() << "finished getting inner files";
 }
 
 void FileSystemManager::handleGetRootElementSizeFinished()
@@ -127,19 +127,15 @@ void FileSystemManager::handleGetRootElementSizeFinished()
         emit fileTreeGenerated(m_FileTreeRoot);
         m_FileTreeGenerationFlags.resetFlags();
     }
-    qDebug() << "finished getting root element size";
+    qDebug() << QTime::currentTime() << "finished getting root element size";
 }
 
 void FileSystemManager::cancelSetupModelHandler()
 {
     m_GetRootElementSizeFuture->cancel();
     m_GetInnerFilesFuture->cancel();
-    handleGetInnerFilesFinished();
-    handleGetRootElementSizeFinished();
-    emit fileTreeGenerated(m_FileTreeRoot);
-    m_FileTreeGenerationFlags.resetFlags();
     emit setupModelCanceled();
-    qDebug() << "cancel setup model handler in FileSystemManager";
+    qDebug() << QTime::currentTime() << "cancel setup model handler in FileSystemManager";
 }
 
 quint64 FileSystemManager::getDirectorySize(const QString &directory)

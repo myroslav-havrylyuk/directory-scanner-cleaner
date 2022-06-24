@@ -22,9 +22,6 @@ ApplicationWindow {
         function onActivePathInvalid(){
             warning_dialog.open();
         }
-        function onSetupModelCanceled(){
-            progress_dialog.close();
-        }
     }
 
     Connections {
@@ -36,6 +33,9 @@ ApplicationWindow {
         function onModelSetupFinished(){
             progress_dialog.close();
             console.log('closed progress dialog');
+        }
+        function onSetupModelCanceled(){
+            progress_dialog.close();
         }
     }
 
