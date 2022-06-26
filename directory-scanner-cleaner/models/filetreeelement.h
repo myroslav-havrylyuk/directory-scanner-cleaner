@@ -28,6 +28,7 @@ public:
     FileTreeElement *getParent() const;
     FileTreeElement *getChildAt(int row);
     void setChildElements(QList<FileTreeElement *> childFiles);
+    void appendChild(FileTreeElement *element);
     QList<FileTreeElement *> getChildElements() const;
     const QString &fileName() const;
     void setFileSize(quint64 fileSize);

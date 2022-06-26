@@ -50,6 +50,7 @@ private:
     QFuture<FileTreeElement *> *m_GetInnerFilesFuture = nullptr;
     QFuture<quint64> *m_GetRootElementSizeFuture = nullptr;
     FileTreeElement *m_FileTreeRoot;
+    FileTreeElement *m_FilesystemRootElement;
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
     void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
     FileTreeElement *generateFileTreeElementAsync(const QString &rootPath);

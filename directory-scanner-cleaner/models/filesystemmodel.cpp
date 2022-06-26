@@ -2,7 +2,8 @@
 #include <QThread>
 
 FileSystemModel::FileSystemModel()
-    : m_FileTreeRoot(nullptr)
+    : m_FileTreeRoot(nullptr),
+      m_FilesystemRootElement(nullptr)
 {
 }
 
@@ -38,10 +39,6 @@ QHash<int, QByteArray> FileSystemModel::roleNames() const
 
 QModelIndex FileSystemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    // Special handler for root element(need to return itself not its childrens)
-    if (!parent.isValid() && m_FileTreeRoot != nullptr)
-        return createIndex(row, column, m_FileTreeRoot);
-
     if (!hasIndex(row, column, parent))
         return QModelIndex();
 
@@ -55,26 +52,32 @@ QModelIndex FileSystemModel::index(int row, int column, const QModelIndex &paren
 
 QModelIndex FileSystemModel::parent(const QModelIndex &child) const
 {
+    if (!child.isValid())
+        return QModelIndex();
+
     FileTreeElement *childTreeElement = indexToFileTreeElement(child);
     if (childTreeElement == nullptr)
         return QModelIndex();
 
     FileTreeElement *parentTreeElement = childTreeElement->getParent();
-    if (parentTreeElement == nullptr)
+    if (parentTreeElement == nullptr || parentTreeElement == m_FileTreeRoot)
             return QModelIndex();
 
     int rows = parentTreeElement->getChildsCount();
-    int cols = parentTreeElement->getRolesCount();
-    return createIndex(rows, cols, parentTreeElement);
+    return createIndex(rows, 0, parentTreeElement);
 }
 
 int FileSystemModel::rowCount(const QModelIndex &parent) const
 {
+    // Only element with column #1 should have child elements
+    if (parent.column() > 0)
+        return 0;
     // Special handler for root element
+    FileTreeElement *fileTreeElement = nullptr;
     if (!parent.isValid() && m_FileTreeRoot != nullptr)
-        return 1;
-
-    FileTreeElement *fileTreeElement = indexToFileTreeElement(parent);
+        fileTreeElement = m_FileTreeRoot;
+    else
+        fileTreeElement = indexToFileTreeElement(parent);
 
     return (fileTreeElement == nullptr) ? 0
                                         : fileTreeElement->getChildsCount();
@@ -90,6 +93,9 @@ int FileSystemModel::columnCount(const QModelIndex &parent) const
 
 QVariant FileSystemModel::data(const QModelIndex &index, int role) const
 {
+    if (!index.isValid())
+        return QVariant();
+
     FileTreeElement *fileTreeElement = indexToFileTreeElement(index);
 
     return (fileTreeElement == nullptr) ? QVariant()
@@ -98,10 +104,11 @@ QVariant FileSystemModel::data(const QModelIndex &index, int role) const
 
 bool FileSystemModel::hasChildren(const QModelIndex &parent) const
 {
+
     FileTreeElement *fileTreeElement = indexToFileTreeElement(parent);
 
     return (fileTreeElement == nullptr) ? false
-                                        : (fileTreeElement->getChildsCount() != 0);
+                                        : (!fileTreeElement->getChildElements().empty());
 }
 
 bool FileSystemModel::hasIndex(int row, int column, const QModelIndex &parent = QModelIndex()) const
@@ -116,7 +123,7 @@ bool FileSystemModel::hasIndex(int row, int column, const QModelIndex &parent = 
 
 QString FileSystemModel::getRootPath()
 {
-    return m_FileTreeRoot ? m_FileTreeRoot->fileName() : QString();
+    return m_FilesystemRootElement ? m_FilesystemRootElement->fileName() : QString();
 }
 
 void FileSystemModel::setupModel(const QString &rootPath)
@@ -152,6 +159,9 @@ void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
     qDebug() << QTime::currentTime() << "handled fileTreeGenerated signal in FileSystemModel";
     emit beginResetModel();
     m_FileTreeRoot = fileTreeRoot;
+    if (m_FileTreeRoot != nullptr)
+        m_FilesystemRootElement = m_FileTreeRoot->getChildElements().front();
+
     emit endResetModel();
     emit modelSetupFinished();
 }

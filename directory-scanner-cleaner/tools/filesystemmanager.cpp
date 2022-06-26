@@ -29,8 +29,11 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
         return ;
 
     QDir currentDir(normalizedRootPath);
-    m_FileTreeRoot = new FileTreeElement(normalizedRootPath, 0, nullptr);
+    m_FileTreeRoot = new FileTreeElement("", 0, nullptr);
+    m_FilesystemRootElement = new FileTreeElement(normalizedRootPath, 0, m_FileTreeRoot);
+    m_FileTreeRoot->appendChild(m_FilesystemRootElement);
     //getting inner files of root
+
     if(m_GetInnerFilesFuture != nullptr){
         delete m_GetInnerFilesFuture;
         m_GetInnerFilesFuture = nullptr;
@@ -41,9 +44,10 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
     }
     m_GetInnerFilesFuture = new QFuture<FileTreeElement *>();
     m_GetInnerFilesWatcher = new QFutureWatcher<FileTreeElement *>();
-    *m_GetInnerFilesFuture = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, m_FileTreeRoot);
+    *m_GetInnerFilesFuture = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, m_FilesystemRootElement);
     QObject::connect(m_GetInnerFilesWatcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleGetInnerFilesFinished);
     m_GetInnerFilesWatcher->setFuture(*m_GetInnerFilesFuture);
+
     //getting root directory size
     if(m_GetRootElementSizeFuture != nullptr){
         delete m_GetRootElementSizeFuture;
@@ -106,7 +110,8 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
 void FileSystemManager::handleGetInnerFilesFinished()
 {
     QList<FileTreeElement *> results = m_GetInnerFilesFuture->results();
-    m_FileTreeRoot->setChildElements(results);
+    m_FilesystemRootElement->setChildElements(results);
+
     m_FileTreeGenerationFlags.setGotInnerFilesFlag(true);
     if(m_FileTreeGenerationFlags.isAllFlagsSet()){
         emit fileTreeGenerated(m_FileTreeRoot);
@@ -120,7 +125,7 @@ void FileSystemManager::handleGetRootElementSizeFinished()
     QList<quint64> results = m_GetRootElementSizeFuture->results();
     //in case operation is cancelled before even getting one result
     if(!results.isEmpty()){
-        m_FileTreeRoot->setFileSize(results.last());
+        m_FilesystemRootElement->setFileSize(results.last());
     }
     m_FileTreeGenerationFlags.setGotDirectorySizeFlag(true);
     if(m_FileTreeGenerationFlags.isAllFlagsSet()){

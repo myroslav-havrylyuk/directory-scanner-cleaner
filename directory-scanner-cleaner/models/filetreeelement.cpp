@@ -81,6 +81,14 @@ void FileTreeElement::setChildElements(QList<FileTreeElement *> childFiles)
     m_ChildFiles = childFiles;
 }
 
+void FileTreeElement::appendChild(FileTreeElement *element)
+{
+    if (element == nullptr)
+        return;
+
+    m_ChildFiles.append(element);
+}
+
 QList<FileTreeElement *> FileTreeElement::getChildElements() const
 {
     return m_ChildFiles;
