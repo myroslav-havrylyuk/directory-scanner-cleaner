@@ -38,6 +38,23 @@ void FileSystemController::setActivePath(const QString &newActivePath)
         }
     }
 }
+
+void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {
+    if (!currentRow.isValid())
+        return;
+
+    m_CurrentRow = currentRow;
+    emit currentlySelectedIndexChanged();
+
+    m_FileSystemModel.selectFile(m_CurrentRow);
+
+    m_isSelectionStateChanged = true;
+    emit selectionStateChanged();
+}
+
+QModelIndex FileSystemController::getCurrentlySelectedIndex() const {
+    return m_CurrentRow;
+}
 QString FileSystemController::ActivePath() const
 {
     return QDir::toNativeSeparators(m_ActivePath);

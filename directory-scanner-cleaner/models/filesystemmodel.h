@@ -1,6 +1,7 @@
 #ifndef FILESYSTEMMODEL_H
 #define FILESYSTEMMODEL_H
 
+#include <QItemSelectionModel>
 #include <QAbstractItemModel>
 #include <QFileInfo>
 #include <QDir>
@@ -11,6 +12,8 @@
 class FileSystemModel : public QAbstractItemModel
 {
     Q_OBJECT
+
+    Q_PROPERTY(QItemSelectionModel* itemSelectionModel READ getItemSelectionModel NOTIFY itemSelectionModelChanged)
 
 public:
     FileSystemModel();
@@ -29,19 +32,23 @@ public:
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
     void setupModel(const QString &rootPath);
     QString getRootPath();
+    void selectFile(QModelIndex index);
 
 private:
+    QItemSelectionModel m_ItemSelectionModel;
     FileSystemManager *m_FileSystemManager = nullptr;
     FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
     FileTreeElement *m_FilesystemRootElement;
     FileTreeElement *m_FileTreeRoot;
     void connectToFileSystemManager();
+    QItemSelectionModel *getItemSelectionModel();
 
 signals:
     void modelSetupStarted(const QString &rootPath);
     void modelSetupFinished();
     void cancelSetupModel();
     void setupModelCanceled();
+    void itemSelectionModelChanged();
 
 
 public slots:

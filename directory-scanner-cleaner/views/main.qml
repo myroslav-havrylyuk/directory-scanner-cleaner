@@ -133,7 +133,7 @@ ApplicationWindow {
             Layout.column: 0
             Layout.fillHeight: true
             Layout.fillWidth: true
-            //color: '#3fcccccc'
+
             TreeView {
                 id: tree_view
                 anchors{
@@ -142,13 +142,23 @@ ApplicationWindow {
                 }
 
                 model: FileSystemModel
+                selectionModel: model.itemSelectionModel
                 clip: true
 
                 delegate: TreeViewDelegate {
+                    id: delegate_item
+                    // z hack used to allow other column`s content be always over selection
+                    // rectangle(instantiated on column 0 with Loader element)
+                    z: column != 0 ? 1 : 0
+
+                    property bool selected : FileSystemController.isSelectionStateChanged && tree_view.selectionModel.isSelected(tree_view.modelIndex(row, column))
                     contentItem: Text {
+                        // Loader element loads its component after text is loaded so the current element is not visible
+                        // That hack allows force that text item be always on selection rectangle
+                        z: 1
+                        id: content_item
                         anchors.leftMargin: leftMargin
                         anchors.rightMargin: rightMargin
-                        //color: 'white'
                         text: {
                             if (column === 0)
                                 file_name
@@ -157,9 +167,45 @@ ApplicationWindow {
                             else
                                 file_size
                         }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            propagateComposedEvents: true
+                        }
                     }
-                }
-            }
+
+                    Loader {
+                        x: delegate_item.indicator.x + delegate_item.indicator.width
+                        y: delegate_item.indicator.y
+                        width: tree_view.contentWidth - delegate_item.indicator.width -
+                               (depth * delegate_item.indicator.width)
+                        height: content_item.implicitHeight
+
+                        active: column === 0
+                        visible: column === 0
+
+                        sourceComponent:
+                            Rectangle {
+                                id: selection_rectangle
+                                anchors.fill: parent
+
+                                color: selected ? "#f0f0f0" : "white"
+                                border.width: selected ? 1 : 0
+                                border.color: "black"
+                                radius: 3
+
+                                MouseArea {
+                                    anchors.fill: parent
+
+                                    onClicked: {
+                                        FileSystemController.currentlySelectedIndex = tree_view.modelIndex(row, column)
+                                        console.log(tree_view.selectionModel)
+                                    }
+                                }
+                            }
+                       } // Loader ends
+                  } // TreeViewDelegate ends
+            } // TreeView ends
         }
 
 

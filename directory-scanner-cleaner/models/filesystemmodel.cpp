@@ -5,6 +5,7 @@ FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr),
       m_FilesystemRootElement(nullptr)
 {
+    m_ItemSelectionModel.setModel(this);
 }
 
 //Probably should not be used, as it may cause unhandled signals.
@@ -126,6 +127,11 @@ QString FileSystemModel::getRootPath()
     return m_FilesystemRootElement ? m_FilesystemRootElement->fileName() : QString();
 }
 
+void FileSystemModel::selectFile(QModelIndex index)
+{
+    m_ItemSelectionModel.select(index, QItemSelectionModel::Toggle);
+}
+
 void FileSystemModel::setupModel(const QString &rootPath)
 {
     QString normalizedRootPath = QDir::cleanPath(rootPath);
@@ -154,6 +160,10 @@ void FileSystemModel::connectToFileSystemManager()
     connect(this, &FileSystemModel::cancelSetupModel, m_FileSystemManager, &FileSystemManager::cancelSetupModelHandler);
 }
 
+QItemSelectionModel *FileSystemModel::getItemSelectionModel() {
+    return &m_ItemSelectionModel;
+}
+
 void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
 {
     qDebug() << QTime::currentTime() << "handled fileTreeGenerated signal in FileSystemModel";
@@ -161,6 +171,8 @@ void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
     m_FileTreeRoot = fileTreeRoot;
     if (m_FileTreeRoot != nullptr)
         m_FilesystemRootElement = m_FileTreeRoot->getChildElements().front();
+
+    m_ItemSelectionModel.clearSelection();
 
     emit endResetModel();
     emit modelSetupFinished();
