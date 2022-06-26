@@ -5,6 +5,9 @@
 #include <QFileInfo>
 #include <QDir>
 
+#include <QItemSelectionModel>
+#include <functional>
+
 #include "filetreeelement.h"
 #include "tools/filesystemmanager.h"
 
@@ -32,7 +35,8 @@ public:
 
 private:
     FileSystemManager *m_FileSystemManager = nullptr;
-    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;\
+    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
+
     FileTreeElement *m_FileTreeRoot;
     void connectToFileSystemManager();
 
