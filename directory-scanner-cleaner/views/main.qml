@@ -263,7 +263,7 @@ ApplicationWindow {
         id: cancelation_dialog
         objectName: "cancelation_dialog"
         anchors.centerIn: parent
-        closePolicy: Popup.CloseOnEscape
+        closePolicy: Popup.NoAutoClose
         title: qsTr("Waiting for cancelation...")
         contentItem: ProgressBar {
                 indeterminate: true
