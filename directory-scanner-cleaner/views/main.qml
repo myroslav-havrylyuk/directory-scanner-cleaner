@@ -15,7 +15,11 @@ ApplicationWindow {
     palette.highlight: "blue"
     palette.buttonText: "blue"
 
-
+    ScrollBar {
+        id: horizontal_scroll
+                            //anchors.bottom: parent.bottom // adjust the anchor as suggested by derM
+        policy: ScrollBar.AsNeeded
+                        }
 
 
     Connections {
@@ -43,14 +47,14 @@ ApplicationWindow {
     MenuBar{
         id: main_window_menu_bar
             Menu{
-                title:  "&Options"
+                title:  "Options"
                 font {
                     pixelSize: 10
                 }
                 MenuItem{
                     property variant win
                     property bool clicked: false
-                    text: "&Settings"
+                    text: "Settings..."
                     font {
                         pixelSize: 10
                     }
@@ -129,41 +133,60 @@ ApplicationWindow {
             }
         }
 
+        ScrollView {
+                id: frame
+                clip: true
+                Layout.row: 3
+                Layout.column: 0
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                //other properties
+                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
+                Flickable {
+                    id: flicable_frame
+                    contentHeight: frame.height + 1
+                    contentWidth: frame.width + 1
+                    width: parent.width
+
+
         Rectangle {
-            Layout.row: 3
-            Layout.column: 0
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+            anchors.fill: parent
 
-            Row {
-                id: headers
-                anchors{
-                    left: parent.left
-                    right: parent.right
-                    top: parent.top
-                    //margins: 10
-                }
-                height: 24
+                    Row {
+                        id: headers
 
-                    Button{
-                        id: file_name_header
-                        implicitWidth: parent.width / 1.15
-                        height: parent.height
-                        text: "file name"
-                    }
-                    Button{
-                        id: items_header
-                        implicitWidth: parent.width / 15
-                        height: parent.height
-                        text: "items"
-                    }
-                    Button{
-                        id: size_header
-                        implicitWidth: parent.width / 15
-                        height: parent.height
-                        text: "size"
-                    }
-                }
+                        anchors{
+                            left: parent.left
+                            right: parent.right
+                            top: parent.top
+                            margins: 10
+                        }
+                        height: 24
+
+                            Button{
+                                id: file_name_header
+                                implicitWidth: frame.width / 1.19
+                                height: parent.height
+                                text: "file name"
+                                enabled: false
+                            }
+                            Button{
+                                id: items_header
+                                implicitWidth: frame.width / 15
+                                height: parent.height
+                                text: "items"
+                                enabled: false
+                            }
+                            Button{
+                                id: size_header
+                                implicitWidth: frame.width / 15
+                                height: parent.height
+                                text: "size"
+                                enabled: false
+                            }
+                        }
+
 
             TreeView {
                 id: tree_view
@@ -198,7 +221,16 @@ ApplicationWindow {
                     onImplicitContentWidthChanged:
                     {
                         if (column === 0)
+                        {
                             file_name_header.implicitWidth = Math.max(implicitWidth, content_item.implicitWidth + 21 * depth)
+                        }
+
+                        flicable_frame.contentWidth = file_name_header.implicitWidth + items_header.implicitWidth + size_header.implicitWidth + 20
+                        if(tree_view.rows !== 0)
+                        {
+                            flicable_frame.contentHeight = tree_view.rows * delegate_item.implicitHeight + tree_view.rowSpacing * tree_view.rows + 24 + 30
+                        }
+
                     }
 
                     property bool selected : FileSystemController.isSelectionStateChanged && tree_view.selectionModel.isSelected(tree_view.modelIndex(row, column))
@@ -256,6 +288,8 @@ ApplicationWindow {
                        } // Loader ends
                   } // TreeViewDelegate ends
             } // TreeView ends
+        }
+}
         }
 
 
