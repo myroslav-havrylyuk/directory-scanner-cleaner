@@ -135,10 +135,43 @@ ApplicationWindow {
             Layout.fillHeight: true
             Layout.fillWidth: true
 
+            Row {
+                id: headers
+                anchors{
+                    left: parent.left
+                    right: parent.right
+                    top: parent.top
+                    //margins: 10
+                }
+                height: 24
+
+                    Button{
+                        id: file_name_header
+                        implicitWidth: parent.width / 1.15
+                        height: parent.height
+                        text: "file name"
+                    }
+                    Button{
+                        id: items_header
+                        implicitWidth: parent.width / 15
+                        height: parent.height
+                        text: "items"
+                    }
+                    Button{
+                        id: size_header
+                        implicitWidth: parent.width / 15
+                        height: parent.height
+                        text: "size"
+                    }
+                }
+
             TreeView {
                 id: tree_view
                 anchors{
-                    fill: parent
+                    left: parent.left
+                    right: parent.right
+                    top: headers.bottom
+                    bottom: parent.bottom
                     margins: 10
                 }
 
@@ -151,6 +184,22 @@ ApplicationWindow {
                     // z hack used to allow other column`s content be always over selection
                     // rectangle(instantiated on column 0 with Loader element)
                     z: column != 0 ? 1 : 0
+
+                    implicitWidth:
+                    {
+                        if (column === 0)
+                            file_name_header.implicitWidth
+                        else if (column === 1)
+                            items_header.implicitWidth
+                        else if (column === 2)
+                            size_header.implicitWidth
+                    }
+
+                    onImplicitContentWidthChanged:
+                    {
+                        if (column === 0)
+                            file_name_header.implicitWidth = Math.max(implicitWidth, content_item.implicitWidth + 21 * depth)
+                    }
 
                     property bool selected : FileSystemController.isSelectionStateChanged && tree_view.selectionModel.isSelected(tree_view.modelIndex(row, column))
                     contentItem: Text {
