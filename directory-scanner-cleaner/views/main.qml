@@ -17,9 +17,10 @@ ApplicationWindow {
 
 
 
+
     Connections {
-        target: FileSystemController
-        function onActivePathInvalid(){
+        target: SettingsController
+        function onHistoryPathInvalid(){
             warning_dialog.open();
         }
     }

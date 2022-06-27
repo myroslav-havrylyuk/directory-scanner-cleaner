@@ -14,6 +14,13 @@ Window {
     palette.highlight: "blue"
     palette.buttonText: "blue"
 
+    Connections {
+        target: FileSystemController
+        function onActivePathInvalid(){
+            warning_dialog.open();
+        }
+    }
+
     FolderDialog {
         id: folder_dialog
 

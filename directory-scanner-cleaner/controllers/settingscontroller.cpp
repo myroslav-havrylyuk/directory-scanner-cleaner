@@ -20,8 +20,7 @@ void SettingsController::setHistoryPath(const QString &newActivePath)
 {
     qDebug() << "New active path has been set: " << newActivePath;
     QString validActivePath = newActivePath;
-    validActivePath.remove(QRegularExpression("file:///"));
-    validActivePath.replace(QRegularExpression("\\\\"), "/");
+    validActivePath = QDir::cleanPath(validActivePath);
     qDebug() << "Edited active path has been set: " << validActivePath;
 
     QDir activePath(validActivePath);
@@ -31,21 +30,14 @@ void SettingsController::setHistoryPath(const QString &newActivePath)
         emit historyPathChanged();
     } else {
         //show warning message
-        const QUrl url(u"qrc:/directory-scanner-cleaner/views/warningmessage.qml"_qs);
-        QQmlComponent component(gEngine, url);
-        if(m_warningMessage != nullptr){
-            delete m_warningMessage;
-        }
-        m_warningMessage = component.create();
+        qDebug() << "invalid path has been entered";
         emit historyPathInvalid();
     }
 }
 
 QString SettingsController::HistoryPath() const
 {
-    QString activePath = m_HistoryPath;
-    activePath.replace(QRegularExpression("/"), "\\");
-    return activePath;
+    return QDir::toNativeSeparators(m_HistoryPath);;
 }
 
 void SettingsController::setState(bool newState)
