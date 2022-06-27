@@ -22,7 +22,10 @@ void FileSystemController::setActivePath(const QString &newActivePath)
     QString validActivePath = newActivePath;
     validActivePath.remove(QRegularExpression("file:///"));
     validActivePath = QDir::cleanPath(validActivePath);
-    if(m_ActivePath != validActivePath){
+    //better ask user if he really want to scan the same directory again, as if
+    //he canceled scanning last time, he wouldn't be able to scan this directory
+    //again because of this check
+    //if(m_ActivePath != validActivePath){
         qDebug() << "New active path has been set: " << newActivePath;
         qDebug() << "Edited active path has been set: " << validActivePath;
 
@@ -36,7 +39,7 @@ void FileSystemController::setActivePath(const QString &newActivePath)
             qDebug() << "invalid path has been entered";
             emit activePathInvalid();
         }
-    }
+    //}
 }
 
 void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {

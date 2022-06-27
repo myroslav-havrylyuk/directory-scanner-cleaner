@@ -85,6 +85,33 @@ QList<FileTreeElement *> FileSystemManager::getInnerFiles(const QDir &currenDir,
     return innerFiles;
 }
 
+QList<FileTreeElement *> FileSystemManager::getInnerFiles(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent)
+{
+    QList<FileTreeElement *> innerFiles;
+    bool wasCanceled = false;
+    for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
+    {
+        if(promise.isCanceled()){
+            wasCanceled = true;
+            break;
+        }
+        FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
+
+        if (fileElement.isDir())
+        {
+            QList<FileTreeElement *> innerFiles = getInnerFiles(promise, QDir(fileElement.absoluteFilePath()), fileTreeElement);
+            fileTreeElement->setChildElements(innerFiles);
+            fileTreeElement->setFileSize(getDirectorySize(fileElement.absoluteFilePath()));
+        }
+
+        innerFiles.append(fileTreeElement);
+    }
+    if(wasCanceled){
+        innerFiles.clear();
+    }
+    return innerFiles;
+}
+
 void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent)
 {
     qDebug() << "Getting inner files in thread:" << QThread::currentThread();
@@ -98,13 +125,21 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
 
         if (fileElement.isDir())
         {
-            QList<FileTreeElement *> innerFiles = getInnerFiles(QDir(fileElement.absoluteFilePath()), fileTreeElement);
+            QList<FileTreeElement *> innerFiles = getInnerFiles(promise, QDir(fileElement.absoluteFilePath()), fileTreeElement);
             fileTreeElement->setChildElements(innerFiles);
             fileTreeElement->setFileSize(getDirectorySize(fileElement.absoluteFilePath()));
         }
         promise.addResult(fileTreeElement);
         qDebug() << "files/folders read:" << ++counter;
     }
+}
+
+void FileSystemManager::waitForCancelation(QPromise<void> &promise)
+{
+    m_GetRootElementSizeFuture->cancel();
+    m_GetInnerFilesFuture->cancel();
+    m_GetRootElementSizeFuture->waitForFinished();
+    m_GetInnerFilesFuture->waitForFinished();
 }
 
 void FileSystemManager::handleGetInnerFilesFinished()
@@ -135,12 +170,27 @@ void FileSystemManager::handleGetRootElementSizeFinished()
     qDebug() << QTime::currentTime() << "finished getting root element size";
 }
 
+void FileSystemManager::handleWaitForCancelationFinished()
+{
+    emit setupModelCanceled();
+}
+
 void FileSystemManager::cancelSetupModelHandler()
 {
-    m_GetRootElementSizeFuture->cancel();
-    m_GetInnerFilesFuture->cancel();
-    emit setupModelCanceled();
-    qDebug() << QTime::currentTime() << "cancel setup model handler in FileSystemManager";
+    if(m_CancelationFuture != nullptr){
+        delete m_CancelationFuture;
+        m_CancelationFuture = nullptr;
+    }
+    if(m_CancelationWatcher != nullptr){
+        delete m_CancelationWatcher;
+        m_CancelationWatcher = nullptr;
+    }
+    m_CancelationFuture = new QFuture<void>();
+    m_CancelationWatcher = new QFutureWatcher<void>();
+    *m_CancelationFuture = QtConcurrent::run(&FileSystemManager::waitForCancelation, this);
+    QObject::connect(m_CancelationWatcher, &QFutureWatcher<void>::finished, this, &FileSystemManager::handleWaitForCancelationFinished);
+    m_CancelationWatcher->setFuture(*m_CancelationFuture);
+    qDebug() << QTime::currentTime() << "FileSystemManager: cancel setup model handler";
 }
 
 quint64 FileSystemManager::getDirectorySize(const QString &directory)

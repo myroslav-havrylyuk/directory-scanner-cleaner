@@ -47,16 +47,21 @@ private:
     FILE_TREE_GENERATION_FLAGS m_FileTreeGenerationFlags;
     QFutureWatcher<FileTreeElement *> *m_GetInnerFilesWatcher = nullptr;
     QFutureWatcher<quint64> *m_GetRootElementSizeWatcher = nullptr;
+    QFutureWatcher<void> *m_CancelationWatcher = nullptr;
     QFuture<FileTreeElement *> *m_GetInnerFilesFuture = nullptr;
     QFuture<quint64> *m_GetRootElementSizeFuture = nullptr;
+    QFuture<void> *m_CancelationFuture = nullptr;
     FileTreeElement *m_FileTreeRoot;
     FileTreeElement *m_FilesystemRootElement;
     QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
+    QList<FileTreeElement *> getInnerFiles(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
     void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
     FileTreeElement *generateFileTreeElementAsync(const QString &rootPath);
+    void waitForCancelation(QPromise<void> &promise);
 public slots:
     void handleGetInnerFilesFinished();
     void handleGetRootElementSizeFinished();
+    void handleWaitForCancelationFinished();
     void cancelSetupModelHandler();
 signals:
     void fileTreeGenerated(FileTreeElement * fileTreeRoot);

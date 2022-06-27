@@ -35,7 +35,7 @@ ApplicationWindow {
             console.log('closed progress dialog');
         }
         function onSetupModelCanceled(){
-            progress_dialog.close();
+            cancelation_dialog.close();
         }
     }
 
@@ -255,6 +255,19 @@ ApplicationWindow {
         onRejected: {
             progress_dialog.cancelSetupModel();
             console.log("Cancel clicked");
+            cancelation_dialog.open()
         }
+    }
+
+    Dialog {
+        id: cancelation_dialog
+        objectName: "cancelation_dialog"
+        anchors.centerIn: parent
+        closePolicy: Popup.CloseOnEscape
+        title: qsTr("Waiting for cancelation...")
+        contentItem: ProgressBar {
+                indeterminate: true
+        }
+        modal: true
     }
 }

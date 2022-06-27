@@ -51,8 +51,6 @@ int main(int argc, char *argv[])
             QObject *progressDialog = mainWindow->findChild<QObject*>("progress_dialog");
             QObject::connect(progressDialog, SIGNAL(cancelSetupModel()),
                              &fileSystemModel, SLOT(cancelSetupModelHandler()));
-            //QObject::connect(mainWindow, SIGNAL(setupModelCanceled()),
-            //                 &fileSystemController, SLOT(cancelOperation()));
 
     //gEngine->load(url);
 
