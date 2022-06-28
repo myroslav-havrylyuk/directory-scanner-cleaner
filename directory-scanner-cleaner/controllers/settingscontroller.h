@@ -9,14 +9,15 @@ class SettingsController : public QQuickItem
     {
         Q_OBJECT
 
-        Q_PROPERTY(QString historyPath READ HistoryPath WRITE setHistoryPath NOTIFY historyPathChanged)
+        Q_PROPERTY(QString historyPath READ HistoryPathToView WRITE setHistoryPath NOTIFY historyPathChanged)
         Q_PROPERTY(bool state WRITE setState)
     public:
         SettingsController(ConfigFileHandler &configFileHandler);
 
         void setHistoryPath(const QString &newActivePath);
         void setState(bool newState);
-        QString HistoryPath() const;
+        QString HistoryPathToView() const;
+        QString getHistoryPath();
         bool State() const;
 
     signals:
@@ -26,7 +27,6 @@ class SettingsController : public QQuickItem
     private:
         QString m_HistoryPath;
         ConfigFileHandler &m_ConfigFileModel;
-        QObject *m_warningMessage;
 };
 
 #endif // SETTINGSCONTROLLER_H
