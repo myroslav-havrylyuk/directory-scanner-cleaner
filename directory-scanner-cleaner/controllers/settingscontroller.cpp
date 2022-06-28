@@ -13,7 +13,6 @@ SettingsController::SettingsController(ConfigFileHandler &configFileHandler)
     : m_ConfigFileModel(configFileHandler)
 {
     m_HistoryPath = m_ConfigFileModel.getDeletionFilePath();
-    m_warningMessage  = nullptr;
 }
 
 void SettingsController::setHistoryPath(const QString &newActivePath)
@@ -36,12 +35,23 @@ void SettingsController::setHistoryPath(const QString &newActivePath)
     }
 }
 
-QString SettingsController::HistoryPath() const
+QString SettingsController::HistoryPathToView() const
 {
-    return QDir::toNativeSeparators(m_HistoryPath);;
+    return QDir::toNativeSeparators(m_HistoryPath);
 }
 
-void SettingsController::setState(bool newState)
+QString SettingsController::getHistoryPath()
+{
+    return m_HistoryPath;
+}
+
+void SettingsController::saveSettings()
+{
+    m_ConfigFileModel.setDeletionFilePath(m_HistoryPath);
+    m_ConfigFileModel.writeSettings();
+}
+
+/*void SettingsController::setState(bool newState)
 {
     if(newState)
     {
@@ -50,7 +60,5 @@ void SettingsController::setState(bool newState)
     }
     else
     {
-        m_ConfigFileModel.setDeletionFilePath(m_HistoryPath);
-        m_ConfigFileModel.writeSettings();
     }
-}
+}*/

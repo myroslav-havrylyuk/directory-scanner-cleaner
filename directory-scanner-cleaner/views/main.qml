@@ -45,21 +45,19 @@ ApplicationWindow {
                     pixelSize: 10
                 }
                 MenuItem{
+                    id: settings_menu_item
+                    objectName: "settings_menu_item"
                     property variant win
                     property bool clicked: false
                     text: "Settings..."
                     font {
                         pixelSize: 10
                     }
+
+                    signal openSettingsWindow()
+
                     onTriggered: {
-                        if(!clicked)
-                        {
-                            var component = Qt.createComponent("settingswindow.qml")
-                            win = component.createObject(main_window)
-                            clicked = true
-                        }
-                        SettingsController.state = 1
-                        win.show()
+                        settings_menu_item.openSettingsWindow();
                     }
                 }
             }
@@ -307,6 +305,19 @@ ApplicationWindow {
             onClicked: {
                 folder_dialog.currentFolder = current_directory_path.directory_path
                 folder_dialog.open()
+            }
+        }
+
+        Button {
+            id: delete_button
+
+            Layout.row: 3
+            Layout.column: 1
+            width: 89
+
+            text: "Delete"
+
+            onClicked: {
             }
         }
 }

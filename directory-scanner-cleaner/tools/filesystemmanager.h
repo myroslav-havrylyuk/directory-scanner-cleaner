@@ -16,7 +16,6 @@ class FileSystemManager : public QObject
 public:
     explicit FileSystemManager(QObject *parent = nullptr);
 
-    FileTreeElement *generateFileTree(const QString &rootPath);
     void generateFileTreeAsync(const QString &rootPath);
     quint64 getDirectorySize(const QString &directory);
     void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);
@@ -53,8 +52,7 @@ private:
     QFuture<void> *m_CancelationFuture = nullptr;
     FileTreeElement *m_FileTreeRoot;
     FileTreeElement *m_FilesystemRootElement;
-    QList<FileTreeElement *> getInnerFiles(const QDir &currenDir, FileTreeElement *parent);
-    QList<FileTreeElement *> getInnerFiles(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
+    QList<FileTreeElement *> getInnerFiles(QPromise<FileTreeElement *> &promise, bool &outWasCanceled, const QDir &currenDir, FileTreeElement *parent);
     void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent);
     FileTreeElement *generateFileTreeElementAsync(const QString &rootPath);
     void waitForCancelation(QPromise<void> &promise);

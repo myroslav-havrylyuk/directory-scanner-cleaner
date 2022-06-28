@@ -1,4 +1,5 @@
 #include "controllers/filesystemcontroller.h"
+#include "controllers/mainwindowcontroller.h"
 #include "models/filesystemmodel.h"
 #include "controllers/settingscontroller.h"
 #include "tools/configfilehandler.h"
@@ -25,18 +26,19 @@ int main(int argc, char *argv[])
     QString rootFilePath = app.applicationDirPath();
 
     FileSystemModel fileSystemModel;
-    //FileSystemModel fileSystemModel(rootFilePath);
     FileSystemController fileSystemController(fileSystemModel);
-    ConfigFileHandler handler;
-    SettingsController settingsController(handler);
     fileSystemController.setActivePath("C:\\My\\Study\\My_3_course\\2_term\\ZPKG");
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlContext *mainQmlContext = gEngine->rootContext();
 
+    MainWindowController mainWindowController;
     mainQmlContext->setContextProperty("FileSystemModel", &fileSystemModel);
     mainQmlContext->setContextProperty("FileSystemController", &fileSystemController);
-    mainQmlContext->setContextProperty("SettingsController", &settingsController);
+    mainQmlContext->setContextProperty("MainWindowController", &mainWindowController);
+    //QObject *test = mainQmlContext->objectForName("SettingsController");
+    //qDebug() << ((SettingsController *)test)->getHistoryPath();
+
 
     /*QObject::connect(gEngine, &QQmlApplicationEngine::objectCreated,
                      &app, [url, &mainWindow](QObject *obj, const QUrl &objUrl) {
@@ -51,6 +53,9 @@ int main(int argc, char *argv[])
             QObject *progressDialog = mainWindow->findChild<QObject*>("progress_dialog");
             QObject::connect(progressDialog, SIGNAL(cancelSetupModel()),
                              &fileSystemModel, SLOT(cancelSetupModelHandler()));
+            QObject *settingsMenuItem = mainWindow->findChild<QObject*>("settings_menu_item");
+            QObject::connect(settingsMenuItem, SIGNAL(openSettingsWindow()),
+                             &mainWindowController, SLOT(openSettingsWindow()));
 
     //gEngine->load(url);
 
