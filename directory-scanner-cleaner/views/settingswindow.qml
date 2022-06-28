@@ -20,7 +20,6 @@ Window {
         function onHistoryPathInvalid(){
             console.log("history path invalid");
             warning_dialog.open();
-
         }
     }
 
@@ -32,7 +31,7 @@ Window {
         }
     }
 
-    GridLayout{
+    GridLayout {
         anchors.fill: parent
         anchors.margins: 39
         rows: 4
@@ -41,7 +40,6 @@ Window {
         columnSpacing: 25
 
         Text {
-            id: browse_button
             Layout.row: 0
             Layout.column: 1
             text: "The directory to save deletion history file:"
@@ -64,7 +62,7 @@ Window {
             clip: true
             TextEdit {
                 id: current_directory_path_text_edit
-                anchors{
+                anchors {
                     fill: parent
                     leftMargin: 3
                     topMargin: 3
@@ -76,6 +74,7 @@ Window {
                 }
             }
         }
+
         Button {
             id: browse_current_directory_path_button
 
@@ -110,7 +109,7 @@ Window {
             clip: true
             TextInput {
                 id: recursion_depth
-                anchors{
+                anchors {
                     fill: parent
                     leftMargin: 3
                     topMargin: 3
@@ -118,7 +117,7 @@ Window {
 
                 text: SettingsController.recursionDepth
 
-                validator: IntValidator{
+                validator: IntValidator {
                     bottom: 0
                     top: 500
                 }
@@ -129,7 +128,7 @@ Window {
             }
         }
 
-        Button{
+        Button {
             id: save_button
             objectName: "save_button"
             implicitWidth: 90
@@ -155,7 +154,7 @@ Window {
         title: qsTr("No such directory")
         contentItem: Text {
             text: "The directory does not exist or entered wrong. Please check specified path one more time and try again!"
-            }
+        }
         modal: true
         standardButtons: Dialog.Ok
         onAccepted: console.log("Ok clicked")
