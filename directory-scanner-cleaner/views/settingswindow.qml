@@ -8,7 +8,7 @@ Window {
     id: settings_window
     visible: true
     width: 700
-    height: 200
+    height: 300
     title: qsTr("Settings")
     color: 'lightgrey'
     modality: Qt.ApplicationModal
@@ -90,11 +90,50 @@ Window {
             }
         }
 
+        Text {
+            Layout.row: 2
+            Layout.column: 1
+            text: "Recursion depth for directory scanning:"
+            font {
+                bold: true
+                pixelSize: 16
+            }
+        }
+
+        Rectangle {
+            Layout.row: 3
+            Layout.column: 1
+            Layout.fillWidth: true
+            height: 24
+            border.color: "black"
+            border.width: 1
+            clip: true
+            TextInput {
+                id: recursion_depth
+                anchors{
+                    fill: parent
+                    leftMargin: 3
+                    topMargin: 3
+                }
+
+                text: SettingsController.recursionDepth
+
+                validator: IntValidator{
+                    bottom: 0
+                    top: 500
+                }
+
+                Keys.onReturnPressed: {
+                    SettingsController.recursionDepth = text
+                }
+            }
+        }
+
         Button{
             id: save_button
             objectName: "save_button"
             implicitWidth: 90
-            Layout.row: 2
+            Layout.row: 4
             Layout.column: 2
             Layout.alignment: Qt.AlignRight
             text: qsTr("Save")
@@ -102,8 +141,9 @@ Window {
             signal saveSettings()
             onClicked: {
                 console.log('close button pressed');
+                SettingsController.historyPath = current_directory_path_text_edit.text
+                SettingsController.recursionDepth = recursion_depth.text
                 save_button.saveSettings();
-                settings_window.close();
             }
         }
     }
