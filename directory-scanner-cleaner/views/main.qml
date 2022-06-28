@@ -15,13 +15,6 @@ ApplicationWindow {
     palette.highlight: "blue"
     palette.buttonText: "blue"
 
-    ScrollBar {
-        id: horizontal_scroll
-                            //anchors.bottom: parent.bottom // adjust the anchor as suggested by derM
-        policy: ScrollBar.AsNeeded
-                        }
-
-
     Connections {
         target: SettingsController
         function onHistoryPathInvalid(){
@@ -133,30 +126,32 @@ ApplicationWindow {
             }
         }
 
-        ScrollView {
+        Rectangle {
+            Layout.row: 3
+            Layout.column: 0
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+
+            ScrollView {
                 id: frame
                 clip: true
-                Layout.row: 3
-                Layout.column: 0
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                //other properties
-                ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-                ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
+                anchors.fill: parent
+
+                ScrollBar.vertical.policy: ScrollBar.AsNeeded
+                ScrollBar.horizontal.policy: ScrollBar.AsNeeded
+
                 Flickable {
-                    id: flicable_frame
+                    id: flickable_frame
                     contentHeight: frame.height + 1
                     contentWidth: frame.width + 1
-                    width: parent.width
+                    anchors.fill: parent
 
-
-        Rectangle {
-            anchors.fill: parent
+                    boundsBehavior: Flickable.StopAtBounds
 
                     Row {
                         id: headers
 
-                        anchors{
+                        anchors {
                             left: parent.left
                             right: parent.right
                             top: parent.top
@@ -164,132 +159,139 @@ ApplicationWindow {
                         }
                         height: 24
 
-                            Button{
-                                id: file_name_header
-                                implicitWidth: frame.width / 1.19
-                                height: parent.height
-                                text: "file name"
-                                enabled: false
-                            }
-                            Button{
-                                id: items_header
-                                implicitWidth: frame.width / 15
-                                height: parent.height
-                                text: "items"
-                                enabled: false
-                            }
-                            Button{
-                                id: size_header
-                                implicitWidth: frame.width / 15
-                                height: parent.height
-                                text: "size"
-                                enabled: false
-                            }
-                        }
-
-
-            TreeView {
-                id: tree_view
-                anchors{
-                    left: parent.left
-                    right: parent.right
-                    top: headers.bottom
-                    bottom: parent.bottom
-                    margins: 10
-                }
-
-                model: FileSystemModel
-                selectionModel: model.itemSelectionModel
-                clip: true
-
-                delegate: TreeViewDelegate {
-                    id: delegate_item
-                    // z hack used to allow other column`s content be always over selection
-                    // rectangle(instantiated on column 0 with Loader element)
-                    z: column != 0 ? 1 : 0
-
-                    implicitWidth:
-                    {
-                        if (column === 0)
-                            file_name_header.implicitWidth
-                        else if (column === 1)
-                            items_header.implicitWidth
-                        else if (column === 2)
-                            size_header.implicitWidth
-                    }
-
-                    onImplicitContentWidthChanged:
-                    {
-                        if (column === 0)
-                        {
-                            file_name_header.implicitWidth = Math.max(implicitWidth, content_item.implicitWidth + 21 * depth)
-                        }
-
-                        flicable_frame.contentWidth = file_name_header.implicitWidth + items_header.implicitWidth + size_header.implicitWidth + 20
-                        if(tree_view.rows !== 0)
-                        {
-                            flicable_frame.contentHeight = tree_view.rows * delegate_item.implicitHeight + tree_view.rowSpacing * tree_view.rows + 24 + 30
-                        }
-
-                    }
-
-                    property bool selected : FileSystemController.isSelectionStateChanged && tree_view.selectionModel.isSelected(tree_view.modelIndex(row, column))
-                    contentItem: Text {
-                        // Loader element loads its component after text is loaded so the current element is not visible
-                        // That hack allows force that text item be always on selection rectangle
-                        z: 1
-                        id: content_item
-                        anchors.leftMargin: leftMargin
-                        anchors.rightMargin: rightMargin
-                        text: {
-                            if (column === 0)
-                                file_name
-                            else if (column === 1)
-                                inner_files
-                            else
-                                file_size
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            propagateComposedEvents: true
-                        }
-                    }
-
-                    Loader {
-                        x: delegate_item.indicator.x + delegate_item.indicator.width
-                        y: delegate_item.indicator.y
-                        width: tree_view.contentWidth - delegate_item.indicator.width -
-                               (depth * delegate_item.indicator.width)
-                        height: content_item.implicitHeight
-
-                        active: column === 0
-                        visible: column === 0
-
-                        sourceComponent:
-                            Rectangle {
-                                id: selection_rectangle
+                        Button {
+                            id: file_name_header
+                            implicitWidth: frame.width / 1.19
+                            height: parent.height
+                            Text{
                                 anchors.fill: parent
+                                anchors.margins: 10
+                                text: "File name"
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            enabled: false
+                        }
+                        Button {
+                            id: items_header
+                            implicitWidth: frame.width / 15
+                            height: parent.height
+                            Text{
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                text: "Items"
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            enabled: false
+                        }
+                        Button {
+                            id: size_header
+                            implicitWidth: frame.width / 15
+                            height: parent.height
+                            Text {
+                                anchors.fill: parent
+                                anchors.margins: 10
+                                text: "Size"
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                            enabled: false
+                        }
+                    }
 
-                                color: selected ? "#f0f0f0" : "white"
-                                border.width: selected ? 1 : 0
-                                border.color: "black"
-                                radius: 3
+                    TreeView {
+                        id: tree_view
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                            top: headers.bottom
+                            bottom: parent.bottom
+                            margins: 10
+                        }
+
+                        model: FileSystemModel
+                        selectionModel: model.itemSelectionModel
+                        clip: true
+
+                        delegate: TreeViewDelegate {
+                            id: delegate_item
+                            // z hack used to allow other column`s content be always over selection
+                            // rectangle(instantiated on column 0 with Loader element)
+                            z: column != 0 ? 1 : 0
+
+                            implicitWidth: {
+                                if (column === 0)
+                                    file_name_header.implicitWidth
+                                else if (column === 1)
+                                    items_header.implicitWidth
+                                else if (column === 2)
+                                    size_header.implicitWidth
+                            }
+
+                            onImplicitContentWidthChanged: {
+                                if (column === 0) {
+                                    file_name_header.implicitWidth = Math.max(implicitWidth, content_item.implicitWidth + 21 * depth)
+                                }
+
+                                flickable_frame.contentWidth = (file_name_header.implicitWidth + items_header.implicitWidth + size_header.implicitWidth + 20) > frame.width + 1 ? (file_name_header.implicitWidth + items_header.implicitWidth + size_header.implicitWidth + 20) :  frame.width + 1
+                                flickable_frame.contentHeight = (tree_view.rows * delegate_item.implicitHeight + tree_view.rowSpacing * tree_view.rows + 24 + 30) > frame.height + 1 ? (tree_view.rows * delegate_item.implicitHeight + tree_view.rowSpacing * tree_view.rows + 24 + 30) : frame.height + 1
+                            }
+
+                            property bool selected : FileSystemController.isSelectionStateChanged && tree_view.selectionModel.isSelected(tree_view.modelIndex(row, column))
+                            contentItem: Text {
+                                // Loader element loads its component after text is loaded so the current element is not visible
+                                // That hack allows force that text item be always on selection rectangle
+                                z: 1
+                                id: content_item
+                                anchors.leftMargin: leftMargin
+                                anchors.rightMargin: rightMargin
+                                text: {
+                                    if (column === 0)
+                                        file_name
+                                    else if (column === 1)
+                                        inner_files
+                                    else
+                                        file_size
+                                }
 
                                 MouseArea {
                                     anchors.fill: parent
-
-                                    onClicked: {
-                                        FileSystemController.currentlySelectedIndex = tree_view.modelIndex(row, column)
-                                        console.log(tree_view.selectionModel)
-                                    }
+                                    propagateComposedEvents: true
                                 }
                             }
-                       } // Loader ends
-                  } // TreeViewDelegate ends
-            } // TreeView ends
-        }
-}
+
+                            Loader {
+                                x: delegate_item.indicator.x + delegate_item.indicator.width
+                                y: delegate_item.indicator.y
+                                width: tree_view.contentWidth - delegate_item.indicator.width -
+                                       (depth * delegate_item.indicator.width)
+                                height: content_item.implicitHeight
+
+                                active: column === 0
+                                visible: column === 0
+
+                                sourceComponent:
+                                    Rectangle {
+                                    id: selection_rectangle
+                                    anchors.fill: parent
+
+                                    color: selected ? "#f0f0f0" : "white"
+                                    border.width: selected ? 1 : 0
+                                    border.color: "black"
+                                    radius: 3
+
+                                    MouseArea {
+                                        anchors.fill: parent
+
+                                        onClicked: {
+                                            FileSystemController.currentlySelectedIndex = tree_view.modelIndex(row, column)
+                                            console.log(tree_view.selectionModel)
+                                        }
+                                    }
+                                }
+                            } // Loader ends
+                        } // TreeViewDelegate ends
+                    } // TreeView ends
+                }
+            }
         }
 
 
