@@ -13,6 +13,7 @@ qt_add_executable(appdirectory-scanner-cleaner
 	tools/configfilehandler.cpp
 	controllers/filesystemcontroller.cpp
 	controllers/settingscontroller.cpp
+	controllers/mainwindowcontroller.cpp
 	models/filesystemmodel.cpp
 	models/filetreeelement.cpp
 )

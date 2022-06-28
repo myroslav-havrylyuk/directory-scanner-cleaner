@@ -45,7 +45,13 @@ QString SettingsController::getHistoryPath()
     return m_HistoryPath;
 }
 
-void SettingsController::setState(bool newState)
+void SettingsController::saveSettings()
+{
+    m_ConfigFileModel.setDeletionFilePath(m_HistoryPath);
+    m_ConfigFileModel.writeSettings();
+}
+
+/*void SettingsController::setState(bool newState)
 {
     if(newState)
     {
@@ -54,7 +60,5 @@ void SettingsController::setState(bool newState)
     }
     else
     {
-        m_ConfigFileModel.setDeletionFilePath(m_HistoryPath);
-        m_ConfigFileModel.writeSettings();
     }
-}
+}*/

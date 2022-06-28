@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls 2.5
 import QtQuick.Layouts
-import Qt.labs.platform 1.1
+import Qt.labs.platform as Platform
+import QtQuick.Dialogs
 
 Window {
     id: settings_window
@@ -15,13 +16,15 @@ Window {
     palette.buttonText: "blue"
 
     Connections {
-        target: FileSystemController
-        function onActivePathInvalid(){
+        target: SettingsController
+        function onHistoryPathInvalid(){
+            console.log("history path invalid");
             warning_dialog.open();
+
         }
     }
 
-    FolderDialog {
+    Platform.FolderDialog {
         id: folder_dialog
 
         onAccepted: {
@@ -88,16 +91,33 @@ Window {
         }
 
         Button{
+            id: save_button
+            objectName: "save_button"
             implicitWidth: 90
             Layout.row: 2
             Layout.column: 2
             Layout.alignment: Qt.AlignRight
             text: qsTr("Save")
+
+            signal saveSettings()
             onClicked: {
-                console.log('close button pressed')
-                SettingsController.state = 0
-                settings_window.close()
+                console.log('close button pressed');
+                save_button.saveSettings();
+                settings_window.close();
             }
         }
+    }
+
+    Dialog {
+        id: warning_dialog
+        anchors.centerIn: parent
+        closePolicy: Popup.CloseOnEscape
+        title: qsTr("No such directory")
+        contentItem: Text {
+            text: "The directory does not exist or entered wrong. Please check specified path one more time and try again!"
+            }
+        modal: true
+        standardButtons: Dialog.Ok
+        onAccepted: console.log("Ok clicked")
     }
 }
