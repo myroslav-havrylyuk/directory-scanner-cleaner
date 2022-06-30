@@ -11,6 +11,8 @@ qt_add_executable(appdirectory-scanner-cleaner
 	main.cpp
 	tools/filesystemmanager.cpp
 	tools/configfilehandler.cpp
+	tools/filesdeletionhistorymanager.h
+	tools/filesdeletionhistorymanager.cpp
 	controllers/filesystemcontroller.cpp
 	controllers/settingscontroller.cpp
 	controllers/mainwindowcontroller.cpp

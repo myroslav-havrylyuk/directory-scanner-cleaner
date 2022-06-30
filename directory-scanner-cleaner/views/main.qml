@@ -15,14 +15,6 @@ ApplicationWindow {
     palette.highlight: "blue"
     palette.buttonText: "blue"
 
-
-    Connections {
-        target: SettingsController
-        function onHistoryPathInvalid(){
-            warning_dialog.open();
-        }
-    }
-
     Connections {
         target: FileSystemModel
         function onModelSetupStarted(){
@@ -223,6 +215,7 @@ ApplicationWindow {
 
         Button {
             id: delete_button
+            objectName: "delete_button"
 
             Layout.row: 3
             Layout.column: 1
@@ -230,7 +223,10 @@ ApplicationWindow {
 
             text: "Delete"
 
+            signal deleteFiles()
+
             onClicked: {
+                delete_button.deleteFiles()
             }
         }
 }
