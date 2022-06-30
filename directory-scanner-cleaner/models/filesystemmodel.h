@@ -5,7 +5,9 @@
 #include <QAbstractItemModel>
 #include <QFileInfo>
 #include <QDir>
+#include <QPromise>
 
+#include "QtConcurrent/QtConcurrent"
 #include "filetreeelement.h"
 #include "tools/filesystemmanager.h"
 
@@ -34,10 +36,12 @@ public:
     void setupModel(const QString &rootPath);
     QString getRootPath();
     void selectFile(QModelIndex index);
-    QModelIndex getRootIndex();
 
+    QModelIndex getRootIndex();
     template<typename UnaryPredicate>
-    void selectFilesIf(QModelIndex root, UnaryPredicate pred);
+    void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
+    template<typename UnaryPredicate>
+    void selectFilesIfAsync(QModelIndex root, UnaryPredicate pred);
 
 private:
     QModelIndex m_RootIndex;
@@ -49,12 +53,18 @@ private:
     void connectToFileSystemManager();
     QItemSelectionModel *getItemSelectionModel();
 
+    QFutureWatcher<void> *m_SelectionWatcher = nullptr;
+    QFuture<void> *m_SelectionFuture = nullptr;
+
 signals:
     void modelSetupStarted(const QString &rootPath);
     void modelSetupFinished();
     void cancelSetupModel();
     void setupModelCanceled();
     void itemSelectionModelChanged();
+
+    void selectionStarted();
+    void selectionFinished();
 
 
 public slots:
@@ -64,25 +74,33 @@ public slots:
 };
 
 template<typename UnaryPredicate>
-void FileSystemModel::selectFilesIf(QModelIndex root, UnaryPredicate pred)
+void FileSystemModel::selectFilesIfAsync(QModelIndex root, UnaryPredicate pred)
+{
+    m_SelectionFuture = new QFuture<void>();
+    m_SelectionWatcher = new QFutureWatcher<void>();
+    QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
+    QObject::connect(m_SelectionWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionFinished);
+    m_SelectionWatcher->setFuture(*m_SelectionFuture);
+}
+
+template<typename UnaryPredicate>
+void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred)
 {
     int row = 0;
-    QModelIndex el = index(row, 0, root);
-     while(el.internalPointer() != nullptr)
+    if(pred(indexToFileTreeElement(root)))
+        m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
+    QModelIndex element = index(row, 0, root);
+    while(element.internalPointer() != nullptr)
     {
-        qDebug() << indexToFileTreeElement(el)->fileName();
-        if(pred(indexToFileTreeElement(el)))
+        if(pred(indexToFileTreeElement(element)))
         {
-            qDebug() << indexToFileTreeElement(el)->formattedSize();
-            m_ItemSelectionModel.select(el, QItemSelectionModel::Select);
-
-            if(hasChildren(el))
-            {
-                selectFilesIf(el, pred);
-            }
+            if(hasChildren(element))
+                selectFilesIf(promise, element, pred);
+            else
+                m_ItemSelectionModel.select(element, QItemSelectionModel::Select);
         }
         ++row;
-        el = index(row, 0, root);
+        element = index(row, 0, root);
     }
 }
 

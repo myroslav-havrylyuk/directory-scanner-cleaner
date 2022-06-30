@@ -35,6 +35,14 @@ ApplicationWindow {
         function onSetupModelCanceled(){
             cancelation_dialog.close();
         }
+        function onSelectionStarted(){
+            selection_progress_dialog.open();
+            console.log('opened progress dialog');
+        }
+        function onSelectionFinished(){
+            selection_progress_dialog.close();
+            console.log('closed progress dialog');
+        }
     }
 
     MenuBar{
@@ -343,6 +351,8 @@ ApplicationWindow {
                         topMargin: 3
                     }
 
+                    text: FileSystemController.sizeFilter
+
                     validator: DoubleValidator {
                         bottom: 0
                         top: 500
@@ -392,6 +402,18 @@ ApplicationWindow {
         modal: true
         standardButtons: Dialog.Ok
         onAccepted: console.log("Ok clicked")
+    }
+
+    Dialog {
+        id: selection_progress_dialog
+        objectName: "progress_dialog"
+        anchors.centerIn: parent
+        closePolicy: Popup.CloseOnEscape
+        title: qsTr("Selecting files...")
+        contentItem: ProgressBar {
+                indeterminate: true
+            }
+        modal: true
     }
 
     Dialog {

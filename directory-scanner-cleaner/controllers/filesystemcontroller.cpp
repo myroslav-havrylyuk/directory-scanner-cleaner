@@ -66,13 +66,18 @@ QString FileSystemController::ActivePath() const
 
 void FileSystemController::setSizeFilter(const QString &filterValue)
 {
-    //m_SizeFilter = QVariant(filterValue).toDouble();
+    m_SizeFilter = QVariant(filterValue).toDouble();
     emit sizeFilterChanged();
 
-    double value = QVariant(filterValue).toDouble() * 1024 * 1024;
+    quint64 value = m_SizeFilter * 1024 * 1024;
 
-    m_FileSystemModel.selectFilesIf(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
+    m_FileSystemModel.selectFilesIfAsync(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
 
     m_isSelectionStateChanged = true;
     emit selectionStateChanged();
+}
+
+QString FileSystemController::getSizeFilter()
+{
+    return m_SizeFilter < 0.01 ? "" : QVariant(m_SizeFilter).toString();
 }

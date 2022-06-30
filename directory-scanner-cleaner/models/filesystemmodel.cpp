@@ -1,5 +1,4 @@
 #include "filesystemmodel.h"
-#include <QThread>
 
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr),
