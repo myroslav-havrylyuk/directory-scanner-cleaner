@@ -295,10 +295,10 @@ ApplicationWindow {
 
         Button {
             id: browse_current_directory_path_button
-
             Layout.row: 1
             Layout.column: 1
-            width: 89
+            Layout.alignment: Qt.AlignHCenter
+            implicitWidth: 90
 
             text: "Browse folder"
 
