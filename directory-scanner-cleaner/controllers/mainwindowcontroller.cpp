@@ -20,6 +20,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     m_FileSystemModel = new FileSystemModel();
     m_FileSystemController = new FileSystemController(*m_FileSystemModel);
     QString rootFilePath = app->applicationDirPath();
+    m_FileSystemController->setActivePath(rootFilePath);
     m_MainQmlContext = gEngine->rootContext();
     m_MainQmlContext->setContextProperty("FileSystemModel", m_FileSystemModel);
     m_MainQmlContext->setContextProperty("FileSystemController", m_FileSystemController);
