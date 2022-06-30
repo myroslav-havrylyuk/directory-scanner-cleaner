@@ -8,7 +8,7 @@ Window {
     id: settings_window
     visible: true
     width: 700
-    height: 200
+    height: 300
     title: qsTr("Settings")
     color: 'lightgrey'
     modality: Qt.ApplicationModal
@@ -20,7 +20,6 @@ Window {
         function onHistoryPathInvalid(){
             console.log("history path invalid");
             warning_dialog.open();
-
         }
     }
 
@@ -32,7 +31,7 @@ Window {
         }
     }
 
-    GridLayout{
+    GridLayout {
         anchors.fill: parent
         anchors.margins: 39
         rows: 4
@@ -41,7 +40,6 @@ Window {
         columnSpacing: 25
 
         Text {
-            id: browse_button
             Layout.row: 0
             Layout.column: 1
             text: "The directory to save deletion history file:"
@@ -64,7 +62,7 @@ Window {
             clip: true
             TextEdit {
                 id: current_directory_path_text_edit
-                anchors{
+                anchors {
                     fill: parent
                     leftMargin: 3
                     topMargin: 3
@@ -76,6 +74,7 @@ Window {
                 }
             }
         }
+
         Button {
             id: browse_current_directory_path_button
 
@@ -90,11 +89,50 @@ Window {
             }
         }
 
-        Button{
+        Text {
+            Layout.row: 2
+            Layout.column: 1
+            text: "Recursion depth for directory scanning:"
+            font {
+                bold: true
+                pixelSize: 16
+            }
+        }
+
+        Rectangle {
+            Layout.row: 3
+            Layout.column: 1
+            Layout.fillWidth: true
+            height: 24
+            border.color: "black"
+            border.width: 1
+            clip: true
+            TextInput {
+                id: recursion_depth
+                anchors {
+                    fill: parent
+                    leftMargin: 3
+                    topMargin: 3
+                }
+
+                text: SettingsController.recursionDepth
+
+                validator: IntValidator {
+                    bottom: 0
+                    top: 500
+                }
+
+                Keys.onReturnPressed: {
+                    SettingsController.recursionDepth = text
+                }
+            }
+        }
+
+        Button {
             id: save_button
             objectName: "save_button"
             implicitWidth: 90
-            Layout.row: 2
+            Layout.row: 4
             Layout.column: 2
             Layout.alignment: Qt.AlignRight
             text: qsTr("Save")
@@ -102,8 +140,9 @@ Window {
             signal saveSettings()
             onClicked: {
                 console.log('close button pressed');
+                SettingsController.historyPath = current_directory_path_text_edit.text
+                SettingsController.recursionDepth = recursion_depth.text
                 save_button.saveSettings();
-                settings_window.close();
             }
         }
     }
@@ -115,7 +154,7 @@ Window {
         title: qsTr("No such directory")
         contentItem: Text {
             text: "The directory does not exist or entered wrong. Please check specified path one more time and try again!"
-            }
+        }
         modal: true
         standardButtons: Dialog.Ok
         onAccepted: console.log("Ok clicked")

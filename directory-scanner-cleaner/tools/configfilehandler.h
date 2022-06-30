@@ -15,6 +15,8 @@ public:
 
     QString getDeletionFilePath() const;
     void setDeletionFilePath(QString filePath);
+    uint getRecursionDepth() const;
+    void setRecursionDepth(uint filePath);
     void readSettings();
     void writeSettings();
 
@@ -25,6 +27,7 @@ QSettings::Scope m_Scope;
 QSettings::Format m_Format;
 
 QString m_DeletionFilePath;
+uint m_RecursionDepth;
 };
 
 #endif // CONFIGFILEHANDLER_H
