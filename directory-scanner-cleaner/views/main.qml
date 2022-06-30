@@ -308,18 +308,77 @@ ApplicationWindow {
             }
         }
 
-        Button {
-            id: delete_button
-
+        Column {
             Layout.row: 3
             Layout.column: 1
-            width: 89
+            Layout.fillHeight: true
+            spacing: 10
 
-            text: "Delete"
+            Text {
+                text: "Select files: "
+                font {
+                    //bold: true
+                    pixelSize: 16
+                }
+            }
 
-            onClicked: {
+            Text {
+                text: "Larger then (in MB): "
+                font {
+                    //bold: true
+                    pixelSize: 16
+                }
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 24
+                clip: true
+
+                TextInput {
+                    id: size_filter
+                    anchors {
+                        fill: parent
+                        leftMargin: 3
+                        topMargin: 3
+                    }
+
+                    validator: DoubleValidator {
+                        bottom: 0
+                        top: 500
+                        notation: DoubleValidator.StandardNotation
+                        decimals: 2
+                    }
+                }
+            }
+
+            Button {
+                id: filter_button
+                width: 90
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: "Select"
+
+                onClicked: {
+                    FileSystemModel.rootIndex = tree_view.modelIndex(0, 0)
+                    console.log(tree_view.modelIndex(0,0))
+                    FileSystemController.sizeFilter = size_filter.text
+                    console.log(size_filter.text)
+                }
+            }
+
+            Button {
+                id: delete_button
+                width: 90
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                text: "Delete"
+
+                onClicked: {
+                }
             }
         }
+
 }
 
     Dialog {

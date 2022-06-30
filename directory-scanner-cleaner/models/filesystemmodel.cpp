@@ -197,3 +197,8 @@ FileTreeElement *FileSystemModel::indexToFileTreeElement(const QModelIndex &inde
 
     return static_cast<FileTreeElement *>(index.internalPointer());
 }
+
+QModelIndex FileSystemModel::getRootIndex()
+{
+    return m_RootIndex;
+}

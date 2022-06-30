@@ -14,6 +14,7 @@ class FileSystemModel : public QAbstractItemModel
     Q_OBJECT
 
     Q_PROPERTY(QItemSelectionModel* itemSelectionModel READ getItemSelectionModel NOTIFY itemSelectionModelChanged)
+    Q_PROPERTY(QModelIndex rootIndex MEMBER m_RootIndex)
 
 public:
     FileSystemModel();
@@ -33,8 +34,13 @@ public:
     void setupModel(const QString &rootPath);
     QString getRootPath();
     void selectFile(QModelIndex index);
+    QModelIndex getRootIndex();
+
+    template<typename UnaryPredicate>
+    void selectFilesIf(QModelIndex root, UnaryPredicate pred);
 
 private:
+    QModelIndex m_RootIndex;
     QItemSelectionModel m_ItemSelectionModel;
     FileSystemManager *m_FileSystemManager = nullptr;
     FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
@@ -56,5 +62,28 @@ public slots:
     void cancelSetupModelHandler();
     void setupModelCanceledHandler();
 };
+
+template<typename UnaryPredicate>
+void FileSystemModel::selectFilesIf(QModelIndex root, UnaryPredicate pred)
+{
+    int row = 0;
+    QModelIndex el = index(row, 0, root);
+     while(el.internalPointer() != nullptr)
+    {
+        qDebug() << indexToFileTreeElement(el)->fileName();
+        if(pred(indexToFileTreeElement(el)))
+        {
+            qDebug() << indexToFileTreeElement(el)->formattedSize();
+            m_ItemSelectionModel.select(el, QItemSelectionModel::Select);
+
+            if(hasChildren(el))
+            {
+                selectFilesIf(el, pred);
+            }
+        }
+        ++row;
+        el = index(row, 0, root);
+    }
+}
 
 #endif // FILESYSTEMMODEL_H

@@ -16,6 +16,8 @@ class FileSystemController : public QQuickItem
     Q_PROPERTY(QString activePath READ ActivePath WRITE setActivePath NOTIFY activePathChanged)
     Q_PROPERTY(QModelIndex currentlySelectedIndex READ getCurrentlySelectedIndex WRITE setCurrentlySelectedIndex NOTIFY currentlySelectedIndexChanged)
     Q_PROPERTY(bool isSelectionStateChanged MEMBER m_isSelectionStateChanged NOTIFY selectionStateChanged)
+    Q_PROPERTY(QString sizeFilter WRITE setSizeFilter NOTIFY sizeFilterChanged)
+
 
 public:
     FileSystemController(FileSystemModel &fileSystemModel);
@@ -24,19 +26,24 @@ public:
     void setActivePath(const QString &newActivePath);
     void setCurrentlySelectedIndex(QModelIndex currentRow);
     QModelIndex getCurrentlySelectedIndex() const;
+    void setSizeFilter(const QString &filterValue);
 
 signals:
     void activePathInvalid();
     void activePathChanged();
     void currentlySelectedIndexChanged();
     void selectionStateChanged();
+    void sizeFilterChanged();
 
+//public slots:
+    //void setSelectionWithFilter();
 
 private:
     QString m_ActivePath;
     FileSystemModel &m_FileSystemModel;
     QModelIndex m_CurrentRow;
     bool m_isSelectionStateChanged = false;
+    //double m_SizeFilter;
 };
 
 #endif // FILESYSTEMCONTROLLER_H

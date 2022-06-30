@@ -58,7 +58,21 @@ void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {
 QModelIndex FileSystemController::getCurrentlySelectedIndex() const {
     return m_CurrentRow;
 }
+
 QString FileSystemController::ActivePath() const
 {
     return QDir::toNativeSeparators(m_ActivePath);
+}
+
+void FileSystemController::setSizeFilter(const QString &filterValue)
+{
+    //m_SizeFilter = QVariant(filterValue).toDouble();
+    emit sizeFilterChanged();
+
+    double value = QVariant(filterValue).toDouble() * 1024 * 1024;
+
+    m_FileSystemModel.selectFilesIf(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
+
+    m_isSelectionStateChanged = true;
+    emit selectionStateChanged();
 }
