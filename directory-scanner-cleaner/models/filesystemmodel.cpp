@@ -1,5 +1,4 @@
 #include "filesystemmodel.h"
-#include <QThread>
 
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr),
@@ -201,4 +200,9 @@ FileTreeElement *FileSystemModel::indexToFileTreeElement(const QModelIndex &inde
         return m_FileTreeRoot;
 
     return static_cast<FileTreeElement *>(index.internalPointer());
+}
+
+QModelIndex FileSystemModel::getRootIndex()
+{
+    return m_RootIndex;
 }

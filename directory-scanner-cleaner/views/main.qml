@@ -28,33 +28,41 @@ ApplicationWindow {
         function onSetupModelCanceled(){
             cancelation_dialog.close();
         }
+        function onSelectionStarted(){
+            selection_progress_dialog.open();
+            console.log('opened selection progress dialog');
+        }
+        function onSelectionFinished(){
+            selection_progress_dialog.close();
+            console.log('closed selection progress dialog');
+        }
     }
 
     MenuBar{
         id: main_window_menu_bar
-            Menu{
-                title:  "Options"
+        Menu{
+            title:  "Options"
+            font {
+                pixelSize: 10
+            }
+            MenuItem{
+                id: settings_menu_item
+                objectName: "settings_menu_item"
+                property variant win
+                property bool clicked: false
+                text: "Settings..."
                 font {
                     pixelSize: 10
                 }
-                MenuItem{
-                    id: settings_menu_item
-                    objectName: "settings_menu_item"
-                    property variant win
-                    property bool clicked: false
-                    text: "Settings..."
-                    font {
-                        pixelSize: 10
-                    }
 
-                    signal openSettingsWindow()
+                signal openSettingsWindow()
 
-                    onTriggered: {
-                        settings_menu_item.openSettingsWindow();
-                    }
+                onTriggered: {
+                    settings_menu_item.openSettingsWindow();
                 }
             }
         }
+    }
 
     GridLayout{
         anchors{
@@ -291,10 +299,10 @@ ApplicationWindow {
 
         Button {
             id: browse_current_directory_path_button
-
             Layout.row: 1
             Layout.column: 1
-            width: 89
+            Layout.alignment: Qt.AlignHCenter
+            implicitWidth: 90
 
             text: "Browse folder"
 
@@ -304,67 +312,138 @@ ApplicationWindow {
             }
         }
 
-        Button {
-            id: delete_button
-            objectName: "delete_button"
-
+        Column {
             Layout.row: 3
             Layout.column: 1
-            width: 89
+            Layout.fillHeight: true
+            spacing: 10
 
-            text: "Delete"
-
-            signal deleteFiles()
-
-            onClicked: {
-                delete_button.deleteFiles()
+            Text {
+                text: "Select files: "
+                font {
+                    //bold: true
+                    pixelSize: 16
+                }
             }
+
+            Text {
+                text: "Larger then (in MB): "
+                font {
+                    //bold: true
+                    pixelSize: 16
+                }
+            }
+
+                Rectangle {
+                    width: parent.width
+                    height: 24
+                    clip: true
+
+                    TextInput {
+                        id: size_filter
+                        anchors {
+                            fill: parent
+                            leftMargin: 3
+                            topMargin: 3
+                        }
+
+                        text: FileSystemController.sizeFilter
+
+                        validator: DoubleValidator {
+                            bottom: 0
+                            top: 500
+                            notation: DoubleValidator.StandardNotation
+                            decimals: 2
+                        }
+                    }
+                }
+
+                Button {
+                    id: filter_button
+                    width: 90
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    text: "Select"
+
+                    onClicked: {
+                        FileSystemModel.rootIndex = tree_view.modelIndex(0, 0)
+                        console.log(tree_view.modelIndex(0,0))
+                        FileSystemController.sizeFilter = size_filter.text
+                        console.log(size_filter.text)
+                    }
+                }
+
+                Button {
+                    id: delete_button
+                    objectName: "delete_button"
+                    width: 90
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    text: "Delete"
+
+                    signal deleteFiles()
+
+                    onClicked: {
+                        delete_button.deleteFiles()
+                    }
+                }
+            }
+
+        Dialog {
+            id: warning_dialog
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("No such directory")
+            contentItem: Text {
+                text: "The directory does not exist or entered wrong. Please check specified path one more time and try again!"
+            }
+            modal: true
+            standardButtons: Dialog.Ok
+            onAccepted: console.log("Ok clicked")
         }
-}
 
-    Dialog {
-        id: warning_dialog
-        anchors.centerIn: parent
-        closePolicy: Popup.CloseOnEscape
-        title: qsTr("No such directory")
-        contentItem: Text {
-            text: "The directory does not exist or entered wrong. Please check specified path one more time and try again!"
-            }
-        modal: true
-        standardButtons: Dialog.Ok
-        onAccepted: console.log("Ok clicked")
-    }
-
-    Dialog {
-        id: progress_dialog
-        objectName: "progress_dialog"
-        anchors.centerIn: parent
-        closePolicy: Popup.CloseOnEscape
-        title: qsTr("Scanning files...")
-        contentItem: ProgressBar {
+        Dialog {
+            id: selection_progress_dialog
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("Selecting files...")
+            contentItem: ProgressBar {
                 indeterminate: true
             }
-        modal: true
-        standardButtons: Dialog.Cancel
-
-        signal cancelSetupModel()
-
-        onRejected: {
-            progress_dialog.cancelSetupModel();
-            console.log("Cancel clicked");
-            cancelation_dialog.open()
+            modal: true
         }
-    }
 
-    Dialog {
-        id: cancelation_dialog
-        objectName: "cancelation_dialog"
-        anchors.centerIn: parent
-        closePolicy: Popup.NoAutoClose
-        title: qsTr("Waiting for cancelation...")
-        contentItem: ProgressBar {
+        Dialog {
+            id: progress_dialog
+            objectName: "progress_dialog"
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("Scanning files...")
+            contentItem: ProgressBar {
                 indeterminate: true
+            }
+            modal: true
+            standardButtons: Dialog.Cancel
+
+            signal cancelSetupModel()
+
+            onRejected: {
+                progress_dialog.cancelSetupModel();
+                console.log("Cancel clicked");
+                cancelation_dialog.open()
+            }
         }
-        modal: true
+
+        Dialog {
+            id: cancelation_dialog
+            objectName: "cancelation_dialog"
+            anchors.centerIn: parent
+            closePolicy: Popup.NoAutoClose
+            title: qsTr("Waiting for cancelation...")
+            contentItem: ProgressBar {
+                indeterminate: true
+            }
+            modal: true
+        }
     }
 }
