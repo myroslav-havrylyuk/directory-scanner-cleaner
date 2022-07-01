@@ -62,13 +62,16 @@ QString FileSystemController::ActivePath() const
 
 void FileSystemController::setSizeFilter(const QString &filterValue)
 {
-    m_SizeFilter = QVariant(filterValue).toDouble() < 0.001 ? 0 : QVariant(filterValue).toDouble();
-    emit sizeFilterChanged();
-
-    if(!m_ActivePath.isEmpty())
+    if(!filterValue.isEmpty())
     {
-        quint64 value = m_SizeFilter * 1024 * 1024;
-        m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
+        m_SizeFilter = QVariant(filterValue).toDouble() < 0.001 ? 0 : QVariant(filterValue).toDouble();
+        emit sizeFilterChanged();
+
+        if(!m_ActivePath.isEmpty())
+        {
+            quint64 value = m_SizeFilter * 1024 * 1024;
+            m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
+        }
     }
 }
 
@@ -88,4 +91,24 @@ void FileSystemController::selectionEndedHandler()
 QString FileSystemController::getSizeFilter()
 {
     return QVariant(m_SizeFilter).toString();
+}
+
+void FileSystemController::setDaysAfterModificationFilter(const QString &filterValue)
+{
+    if(!filterValue.isEmpty())
+    {
+        m_DaysAfterModificationFilter = QVariant(filterValue).toInt();
+        emit daysAfterModificationFilterChanged();
+
+        if(!m_ActivePath.isEmpty())
+        {
+            int value = m_DaysAfterModificationFilter;
+            m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return ((QDate::currentDate().toJulianDay() - x->getLastModificationDate().toJulianDay()) > value); });
+        }
+    }
+}
+
+QString FileSystemController::getDaysAfterModificationFilter()
+{
+    return QVariant(m_DaysAfterModificationFilter).toString();
 }

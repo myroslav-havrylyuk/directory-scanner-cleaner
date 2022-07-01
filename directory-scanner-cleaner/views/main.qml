@@ -358,6 +358,36 @@ ApplicationWindow {
                     }
                 }
 
+                Text {
+                    text: "Older than (in days): "
+                    font {
+                        //bold: true
+                        pixelSize: 16
+                    }
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: 24
+                    clip: true
+
+                    TextInput {
+                        id: modification_days_filter
+                        anchors {
+                            fill: parent
+                            leftMargin: 3
+                            topMargin: 3
+                        }
+
+                        text: FileSystemController.daysAfterModificationFilter
+
+                        validator: IntValidator {
+                            bottom: 0
+                            top: 500
+                        }
+                    }
+                }
+
                 Button {
                     id: filter_button
                     width: 90
@@ -368,6 +398,8 @@ ApplicationWindow {
                     onClicked: {
                         FileSystemController.sizeFilter = size_filter.text
                         console.log(size_filter.text)
+                        FileSystemController.daysAfterModificationFilter = modification_days_filter.text
+                        console.log(modification_days_filter.text)
                     }
                 }
 
