@@ -27,6 +27,7 @@ public:
     QModelIndex getCurrentlySelectedIndex() const;
     void setSizeFilter(const QString &filterValue);
     QString getSizeFilter();
+    void connectToFileSystemModel();
 
 signals:
     void activePathInvalid();
@@ -40,7 +41,11 @@ private:
     FileSystemModel &m_FileSystemModel;
     QModelIndex m_CurrentRow;
     bool m_isSelectionStateChanged = false;
-    double m_SizeFilter;
+    double m_SizeFilter = 0;
+    bool connectionSet = false;
+
+public slots:
+    void selectionEndedHandler();
 };
 
 #endif // FILESYSTEMCONTROLLER_H

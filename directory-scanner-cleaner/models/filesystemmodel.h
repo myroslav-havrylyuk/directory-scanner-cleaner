@@ -76,9 +76,19 @@ public slots:
 template<typename UnaryPredicate>
 void FileSystemModel::selectFilesIfAsync(QModelIndex root, UnaryPredicate pred)
 {
+    if(m_SelectionFuture != nullptr){
+        delete m_SelectionFuture;
+        m_SelectionFuture = nullptr;
+    }
+    if(m_SelectionWatcher != nullptr){
+        delete m_SelectionWatcher;
+        m_SelectionWatcher = nullptr;
+    }
+
+    emit selectionStarted();
     m_SelectionFuture = new QFuture<void>();
     m_SelectionWatcher = new QFutureWatcher<void>();
-    QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
+    *m_SelectionFuture = QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
     QObject::connect(m_SelectionWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionFinished);
     m_SelectionWatcher->setFuture(*m_SelectionFuture);
 }
@@ -90,6 +100,9 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
     if(pred(indexToFileTreeElement(root)))
         m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
     QModelIndex element = index(row, 0, root);
+
+    qDebug() << indexToFileTreeElement(element)->fileName();
+
     while(element.internalPointer() != nullptr)
     {
         if(pred(indexToFileTreeElement(element)))

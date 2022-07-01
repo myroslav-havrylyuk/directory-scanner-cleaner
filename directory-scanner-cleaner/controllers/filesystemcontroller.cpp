@@ -66,12 +66,29 @@ QString FileSystemController::ActivePath() const
 
 void FileSystemController::setSizeFilter(const QString &filterValue)
 {
-    m_SizeFilter = QVariant(filterValue).toDouble();
+    m_SizeFilter = QVariant(filterValue).toDouble() < 0.001 ? 0 : QVariant(filterValue).toDouble();
     emit sizeFilterChanged();
 
-    quint64 value = m_SizeFilter * 1024 * 1024;
+    if(m_FileSystemModel.getRootIndex().internalPointer() != nullptr)
+    {
+        quint64 value = m_SizeFilter * 1024 * 1024;
+        if(!connectionSet)
+        {
+            connectToFileSystemModel();
+            connectionSet = true;
+        }
+        m_FileSystemModel.selectFilesIfAsync(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
+    }
+}
 
-    m_FileSystemModel.selectFilesIfAsync(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
+void FileSystemController::connectToFileSystemModel()
+{
+    QObject::connect(&m_FileSystemModel, &FileSystemModel::selectionFinished, this, &FileSystemController::selectionEndedHandler);
+}
+
+void FileSystemController::selectionEndedHandler()
+{
+    qDebug() << QTime::currentTime() << "handled selectionEnded signal in FileSystemModel";
 
     m_isSelectionStateChanged = true;
     emit selectionStateChanged();
@@ -79,5 +96,5 @@ void FileSystemController::setSizeFilter(const QString &filterValue)
 
 QString FileSystemController::getSizeFilter()
 {
-    return m_SizeFilter < 0.01 ? "" : QVariant(m_SizeFilter).toString();
+    return QVariant(m_SizeFilter).toString();
 }

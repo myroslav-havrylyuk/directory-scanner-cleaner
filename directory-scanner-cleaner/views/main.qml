@@ -37,11 +37,11 @@ ApplicationWindow {
         }
         function onSelectionStarted(){
             selection_progress_dialog.open();
-            console.log('opened progress dialog');
+            console.log('opened selection progress dialog');
         }
         function onSelectionFinished(){
             selection_progress_dialog.close();
-            console.log('closed progress dialog');
+            console.log('closed selection progress dialog');
         }
     }
 
@@ -406,7 +406,6 @@ ApplicationWindow {
 
     Dialog {
         id: selection_progress_dialog
-        objectName: "progress_dialog"
         anchors.centerIn: parent
         closePolicy: Popup.CloseOnEscape
         title: qsTr("Selecting files...")
