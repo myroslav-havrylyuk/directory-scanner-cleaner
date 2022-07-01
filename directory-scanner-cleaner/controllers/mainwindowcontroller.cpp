@@ -88,8 +88,8 @@ void MainWindowController::openSettingsWindow() {
 void MainWindowController::updateDeletionHistory() {
     m_FileDeletionHistoryManager.updateHistory(
                 QList<QString>{"test file 1.docx", "test file 2.pdf"},
-                FilesDeletionHistoryManager::DELETE_REASON::LARGE,
-                m_SettingsController->getHistoryPath()+"/filesDeletionHistory"+" - "+QDate::currentDate().toString("dd.MM.yyyy")+".json");
+                "reason",
+                gSettingsController->getHistoryPath()+"/filesDeletionHistory"+" - "+QDate::currentDate().toString("dd.MM.yyyy")+".json");
 }
 
 void MainWindowController::setActivePath(QString activePath)

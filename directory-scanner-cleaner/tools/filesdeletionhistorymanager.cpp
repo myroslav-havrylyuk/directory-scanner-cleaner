@@ -4,7 +4,7 @@ FilesDeletionHistoryManager::FilesDeletionHistoryManager(QObject *parent)
     : QObject{parent} {}
 
 void FilesDeletionHistoryManager::updateHistory(QList<QString> files,
-                                                DELETE_REASON reason,
+                                                QString reason,
                                                 QString filePath) {
 
   QFile file;
@@ -22,7 +22,7 @@ void FilesDeletionHistoryManager::updateHistory(QList<QString> files,
         return;
       }
       rootObject = jsonDocument.object();
-      currentReasonItems = rootObject.take(QVariant::fromValue(reason).toString()).toArray();
+      currentReasonItems = rootObject.take(reason).toArray();
   }
 
       QJsonObject currentDeletedInfo;
@@ -40,7 +40,7 @@ void FilesDeletionHistoryManager::updateHistory(QList<QString> files,
       currentDeletedInfo.insert("files", jsonFiles);
       currentReasonItems.push_back(currentDeletedInfo);
 
-      rootObject.insert(QVariant::fromValue(reason).toString(), currentReasonItems);
+      rootObject.insert(reason, currentReasonItems);
       QJsonDocument jsonDoc;
       jsonDoc.setObject(rootObject);
       file.open(QIODevice::WriteOnly);
