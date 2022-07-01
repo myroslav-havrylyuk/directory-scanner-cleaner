@@ -19,6 +19,7 @@ class FileSystemModel : public QAbstractItemModel
 
 public:
     FileSystemModel();
+    //FileSystemModel(const QString &rootPath);
 
     ~FileSystemModel();
 
@@ -32,17 +33,16 @@ public:
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
     void setupModel(const QString &rootPath, uint recursionDepth);
+    QString getRootPath();
     void selectFile(QModelIndex index);
 
     FileSystemManager *getFileSystemManager() const;
-    QModelIndex getRootIndex();
     template<typename UnaryPredicate>
     void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
     template<typename UnaryPredicate>
     void selectFilesIfAsync(/*QModelIndex root, */UnaryPredicate pred);
 
 private:
-    QModelIndex m_RootIndex;
     QItemSelectionModel m_ItemSelectionModel;
     FileSystemManager *m_FileSystemManager = nullptr;
     FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;

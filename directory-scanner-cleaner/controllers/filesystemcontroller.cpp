@@ -65,7 +65,7 @@ void FileSystemController::setSizeFilter(const QString &filterValue)
     m_SizeFilter = QVariant(filterValue).toDouble() < 0.001 ? 0 : QVariant(filterValue).toDouble();
     emit sizeFilterChanged();
 
-    if(m_FileSystemModel.getRootIndex().internalPointer() != nullptr)
+    if(!m_ActivePath.isEmpty())
     {
         quint64 value = m_SizeFilter * 1024 * 1024;
         m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
