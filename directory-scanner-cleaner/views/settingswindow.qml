@@ -35,13 +35,13 @@ Window {
         anchors.fill: parent
         anchors.margins: 39
         rows: 4
-        columns: 3
+        columns: 2
         rowSpacing: 10
         columnSpacing: 25
 
         Text {
             Layout.row: 0
-            Layout.column: 1
+            Layout.column: 0
             text: "The directory to save deletion history file:"
             font {
                 bold: true
@@ -54,7 +54,7 @@ Window {
             property alias directory_path: current_directory_path_text_edit.text
 
             Layout.row: 1
-            Layout.column: 1
+            Layout.column: 0
             Layout.fillWidth: true
             height: 24
             border.color: "black"
@@ -79,7 +79,7 @@ Window {
             id: browse_current_directory_path_button
 
             Layout.row: 1
-            Layout.column: 2
+            Layout.column: 1
             implicitWidth: 90
 
             text: "Browse folder"
@@ -91,7 +91,7 @@ Window {
 
         Text {
             Layout.row: 2
-            Layout.column: 1
+            Layout.column: 0
             text: "Recursion depth for directory scanning:"
             font {
                 bold: true
@@ -101,7 +101,7 @@ Window {
 
         Rectangle {
             Layout.row: 3
-            Layout.column: 1
+            Layout.column: 0
             Layout.fillWidth: true
             height: 24
             border.color: "black"
@@ -132,8 +132,8 @@ Window {
             id: save_button
             objectName: "save_button"
             implicitWidth: 90
-            Layout.row: 4
-            Layout.column: 2
+            Layout.row: 3
+            Layout.column: 1
             Layout.alignment: Qt.AlignRight
             text: qsTr("Save")
 
