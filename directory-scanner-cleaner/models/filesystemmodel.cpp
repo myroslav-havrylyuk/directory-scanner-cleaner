@@ -132,7 +132,12 @@ void FileSystemModel::selectFile(QModelIndex index)
     m_ItemSelectionModel.select(index, QItemSelectionModel::Toggle);
 }
 
-void FileSystemModel::setupModel(const QString &rootPath)
+FileSystemManager *FileSystemModel::getFileSystemManager() const
+{
+    return m_FileSystemManager;
+}
+
+void FileSystemModel::setupModel(const QString &rootPath, uint recursionDepth)
 {
     QString normalizedRootPath = QDir::cleanPath(rootPath);
     emit modelSetupStarted(normalizedRootPath);
@@ -150,7 +155,7 @@ void FileSystemModel::setupModel(const QString &rootPath)
     }
     m_FileSystemManager = new FileSystemManager();
     connectToFileSystemManager();
-    m_FileSystemManager->generateFileTreeAsync(normalizedRootPath);
+    m_FileSystemManager->generateFileTreeAsync(normalizedRootPath, recursionDepth);
 }
 
 void FileSystemModel::connectToFileSystemManager()

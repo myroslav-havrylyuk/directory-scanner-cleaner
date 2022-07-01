@@ -47,6 +47,7 @@ signals:
 public slots:
     void openSettingsWindow();
     void updateDeletionHistory();
+    void setActivePath(QString activePath);
 };
 
 #endif // MAINWINDOWCONTROLLER_H

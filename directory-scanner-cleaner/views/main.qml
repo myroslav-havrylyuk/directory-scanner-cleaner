@@ -72,9 +72,12 @@ ApplicationWindow {
 
         Platform.FolderDialog {
             id: folder_dialog
+            objectName: "folder_dialog"
+
+            signal activePathChanged(string folder)
 
             onAccepted: {
-                FileSystemController.activePath = folder
+                folder_dialog.activePathChanged(folder)
             }
         }
 
@@ -112,7 +115,7 @@ ApplicationWindow {
                 text: FileSystemController.activePath // could be a different folder for Linux
 
                 Keys.onReturnPressed: {
-                    FileSystemController.activePath = text
+                    folder_dialog.activePathChanged(text)
                 }
             }
         }

@@ -20,7 +20,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     m_FileSystemModel = new FileSystemModel();
     m_FileSystemController = new FileSystemController(*m_FileSystemModel);
     QString rootFilePath = app->applicationDirPath();
-    m_FileSystemController->setActivePath(rootFilePath);
+    setActivePath(rootFilePath);
     m_MainQmlContext = gEngine->rootContext();
     m_MainQmlContext->setContextProperty("FileSystemModel", m_FileSystemModel);
     m_MainQmlContext->setContextProperty("FileSystemController", m_FileSystemController);
@@ -44,6 +44,10 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     QObject *deleteButton = m_MainWindow->findChild<QObject *>("delete_button");
     QObject::connect(deleteButton, SIGNAL(deleteFiles()), this,
                      SLOT(updateDeletionHistory()));
+    QObject *folderDialog =
+            m_MainWindow->findChild<QObject *>("folder_dialog");
+    QObject::connect(folderDialog, SIGNAL(activePathChanged(QString)),
+                     this, SLOT(setActivePath(QString)));
 }
 
 void MainWindowController::openSettingsWindow() {
@@ -84,6 +88,11 @@ void MainWindowController::openSettingsWindow() {
 void MainWindowController::updateDeletionHistory() {
     m_FileDeletionHistoryManager.updateHistory(
                 QList<QString>{"test file 1.docx", "test file 2.pdf"},
-                FilesDeletionHistoryManager::DELETE_REASON::OLD,
-                m_SettingsController->getHistoryPath()+"/filesDeletionHistory.json");
+                FilesDeletionHistoryManager::DELETE_REASON::LARGE,
+                m_SettingsController->getHistoryPath()+"/filesDeletionHistory"+" - "+QDate::currentDate().toString("dd.MM.yyyy")+".json");
+}
+
+void MainWindowController::setActivePath(QString activePath)
+{
+    m_FileSystemController->setActivePath(activePath, m_SettingsController->getRecursionDepth());
 }

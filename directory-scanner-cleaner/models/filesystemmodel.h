@@ -30,9 +30,11 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
-    void setupModel(const QString &rootPath);
+    void setupModel(const QString &rootPath, uint recursionDepth);
     QString getRootPath();
     void selectFile(QModelIndex index);
+
+    FileSystemManager *getFileSystemManager() const;
 
 private:
     QItemSelectionModel m_ItemSelectionModel;
