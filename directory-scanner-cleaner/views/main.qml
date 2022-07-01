@@ -366,8 +366,6 @@ ApplicationWindow {
                     text: "Select"
 
                     onClicked: {
-                        FileSystemModel.rootIndex = tree_view.modelIndex(0, 0)
-                        console.log(tree_view.modelIndex(0,0))
                         FileSystemController.sizeFilter = size_filter.text
                         console.log(size_filter.text)
                     }

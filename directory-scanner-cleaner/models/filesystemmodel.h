@@ -16,11 +16,9 @@ class FileSystemModel : public QAbstractItemModel
     Q_OBJECT
 
     Q_PROPERTY(QItemSelectionModel* itemSelectionModel READ getItemSelectionModel NOTIFY itemSelectionModelChanged)
-    Q_PROPERTY(QModelIndex rootIndex MEMBER m_RootIndex)
 
 public:
     FileSystemModel();
-    //FileSystemModel(const QString &rootPath);
 
     ~FileSystemModel();
 
@@ -34,7 +32,6 @@ public:
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
     void setupModel(const QString &rootPath, uint recursionDepth);
-    QString getRootPath();
     void selectFile(QModelIndex index);
 
     FileSystemManager *getFileSystemManager() const;
@@ -42,7 +39,7 @@ public:
     template<typename UnaryPredicate>
     void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
     template<typename UnaryPredicate>
-    void selectFilesIfAsync(QModelIndex root, UnaryPredicate pred);
+    void selectFilesIfAsync(/*QModelIndex root, */UnaryPredicate pred);
 
 private:
     QModelIndex m_RootIndex;
@@ -75,8 +72,10 @@ public slots:
 };
 
 template<typename UnaryPredicate>
-void FileSystemModel::selectFilesIfAsync(QModelIndex root, UnaryPredicate pred)
+void FileSystemModel::selectFilesIfAsync(UnaryPredicate pred)
 {
+    QModelIndex root = createIndex(0,0, m_FilesystemRootElement);
+
     if(m_SelectionFuture != nullptr){
         delete m_SelectionFuture;
         m_SelectionFuture = nullptr;

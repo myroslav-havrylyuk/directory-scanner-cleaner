@@ -10,6 +10,7 @@
 FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     : m_FileSystemModel(fileSystemModel)
 {
+    connectToFileSystemModel();
 }
 
 void FileSystemController::setActivePath(const QString &newActivePath, uint recursionDepth)
@@ -67,12 +68,7 @@ void FileSystemController::setSizeFilter(const QString &filterValue)
     if(m_FileSystemModel.getRootIndex().internalPointer() != nullptr)
     {
         quint64 value = m_SizeFilter * 1024 * 1024;
-        if(!connectionSet)
-        {
-            connectToFileSystemModel();
-            connectionSet = true;
-        }
-        m_FileSystemModel.selectFilesIfAsync(m_FileSystemModel.getRootIndex(), [value](FileTreeElement* x){ return x->getFileSize() > value; });
+        m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
     }
 }
 

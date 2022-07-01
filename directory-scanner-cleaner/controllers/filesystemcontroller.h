@@ -42,7 +42,6 @@ private:
     QModelIndex m_CurrentRow;
     bool m_isSelectionStateChanged = false;
     double m_SizeFilter = 0;
-    bool connectionSet = false;
 
 public slots:
     void selectionEndedHandler();
