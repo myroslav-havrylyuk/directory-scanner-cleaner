@@ -65,6 +65,11 @@ void SettingsController::saveSettings()
     m_ConfigFileModel.writeSettings();
 }
 
+uint SettingsController::getRecursionDepth() const
+{
+    return m_RecursionDepth;
+}
+
 /*void SettingsController::setState(bool newState)
 {
     if(newState)

@@ -20,7 +20,9 @@ class SettingsController : public QQuickItem
         QString RecursionDepthToView() const;
         QString getHistoryPath();
 
-    signals:
+        uint getRecursionDepth() const;
+
+signals:
         void historyPathInvalid();
         void historyPathChanged();
         void recursionDepthChanged();

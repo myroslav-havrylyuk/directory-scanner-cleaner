@@ -9,7 +9,7 @@ FileSystemManager::FileSystemManager(QObject *parent)
 
 }
 
-void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
+void FileSystemManager::generateFileTreeAsync(const QString &rootPath, uint recursionDepth)
 {
     QString normalizedRootPath = QDir::cleanPath(rootPath);
     if (!QFile::exists(normalizedRootPath))
@@ -31,7 +31,7 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
     }
     m_GetInnerFilesFuture = new QFuture<FileTreeElement *>();
     m_GetInnerFilesWatcher = new QFutureWatcher<FileTreeElement *>();
-    *m_GetInnerFilesFuture = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, m_FilesystemRootElement);
+    *m_GetInnerFilesFuture = QtConcurrent::run(&FileSystemManager::getInnerFilesAsync, this, currentDir, m_FilesystemRootElement, recursionDepth);
     QObject::connect(m_GetInnerFilesWatcher, &QFutureWatcher<FileTreeElement *>::finished, this, &FileSystemManager::handleGetInnerFilesFinished);
     m_GetInnerFilesWatcher->setFuture(*m_GetInnerFilesFuture);
 
@@ -51,29 +51,33 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath)
     m_GetRootElementSizeWatcher->setFuture(*m_GetRootElementSizeFuture);
 }
 
-QList<FileTreeElement *> FileSystemManager::getInnerFiles(QPromise<FileTreeElement *> &promise, bool &outWasCanceled, const QDir &currenDir, FileTreeElement *parent)
+QList<FileTreeElement *> FileSystemManager::getInnerFiles(QPromise<FileTreeElement *> &promise, bool &outWasCanceled, const QDir &currenDir, FileTreeElement *parent, uint recursionDepth, uint currentRecursionDepth)
 {
+    qDebug() << "FileSystemManager: current recursion depth:" << currentRecursionDepth;
     QList<FileTreeElement *> innerFiles;
     bool wasCanceled = false;
-    for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
-    {
-        if(promise.isCanceled()){
-            wasCanceled = true;
-            break;
-        }
-        FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
-
-        if (fileElement.isDir())
+    if(currentRecursionDepth <= recursionDepth){
+        ++currentRecursionDepth;
+        for (auto &fileElement : currenDir.entryInfoList(QDir::NoDot | QDir::NoDotDot | QDir::AllEntries))
         {
-            QList<FileTreeElement *> innerFiles = getInnerFiles(promise, wasCanceled, QDir(fileElement.absoluteFilePath()), fileTreeElement);
-            if(wasCanceled){
+            if(promise.isCanceled()){
+                wasCanceled = true;
                 break;
             }
-            fileTreeElement->setChildElements(innerFiles);
-            fileTreeElement->setFileSize(getDirectorySize(fileElement.absoluteFilePath()));
-        }
+            FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
 
-        innerFiles.append(fileTreeElement);
+            if (fileElement.isDir())
+            {
+                QList<FileTreeElement *> innerFiles = getInnerFiles(promise, wasCanceled, QDir(fileElement.absoluteFilePath()), fileTreeElement, recursionDepth, currentRecursionDepth);
+                if(wasCanceled){
+                    break;
+                }
+                fileTreeElement->setChildElements(innerFiles);
+                fileTreeElement->setFileSize(getDirectorySize(fileElement.absoluteFilePath()));
+            }
+
+            innerFiles.append(fileTreeElement);
+        }
     }
     if(wasCanceled){
         innerFiles.clear();
@@ -82,7 +86,7 @@ QList<FileTreeElement *> FileSystemManager::getInnerFiles(QPromise<FileTreeEleme
     return innerFiles;
 }
 
-void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent)
+void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent, uint recursionDepth)
 {
     qDebug() << "Getting inner files in thread:" << QThread::currentThread();
     int counter = 0;
@@ -93,10 +97,10 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
         FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
         qDebug() << "currently reading:" << fileTreeElement->fileName();
 
-        if (fileElement.isDir())
+        if (recursionDepth > 0 && fileElement.isDir())
         {
             bool wasCanceled;
-            QList<FileTreeElement *> innerFiles = getInnerFiles(promise, wasCanceled, QDir(fileElement.absoluteFilePath()), fileTreeElement);
+            QList<FileTreeElement *> innerFiles = getInnerFiles(promise, wasCanceled, QDir(fileElement.absoluteFilePath()), fileTreeElement, recursionDepth, 1);
             if(wasCanceled){
                 break;
             }

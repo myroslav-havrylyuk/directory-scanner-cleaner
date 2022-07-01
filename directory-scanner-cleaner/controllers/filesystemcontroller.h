@@ -13,7 +13,7 @@ class FileSystemController : public QQuickItem
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString activePath READ ActivePath WRITE setActivePath NOTIFY activePathChanged)
+    Q_PROPERTY(QString activePath READ ActivePath NOTIFY activePathChanged)
     Q_PROPERTY(QModelIndex currentlySelectedIndex READ getCurrentlySelectedIndex WRITE setCurrentlySelectedIndex NOTIFY currentlySelectedIndexChanged)
     Q_PROPERTY(bool isSelectionStateChanged MEMBER m_isSelectionStateChanged NOTIFY selectionStateChanged)
     Q_PROPERTY(QString sizeFilter READ getSizeFilter WRITE setSizeFilter NOTIFY sizeFilterChanged)
@@ -22,7 +22,7 @@ public:
     FileSystemController(FileSystemModel &fileSystemModel);
 
     QString ActivePath() const;
-    void setActivePath(const QString &newActivePath);
+    void setActivePath(const QString &newActivePath, uint recursionDepth);
     void setCurrentlySelectedIndex(QModelIndex currentRow);
     QModelIndex getCurrentlySelectedIndex() const;
     void setSizeFilter(const QString &filterValue);

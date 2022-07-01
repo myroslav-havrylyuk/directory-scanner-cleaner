@@ -16,13 +16,6 @@ ApplicationWindow {
     palette.buttonText: "blue"
 
     Connections {
-        target: SettingsController
-        function onHistoryPathInvalid(){
-            warning_dialog.open();
-        }
-    }
-
-    Connections {
         target: FileSystemModel
         function onModelSetupStarted(){
             progress_dialog.open();
@@ -87,9 +80,12 @@ ApplicationWindow {
 
         Platform.FolderDialog {
             id: folder_dialog
+            objectName: "folder_dialog"
+
+            signal activePathChanged(string folder)
 
             onAccepted: {
-                FileSystemController.activePath = folder
+                folder_dialog.activePathChanged(folder)
             }
         }
 
@@ -127,7 +123,7 @@ ApplicationWindow {
                 text: FileSystemController.activePath // could be a different folder for Linux
 
                 Keys.onReturnPressed: {
-                    FileSystemController.activePath = text
+                    folder_dialog.activePathChanged(text)
                 }
             }
         }
@@ -317,6 +313,10 @@ ApplicationWindow {
         }
 
         Column {
+        Button {
+            id: delete_button
+            objectName: "delete_button"
+
             Layout.row: 3
             Layout.column: 1
             Layout.fillHeight: true
@@ -336,6 +336,10 @@ ApplicationWindow {
                     //bold: true
                     pixelSize: 16
                 }
+            signal deleteFiles()
+
+            onClicked: {
+                delete_button.deleteFiles()
             }
 
             Rectangle {

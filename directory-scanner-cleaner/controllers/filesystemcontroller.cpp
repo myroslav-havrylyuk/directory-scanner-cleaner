@@ -10,13 +10,9 @@
 FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     : m_FileSystemModel(fileSystemModel)
 {
-    QString initialRootPath = fileSystemModel.getRootPath();
-    if(!initialRootPath.isEmpty()){
-        setActivePath(initialRootPath);
-    }
 }
 
-void FileSystemController::setActivePath(const QString &newActivePath)
+void FileSystemController::setActivePath(const QString &newActivePath, uint recursionDepth)
 {
     qDebug() << "setActivePath function has been called";
     QString validActivePath = newActivePath;
@@ -33,13 +29,12 @@ void FileSystemController::setActivePath(const QString &newActivePath)
         if (activePath.exists())
         {
             m_ActivePath = validActivePath;
-            m_FileSystemModel.setupModel(m_ActivePath);
+            m_FileSystemModel.setupModel(m_ActivePath, recursionDepth);
             emit activePathChanged();
         } else {
             qDebug() << "invalid path has been entered";
             emit activePathInvalid();
         }
-    //}
 }
 
 void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {
