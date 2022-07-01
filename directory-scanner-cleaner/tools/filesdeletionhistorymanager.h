@@ -16,12 +16,10 @@ class FilesDeletionHistoryManager : public QObject {
 
 private:
 public:
-  enum DELETE_REASON { MANUALLY, DUPLICATE, LARGE, OLD };
-  Q_ENUM(DELETE_REASON)
   explicit FilesDeletionHistoryManager(QObject *parent = nullptr);
 
 public slots:
-  void updateHistory(QList<QString> files, DELETE_REASON reason,
+  void updateHistory(QList<QString> files, QString reason,
                      QString filePath);
 };
 

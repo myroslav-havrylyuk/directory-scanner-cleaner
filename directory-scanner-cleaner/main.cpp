@@ -10,20 +10,24 @@
 #include <QQuickView>
 
 QQmlApplicationEngine *gEngine;
-QGuiApplication *app;
+QGuiApplication *gApp;
+SettingsController *gSettingsController;
 
 int main(int argc, char *argv[])
 {
-    app = new QGuiApplication(argc, argv);
+    gApp = new QGuiApplication(argc, argv);
 
     qDebug() << "Main thread: " << QThread::currentThread();
     QQuickStyle::setStyle("Fusion");
 
     gEngine = new QQmlApplicationEngine();
 
+
+    ConfigFileHandler *handler = new ConfigFileHandler();
+    gSettingsController = new SettingsController(*handler);
     MainWindowController mainWindowController;
 
     //gEngine->load(url);
 
-    return app->exec();
+    return gApp->exec();
 }

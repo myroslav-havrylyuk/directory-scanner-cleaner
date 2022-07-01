@@ -14,19 +14,18 @@ MainWindowController::getFileDeletionHistoryManager() const {
 }
 
 MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
-    m_Handler = new ConfigFileHandler();
-    m_SettingsController = new SettingsController(*m_Handler);
 
     m_FileSystemModel = new FileSystemModel();
     m_FileSystemController = new FileSystemController(*m_FileSystemModel);
-    QString rootFilePath = app->applicationDirPath();
+    QString rootFilePath = gApp->applicationDirPath();
     setActivePath(rootFilePath);
     m_MainQmlContext = gEngine->rootContext();
     m_MainQmlContext->setContextProperty("FileSystemModel", m_FileSystemModel);
     m_MainQmlContext->setContextProperty("FileSystemController", m_FileSystemController);
     m_MainQmlContext->setContextProperty("MainWindowController", this);
 
-
+    // QObject *test = mainQmlContext->objectForName("SettingsController");
+    // qDebug() << ((SettingsController *)test)->getHistoryPath();
 
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlComponent mainWindowComponent(gEngine, url);
@@ -51,37 +50,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
 }
 
 void MainWindowController::openSettingsWindow() {
-
-    const QUrl url(u"qrc:/directory-scanner-cleaner/views/settingswindow.qml"_qs);
-    if (m_SettingsWindow == nullptr) {
-        m_SettingsWindowComponent = new QQmlComponent(gEngine, url);
-        m_SettingsQmlContext = new QQmlContext(gEngine->rootContext());
-        m_SettingsQmlContext->setContextProperty("SettingsController",
-                                                 m_SettingsController);
-        m_SettingsWindow = m_SettingsWindowComponent->create(m_SettingsQmlContext);
-    } else {
-        delete m_SettingsWindow;
-        m_SettingsWindow = nullptr;
-        delete m_SettingsWindowComponent;
-        m_SettingsWindowComponent = nullptr;
-        delete m_SettingsQmlContext;
-        m_SettingsQmlContext = nullptr;
-        delete m_Handler;
-        m_Handler = nullptr;
-        delete m_SettingsController;
-        m_SettingsController = nullptr;
-
-        m_SettingsWindowComponent = new QQmlComponent(gEngine, url);
-        m_Handler = new ConfigFileHandler();
-        m_SettingsController = new SettingsController(*m_Handler);
-        m_SettingsQmlContext = new QQmlContext(gEngine->rootContext());
-        m_SettingsQmlContext->setContextProperty("SettingsController",
-                                                 m_SettingsController);
-        m_SettingsWindow = m_SettingsWindowComponent->create(m_SettingsQmlContext);
-    }
-    QObject *saveButton = m_SettingsWindow->findChild<QObject *>("save_button");
-    QObject::connect(saveButton, SIGNAL(saveSettings()), m_SettingsController,
-                     SLOT(saveSettings()));
+    SettingsWindowController *settingsWindowController = new SettingsWindowController();
     qDebug() << "MainWindowController: openSettingsWindow func called";
 }
 
@@ -94,5 +63,5 @@ void MainWindowController::updateDeletionHistory() {
 
 void MainWindowController::setActivePath(QString activePath)
 {
-    m_FileSystemController->setActivePath(activePath, m_SettingsController->getRecursionDepth());
+    m_FileSystemController->setActivePath(activePath, gSettingsController->getRecursionDepth());
 }

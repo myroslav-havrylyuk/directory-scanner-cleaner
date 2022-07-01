@@ -4,6 +4,7 @@
 #include "models/filesystemmodel.h"
 #include "controllers/filesystemcontroller.h"
 #include "settingscontroller.h"
+#include "settingswindowcontroller.h"
 #include "tools/configfilehandler.h"
 #include "tools/filesdeletionhistorymanager.h"
 
@@ -15,7 +16,8 @@
 #include <QGuiApplication>
 
 extern QQmlApplicationEngine *gEngine;
-extern QGuiApplication *app;
+extern QGuiApplication *gApp;
+extern SettingsController *gSettingsController;
 
 class MainWindowController : public QObject
 {
@@ -23,11 +25,6 @@ class MainWindowController : public QObject
 
 private:
     QObject *m_MainWindow = nullptr;
-    QObject *m_SettingsWindow = nullptr;
-    QQmlComponent *m_SettingsWindowComponent = nullptr;
-    QQmlContext *m_SettingsQmlContext = nullptr;
-    SettingsController *m_SettingsController = nullptr;
-    ConfigFileHandler *m_Handler = nullptr;
 
     QQmlContext *m_MainQmlContext;
     FilesDeletionHistoryManager m_FileDeletionHistoryManager;
