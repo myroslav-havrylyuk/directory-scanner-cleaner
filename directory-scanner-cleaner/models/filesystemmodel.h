@@ -97,12 +97,13 @@ template<typename UnaryPredicate>
 void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred)
 {
     int row = 0;
-    qDebug() << indexToFileTreeElement(root)->fileName();
     if(pred(indexToFileTreeElement(root)))
         m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
     QModelIndex element = index(row, 0, root);
 
-    while(element.internalPointer() != nullptr)
+    qDebug() << indexToFileTreeElement(element)->fileName();
+
+    while(element.isValid())
     {
         if(pred(indexToFileTreeElement(element)))
         {
