@@ -4,14 +4,16 @@ import QtQuick.Layouts
 import Qt.labs.platform as Platform
 import QtQuick.Dialogs
 
-ApplicationWindow {
+Window {
     id: settings_window
     visible: true
     width: 700
     height: 300
     title: qsTr("Settings")
+    color: 'lightgrey'
     modality: Qt.ApplicationModal
-    palette.buttonText: "black"
+    palette.highlight: "blue"
+    palette.buttonText: "blue"
 
     Connections {
         target: SettingsController
@@ -32,11 +34,10 @@ ApplicationWindow {
     GridLayout {
         anchors.fill: parent
         anchors.margins: 39
-        rows: 5
+        rows: 4
         columns: 2
-        columnSpacing: 25
         rowSpacing: 10
-
+        columnSpacing: 25
 
         Text {
             Layout.row: 0
@@ -56,7 +57,7 @@ ApplicationWindow {
             Layout.column: 0
             Layout.fillWidth: true
             height: 24
-            //border.color: "black"
+            border.color: "black"
             border.width: 1
             clip: true
             TextEdit {
@@ -66,7 +67,6 @@ ApplicationWindow {
                     leftMargin: 3
                     topMargin: 3
                 }
-                selectByMouse: true
                 text: SettingsController.historyPath
 
                 Keys.onReturnPressed: {
@@ -80,6 +80,7 @@ ApplicationWindow {
 
             Layout.row: 1
             Layout.column: 1
+            implicitWidth: 90
 
             text: "Browse folder"
             onClicked: {
@@ -91,7 +92,6 @@ ApplicationWindow {
         Text {
             Layout.row: 2
             Layout.column: 0
-            Layout.topMargin: 10
             text: "Recursion depth for directory scanning:"
             font {
                 bold: true
@@ -104,7 +104,7 @@ ApplicationWindow {
             Layout.column: 0
             Layout.fillWidth: true
             height: 24
-            //border.color: "black"
+            border.color: "black"
             border.width: 1
             clip: true
             TextInput {
@@ -114,7 +114,6 @@ ApplicationWindow {
                     leftMargin: 3
                     topMargin: 3
                 }
-                selectByMouse: true
 
                 text: SettingsController.recursionDepth
 
@@ -132,6 +131,7 @@ ApplicationWindow {
         Button {
             id: save_button
             objectName: "save_button"
+            implicitWidth: 90
             Layout.row: 3
             Layout.column: 1
             Layout.alignment: Qt.AlignRight
@@ -144,11 +144,6 @@ ApplicationWindow {
                 SettingsController.recursionDepth = recursion_depth.text
                 save_button.saveSettings();
             }
-        }
-        Item{
-            //placeholder
-            Layout.row: 4
-            Layout.fillHeight: true
         }
     }
 

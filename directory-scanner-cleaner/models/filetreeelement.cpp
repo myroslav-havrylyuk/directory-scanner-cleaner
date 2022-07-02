@@ -2,10 +2,12 @@
 
 FileTreeElement::FileTreeElement(const QString &fileName,
                 quint64 fileSize,
+                QDate lastModificationDate,
                 FileTreeElement *parentElement,
                 QList<FileTreeElement *> childFiles)
     : m_FileName(fileName),
       m_FileSize(fileSize),
+      m_LastModificationDate(lastModificationDate),
       m_ChildFiles(childFiles),
       m_ParentElement(parentElement)
 {
@@ -99,3 +101,12 @@ const QString &FileTreeElement::fileName() const
     return m_FileName;
 }
 
+void FileTreeElement::setLastModificationDate(QDate lastModificationDate)
+{
+    m_LastModificationDate = lastModificationDate;
+}
+
+QDate FileTreeElement::getLastModificationDate()
+{
+    return m_LastModificationDate;
+}

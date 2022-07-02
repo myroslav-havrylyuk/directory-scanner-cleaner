@@ -12,8 +12,8 @@ ApplicationWindow {
     title: qsTr("Directory scanner & cleaner")
     //color: 'lightgrey'
     //Material.theme: Material.Dark
-    //palette.highlight: "violet"
-    palette.buttonText: "black"
+    palette.highlight: "blue"
+    palette.buttonText: "blue"
 
     Connections {
         target: FileSystemModel
@@ -122,7 +122,6 @@ ApplicationWindow {
             clip: true
             TextEdit {
                 id: current_directory_path_text_edit
-                selectByMouse: true
                 //color: 'white'
                 anchors{
                     fill: parent
@@ -138,7 +137,7 @@ ApplicationWindow {
         }
 
         Rectangle {
-            Layout.row: 2
+            Layout.row: 3
             Layout.column: 0
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -322,11 +321,10 @@ ApplicationWindow {
         }
 
         Column {
-            Layout.row: 2
+            Layout.row: 3
             Layout.column: 1
             Layout.fillHeight: true
             spacing: 10
-            Layout.topMargin: 5
 
             Text {
                 text: "Select files: "
@@ -334,14 +332,13 @@ ApplicationWindow {
                     //bold: true
                     pixelSize: 16
                 }
-                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Text {
                 text: "Larger then (in MB): "
                 font {
                     //bold: true
-                    pixelSize: 14
+                    pixelSize: 16
                 }
             }
 
@@ -357,7 +354,6 @@ ApplicationWindow {
                             leftMargin: 3
                             topMargin: 3
                         }
-                        selectByMouse: true
 
                         text: FileSystemController.sizeFilter
 

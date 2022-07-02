@@ -16,8 +16,8 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath, uint recu
         return ;
 
     QDir currentDir(normalizedRootPath);
-    m_FileTreeRoot = new FileTreeElement("", 0, nullptr);
-    m_FilesystemRootElement = new FileTreeElement(normalizedRootPath, 0, m_FileTreeRoot);
+    m_FileTreeRoot = new FileTreeElement("", 0, QDate(), nullptr);
+    m_FilesystemRootElement = new FileTreeElement(normalizedRootPath, 0, QDate(), m_FileTreeRoot);
     m_FileTreeRoot->appendChild(m_FilesystemRootElement);
     //getting inner files of root
 
@@ -64,7 +64,7 @@ QList<FileTreeElement *> FileSystemManager::getInnerFiles(QPromise<FileTreeEleme
                 wasCanceled = true;
                 break;
             }
-            FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
+            FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(),  fileElement.lastModified().date(), parent);
 
             if (fileElement.isDir())
             {
@@ -94,7 +94,7 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
     {
         if (promise.isCanceled())
             return;
-        FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), parent);
+        FileTreeElement *fileTreeElement = new FileTreeElement(fileElement.fileName(), fileElement.size(), fileElement.lastModified().date(), parent);
         qDebug() << "currently reading:" << fileTreeElement->fileName();
 
         if (recursionDepth > 0 && fileElement.isDir())
