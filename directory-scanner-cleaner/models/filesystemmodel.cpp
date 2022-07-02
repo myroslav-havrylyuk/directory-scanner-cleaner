@@ -176,7 +176,7 @@ void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
     if (m_FileTreeRoot != nullptr)
         m_FilesystemRootElement = m_FileTreeRoot->getChildElements().front();
 
-    m_ItemSelectionModel.clearSelection();
+    //m_ItemSelectionModel.clearSelection();
 
     emit endResetModel();
     emit modelSetupFinished();

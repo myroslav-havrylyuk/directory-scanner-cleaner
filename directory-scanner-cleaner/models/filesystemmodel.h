@@ -102,7 +102,7 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
         m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
     QModelIndex element = index(row, 0, root);
 
-    while(element.internalPointer() != nullptr)
+    while(element.isValid())
     {
         if(pred(indexToFileTreeElement(element)))
         {

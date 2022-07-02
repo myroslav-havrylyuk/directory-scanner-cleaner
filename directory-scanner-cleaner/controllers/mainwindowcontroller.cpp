@@ -47,6 +47,9 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
             m_MainWindow->findChild<QObject *>("folder_dialog");
     QObject::connect(folderDialog, SIGNAL(activePathChanged(QString)),
                      this, SLOT(setActivePath(QString)));
+    QObject *filterButton = m_MainWindow->findChild<QObject *>("filter_button");
+    QObject::connect(filterButton, SIGNAL(selectByFilter()), m_FileSystemController,
+                     SLOT(selectByFilter()));
 }
 
 void MainWindowController::openSettingsWindow() {

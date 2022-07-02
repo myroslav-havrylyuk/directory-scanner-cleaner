@@ -31,6 +31,8 @@ public:
     void setDaysAfterModificationFilter(const QString &filterValue);
     QString getDaysAfterModificationFilter();
     void connectToFileSystemModel();
+    void selectBySize();
+    void selectByDate();
 
 signals:
     void activePathInvalid();
@@ -47,9 +49,11 @@ private:
     bool m_isSelectionStateChanged = false;
     double m_SizeFilter = 0;
     int m_DaysAfterModificationFilter = 0;
+    bool selectionFlag = false;
 
 public slots:
     void selectionEndedHandler();
+    void selectByFilter();
 };
 
 #endif // FILESYSTEMCONTROLLER_H

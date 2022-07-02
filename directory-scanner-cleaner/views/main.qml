@@ -390,15 +390,20 @@ ApplicationWindow {
 
                 Button {
                     id: filter_button
+                    objectName: "filter_button"
                     width: 90
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text: "Select"
 
+                    signal selectByFilter()
+
                     onClicked: {
                         FileSystemController.sizeFilter = size_filter.text
+                                                FileSystemController.daysAfterModificationFilter = modification_days_filter.text
                         console.log(size_filter.text)
-                        FileSystemController.daysAfterModificationFilter = modification_days_filter.text
+
+                        filter_button.selectByFilter()
                         console.log(modification_days_filter.text)
                     }
                 }
