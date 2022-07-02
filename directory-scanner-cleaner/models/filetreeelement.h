@@ -17,7 +17,6 @@ class FileTreeElement
 public:
     FileTreeElement(const QString &fileName,
                     quint64 fileSize,
-                    QDate lastModificationDate,
                     FileTreeElement *parentElement,
                     QList<FileTreeElement *> childFiles = {});
 
@@ -35,13 +34,10 @@ public:
     void setFileSize(quint64 fileSize);
     quint64 getFileSize() const;
     QString formattedSize() const;
-    void setLastModificationDate(QDate lastModificationDate);
-    QDate getLastModificationDate();
 
 private:
     QString m_FileName;
     quint64 m_FileSize;
-    QDate m_LastModificationDate;
     QList<FileTreeElement *> m_ChildFiles;
     FileTreeElement *m_ParentElement;
 };

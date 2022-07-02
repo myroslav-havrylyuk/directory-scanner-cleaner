@@ -17,7 +17,6 @@ class FileSystemController : public QQuickItem
     Q_PROPERTY(QModelIndex currentlySelectedIndex READ getCurrentlySelectedIndex WRITE setCurrentlySelectedIndex NOTIFY currentlySelectedIndexChanged)
     Q_PROPERTY(bool isSelectionStateChanged MEMBER m_isSelectionStateChanged NOTIFY selectionStateChanged)
     Q_PROPERTY(QString sizeFilter READ getSizeFilter WRITE setSizeFilter NOTIFY sizeFilterChanged)
-    Q_PROPERTY(QString daysAfterModificationFilter READ getDaysAfterModificationFilter WRITE setDaysAfterModificationFilter NOTIFY daysAfterModificationFilterChanged)
 
 public:
     FileSystemController(FileSystemModel &fileSystemModel);
@@ -40,7 +39,6 @@ signals:
     void currentlySelectedIndexChanged();
     void selectionStateChanged();
     void sizeFilterChanged();
-    void daysAfterModificationFilterChanged();
 
 private:
     QString m_ActivePath;
@@ -48,7 +46,6 @@ private:
     QModelIndex m_CurrentRow;
     bool m_isSelectionStateChanged = false;
     double m_SizeFilter = 0;
-    int m_DaysAfterModificationFilter = 0;
     bool selectionFlag = false;
 
 public slots:
