@@ -5,6 +5,7 @@
 #include <QAbstractItemModel>
 #include <QFileInfo>
 #include <QDir>
+#include <QMutex>
 #include <QPromise>
 
 #include "QtConcurrent/QtConcurrent"
@@ -40,7 +41,9 @@ public:
     template<typename UnaryPredicate>
     void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
     template<typename UnaryPredicate>
-    void selectFilesIfAsync(/*QModelIndex root, */UnaryPredicate pred);
+    void selectFilesBySizeIfAsync(UnaryPredicate pred);
+    template<typename UnaryPredicate>
+    void selectFilesByDateIfAsync(UnaryPredicate pred);
 
 private:
     QItemSelectionModel m_ItemSelectionModel;
@@ -51,8 +54,12 @@ private:
     void connectToFileSystemManager();
     QItemSelectionModel *getItemSelectionModel();
 
-    QFutureWatcher<void> *m_SelectionWatcher = nullptr;
-    QFuture<void> *m_SelectionFuture = nullptr;
+    QFutureWatcher<void> *m_SelectionBySizeWatcher = nullptr;
+    QFuture<void> *m_SelectionBySizeFuture = nullptr;
+    QFutureWatcher<void> *m_SelectionByDateWatcher = nullptr;
+    QFuture<void> *m_SelectionByDateFuture = nullptr;
+
+    QMutex mutex;
 
 signals:
     void modelSetupStarted(const QString &rootPath);
@@ -61,9 +68,10 @@ signals:
     void setupModelCanceled();
     void itemSelectionModelChanged();
 
-    void selectionStarted();
-    void selectionFinished();
-
+    void selectionBySizeStarted();
+    void selectionBySizeFinished();
+    void selectionByDateStarted();
+    void selectionByDateFinished();
 
 public slots:
     void fileTreeGeneratedHandler(FileTreeElement * fileTreeRoot);
@@ -72,34 +80,63 @@ public slots:
 };
 
 template<typename UnaryPredicate>
-void FileSystemModel::selectFilesIfAsync(UnaryPredicate pred)
+void FileSystemModel::selectFilesByDateIfAsync(UnaryPredicate pred)
 {
     QModelIndex root = createIndex(0,0, m_FilesystemRootElement);
 
-    if(m_SelectionFuture != nullptr){
-        delete m_SelectionFuture;
-        m_SelectionFuture = nullptr;
+    if(m_SelectionByDateFuture != nullptr){
+        delete m_SelectionByDateFuture;
+        m_SelectionByDateFuture = nullptr;
     }
-    if(m_SelectionWatcher != nullptr){
-        delete m_SelectionWatcher;
-        m_SelectionWatcher = nullptr;
+    if(m_SelectionByDateWatcher != nullptr){
+        delete m_SelectionByDateWatcher;
+        m_SelectionByDateWatcher = nullptr;
     }
 
-    emit selectionStarted();
-    m_SelectionFuture = new QFuture<void>();
-    m_SelectionWatcher = new QFutureWatcher<void>();
-    *m_SelectionFuture = QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
-    QObject::connect(m_SelectionWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionFinished);
-    m_SelectionWatcher->setFuture(*m_SelectionFuture);
+    emit selectionByDateStarted();
+    m_SelectionByDateFuture = new QFuture<void>();
+    m_SelectionByDateWatcher = new QFutureWatcher<void>();
+    *m_SelectionByDateFuture = QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
+    QObject::connect(m_SelectionByDateWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionByDateFinished);
+    m_SelectionByDateWatcher->setFuture(*m_SelectionByDateFuture);
+}
+
+template<typename UnaryPredicate>
+void FileSystemModel::selectFilesBySizeIfAsync(UnaryPredicate pred)
+{
+    QModelIndex root = createIndex(0,0, m_FilesystemRootElement);
+
+    if(m_SelectionBySizeFuture != nullptr){
+        delete m_SelectionBySizeFuture;
+        m_SelectionBySizeFuture = nullptr;
+    }
+    if(m_SelectionBySizeWatcher != nullptr){
+        delete m_SelectionBySizeWatcher;
+        m_SelectionBySizeWatcher = nullptr;
+    }
+
+    emit selectionBySizeStarted();
+    m_SelectionBySizeFuture = new QFuture<void>();
+    m_SelectionBySizeWatcher = new QFutureWatcher<void>();
+    *m_SelectionBySizeFuture = QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
+    QObject::connect(m_SelectionBySizeWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionBySizeFinished);
+    m_SelectionBySizeWatcher->setFuture(*m_SelectionBySizeFuture);
+
+
 }
 
 template<typename UnaryPredicate>
 void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred)
 {
     int row = 0;
-    qDebug() << indexToFileTreeElement(root)->fileName();
+
     if(pred(indexToFileTreeElement(root)))
+    {
+        mutex.lock();
         m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
+        mutex.unlock();
+    }
+
     QModelIndex element = index(row, 0, root);
 
     while(element.isValid())
@@ -109,7 +146,11 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
             if(hasChildren(element))
                 selectFilesIf(promise, element, pred);
             else
+            {
+                mutex.lock();
                 m_ItemSelectionModel.select(element, QItemSelectionModel::Select);
+                mutex.unlock();
+            }
         }
         ++row;
         element = index(row, 0, root);

@@ -52,7 +52,8 @@ private:
     bool selectionFlag = false;
 
 public slots:
-    void selectionEndedHandler();
+    void selectionBySizeEndedHandler();
+    void selectionByDateEndedHandler();
     void selectByFilter();
 };
 

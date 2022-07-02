@@ -28,12 +28,20 @@ ApplicationWindow {
         function onSetupModelCanceled(){
             cancelation_dialog.close();
         }
-        function onSelectionStarted(){
-            selection_progress_dialog.open();
+        function onSelectionBySizeStarted(){
+            selection_by_size_progress_dialog.open();
             console.log('opened selection progress dialog');
         }
-        function onSelectionFinished(){
-            selection_progress_dialog.close();
+        function onSelectionBySizeFinished(){
+            selection_by_size_progress_dialog.close();
+            console.log('closed selection progress dialog');
+        }
+        function onSelectionByDateStarted(){
+            selection_by_date_progress_dialog.open();
+            console.log('opened selection progress dialog');
+        }
+        function onSelectionByDateFinished(){
+            selection_by_date_progress_dialog.close();
             console.log('closed selection progress dialog');
         }
     }
@@ -383,7 +391,7 @@ ApplicationWindow {
 
                         validator: IntValidator {
                             bottom: 0
-                            top: 500
+                            top: 1000
                         }
                     }
                 }
@@ -400,7 +408,7 @@ ApplicationWindow {
 
                     onClicked: {
                         FileSystemController.sizeFilter = size_filter.text
-                                                FileSystemController.daysAfterModificationFilter = modification_days_filter.text
+                        FileSystemController.daysAfterModificationFilter = modification_days_filter.text
                         console.log(size_filter.text)
 
                         filter_button.selectByFilter()
@@ -438,7 +446,18 @@ ApplicationWindow {
         }
 
         Dialog {
-            id: selection_progress_dialog
+            id: selection_by_size_progress_dialog
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("Selecting files...")
+            contentItem: ProgressBar {
+                indeterminate: true
+            }
+            modal: true
+        }
+
+        Dialog {
+            id: selection_by_date_progress_dialog
             anchors.centerIn: parent
             closePolicy: Popup.CloseOnEscape
             title: qsTr("Selecting files...")

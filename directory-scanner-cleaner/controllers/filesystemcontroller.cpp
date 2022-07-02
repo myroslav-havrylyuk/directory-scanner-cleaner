@@ -77,30 +77,31 @@ void FileSystemController::selectBySize()
     if(!m_ActivePath.isEmpty() && m_SizeFilter >= 0)
     {
         quint64 value = m_SizeFilter * 1024 * 1024;
-        m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
+        m_FileSystemModel.selectFilesBySizeIfAsync([value](FileTreeElement* x){ return x->getFileSize() > value; });
         selectionFlag = true;
     }
-    else
-        selectByDate();
 }
 
 void FileSystemController::connectToFileSystemModel()
 {
-    QObject::connect(&m_FileSystemModel, &FileSystemModel::selectionFinished, this, &FileSystemController::selectionEndedHandler);
+    QObject::connect(&m_FileSystemModel, &FileSystemModel::selectionBySizeFinished, this, &FileSystemController::selectionBySizeEndedHandler);
+    QObject::connect(&m_FileSystemModel, &FileSystemModel::selectionByDateFinished, this, &FileSystemController::selectionByDateEndedHandler);
 }
 
-void FileSystemController::selectionEndedHandler()
+void FileSystemController::selectionBySizeEndedHandler()
 {
     qDebug() << QTime::currentTime() << "handled selectionEnded signal in FileSystemModel";
 
     m_isSelectionStateChanged = true;
     emit selectionStateChanged();
+}
 
-    if(selectionFlag)
-    {
-        selectByDate();
-        selectionFlag = false;
-    }
+void FileSystemController::selectionByDateEndedHandler()
+{
+    qDebug() << QTime::currentTime() << "handled selectionEnded signal in FileSystemModel";
+
+    m_isSelectionStateChanged = true;
+    emit selectionStateChanged();
 }
 
 QString FileSystemController::getSizeFilter()
@@ -125,7 +126,7 @@ void FileSystemController::selectByDate()
     if(!m_ActivePath.isEmpty() && m_DaysAfterModificationFilter != -1)
     {
         int value = m_DaysAfterModificationFilter;
-        m_FileSystemModel.selectFilesIfAsync([value](FileTreeElement* x){ return ((QDate::currentDate().toJulianDay() - x->getLastModificationDate().toJulianDay()) > value); });
+        m_FileSystemModel.selectFilesByDateIfAsync([value](FileTreeElement* x){ return ((QDate::currentDate().toJulianDay() - x->getLastModificationDate().toJulianDay()) > value); });
     }
 }
 
@@ -138,5 +139,5 @@ QString FileSystemController::getDaysAfterModificationFilter()
 void FileSystemController::selectByFilter()
 {
     selectBySize();
-
+    selectByDate();
 }
