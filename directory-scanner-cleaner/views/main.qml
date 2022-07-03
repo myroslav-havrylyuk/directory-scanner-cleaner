@@ -50,12 +50,12 @@ ApplicationWindow {
             console.log('closed selection progress dialog');
         }
         function onFileDeletionStarted(){
-            deletion_reason_dialog.open()
-            console.log('opened deletion reason dialog');
+            deletion_dialog.open()
+            console.log('opened deletion dialog');
         }
         function onFileDeletionFinished(){
-            deletion_reason_dialog.close()
-            console.log('closed deletion reason dialog');
+            deletion_dialog.close()
+            console.log('closed deletion dialog');
         }
     }
 
@@ -450,7 +450,7 @@ ApplicationWindow {
             id: selection_by_date_progress_dialog
             anchors.centerIn: parent
             closePolicy: Popup.CloseOnEscape
-            title: qsTr("Selecting files...")
+            title: qsTr("Selecting file...")
             contentItem: ProgressBar {
                 indeterminate: true
             }
@@ -482,6 +482,18 @@ ApplicationWindow {
             anchors.centerIn: parent
             closePolicy: Popup.NoAutoClose
             title: qsTr("Waiting for cancelation...")
+            contentItem: ProgressBar {
+                indeterminate: true
+            }
+            modal: true
+        }
+
+        Dialog {
+            id: deletion_dialog
+            objectName: "deletion_dialog"
+            anchors.centerIn: parent
+            closePolicy: Popup.NoAutoClose
+            title: qsTr("Deleting files...")
             contentItem: ProgressBar {
                 indeterminate: true
             }
