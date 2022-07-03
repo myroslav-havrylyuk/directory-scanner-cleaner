@@ -27,6 +27,8 @@ qt_add_executable(appdirectory-scanner-cleaner
 	models/filesystemmodel.cpp
 	models/filetreeelement.h
 	models/filetreeelement.cpp
+        models/deletionreasonsstringmodel.h
+        models/deletionreasonsstringmodel.cpp
 )
 
 qt_add_qml_module(appdirectory-scanner-cleaner

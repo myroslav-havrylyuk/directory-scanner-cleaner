@@ -38,6 +38,13 @@ public:
     void setLastModificationDate(QDate lastModificationDate);
     QDate getLastModificationDate();
     int row() const;
+    QString getPathPrefix() const;
+    QString getAbsoluteFilename() const;
+    QList<QString> getAllFilenamesUnder() const;
+    void removeChildAt(int index);
+
+private:
+    void fillFilenameList(const FileTreeElement *parent, QList<QString> &filenameList) const;
 
 private:
     QString m_FileName;

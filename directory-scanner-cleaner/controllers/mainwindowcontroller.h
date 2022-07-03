@@ -43,7 +43,7 @@ signals:
 
 public slots:
     void openSettingsWindow();
-    void updateDeletionHistory();
+    void updateDeletionHistory(const QList<QString> &deletedFilesList, const QString &fileDeletionReason);
     void setActivePath(QString activePath);
 };
 

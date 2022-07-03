@@ -5,12 +5,20 @@
 #include <QAbstractItemModel>
 #include <QFileInfo>
 #include <QDir>
+#include <QMap>
 #include <QMutex>
 #include <QPromise>
 
 #include "QtConcurrent/QtConcurrent"
 #include "filetreeelement.h"
 #include "tools/filesystemmanager.h"
+#include "models/deletionreasonsstringmodel.h"
+
+enum class DeletionReason {
+    FILE_SIZE,
+    FILE_OLDNESS,
+    OTHER
+};
 
 class FileSystemModel : public QAbstractItemModel
 {
@@ -31,11 +39,16 @@ public:
     virtual int rowCount(const QModelIndex &parent) const;
     virtual int columnCount(const QModelIndex &parent) const;
     virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual bool removeRow(int row, const QModelIndex &parent);
     bool hasChildren(const QModelIndex &parent) const;
     bool hasIndex(int row, int column, const QModelIndex &parent) const;
     void setupModel(const QString &rootPath, uint recursionDepth);
     QString getRootPath();
-    void selectFile(QModelIndex index);
+    void selectFileManually(QModelIndex index);
+    Q_INVOKABLE void deleteSelectedFiles();
+    void deleteSelectedFiles(QPromise<QList<QString> > &promise);
+    void handleDeleteSelectedFilesFinished();
+    DeletionReasonsStringModel *getDeletionReasonsStringModel();
 
     FileSystemManager *getFileSystemManager() const;
     template<typename UnaryPredicate>
@@ -59,6 +72,11 @@ private:
     QFutureWatcher<void> *m_SelectionByDateWatcher = nullptr;
     QFuture<void> *m_SelectionByDateFuture = nullptr;
 
+    DeletionReasonsStringModel m_DeletionReasonsStringModel;
+    QFuture<QList<QString> > m_DeleteFilesFuture;
+    QFutureWatcher<QList<QString> > m_DeleteFilesFutureWatcher;
+    QMap<DeletionReason, QString> m_DeletionReasons;
+
     QMutex mutex;
 
 signals:
@@ -72,11 +90,15 @@ signals:
     void selectionBySizeFinished();
     void selectionByDateStarted();
     void selectionByDateFinished();
+    void fileDeletionStarted();
+    void fileDeletionFinished();
+    void fileDeletionFinished(const QList<QString> &filesDeleted, const QString &fileDeletionReason);
 
 public slots:
     void fileTreeGeneratedHandler(FileTreeElement * fileTreeRoot);
     void cancelSetupModelHandler();
     void setupModelCanceledHandler();
+    void mockHandler();
 };
 
 template<typename UnaryPredicate>
@@ -92,6 +114,9 @@ void FileSystemModel::selectFilesByDateIfAsync(UnaryPredicate pred)
         delete m_SelectionByDateWatcher;
         m_SelectionByDateWatcher = nullptr;
     }
+
+    m_DeletionReasonsStringModel.
+            setInitialDeletionReason(m_DeletionReasons[DeletionReason::FILE_OLDNESS]);
 
     emit selectionByDateStarted();
     m_SelectionByDateFuture = new QFuture<void>();
@@ -114,6 +139,9 @@ void FileSystemModel::selectFilesBySizeIfAsync(UnaryPredicate pred)
         delete m_SelectionBySizeWatcher;
         m_SelectionBySizeWatcher = nullptr;
     }
+
+    m_DeletionReasonsStringModel.
+            setInitialDeletionReason(m_DeletionReasons[DeletionReason::FILE_SIZE]);
 
     emit selectionBySizeStarted();
     m_SelectionBySizeFuture = new QFuture<void>();

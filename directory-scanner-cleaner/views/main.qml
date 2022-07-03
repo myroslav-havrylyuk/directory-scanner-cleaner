@@ -49,6 +49,14 @@ ApplicationWindow {
             selection_by_date_progress_dialog.close();
             console.log('closed selection progress dialog');
         }
+        function onFileDeletionStarted(){
+            deletion_reason_dialog.open()
+            console.log('opened deletion reason dialog');
+        }
+        function onFileDeletionFinished(){
+            deletion_reason_dialog.close()
+            console.log('closed deletion reason dialog');
+        }
     }
 
     MenuBar{
@@ -407,9 +415,9 @@ ApplicationWindow {
                     width: 90
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "Delete"
-                    signal deleteFiles()
+
                     onClicked: {
-                        delete_button.deleteFiles()
+                        deletion_reason_dialog.open()
                     }
                 }
             }
@@ -477,6 +485,52 @@ ApplicationWindow {
             contentItem: ProgressBar {
                 indeterminate: true
             }
+            modal: true
+        }
+
+        Dialog {
+            id: deletion_reason_dialog
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("Choosing deletion reason")
+
+            ColumnLayout {
+
+                Text {
+                    Layout.alignment: Qt.AlignLeft
+                    text: "Please, select a deletion reason:"
+                }
+
+                ComboBox {
+                    Layout.alignment: Qt.AlignHCenter
+                    id: deletion_reason_combobox
+                    textRole: "display"
+                    model: DeletionReasonsStringModel
+                }
+
+                RowLayout {
+                    spacing: 30
+                    Layout.alignment: Qt.AlignHCenter
+
+                    Button {
+                       text: "Cancel"
+                       onClicked: {
+                           deletion_reason_dialog.close()
+                       }
+                    }
+
+                    Button {
+                        text: "Delete"
+                        onClicked: {
+                            console.log(deletion_reason_combobox.currentText)
+                            DeletionReasonsStringModel.activeDeletionReason = deletion_reason_combobox.currentText
+                            deletion_reason_dialog.close()
+                            FileSystemModel.deleteSelectedFiles()
+                        }
+                    }
+                }
+            }
+
             modal: true
         }
     }

@@ -19,6 +19,7 @@ public:
     void generateFileTreeAsync(const QString &rootPath, uint recursionDepth);
     quint64 getDirectorySize(const QString &directory);
     void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);
+    bool deleteFile(const QString &filename);
 
 private:
     class FILE_TREE_GENERATION_FLAGS{

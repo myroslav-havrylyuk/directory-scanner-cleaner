@@ -21,6 +21,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     setActivePath(rootFilePath);
     m_MainQmlContext = gEngine->rootContext();
     m_MainQmlContext->setContextProperty("FileSystemModel", m_FileSystemModel);
+    m_MainQmlContext->setContextProperty("DeletionReasonsStringModel", m_FileSystemModel->getDeletionReasonsStringModel());
     m_MainQmlContext->setContextProperty("FileSystemController", m_FileSystemController);
     m_MainQmlContext->setContextProperty("MainWindowController", this);
 
@@ -41,8 +42,10 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     QObject::connect(settingsMenuItem, SIGNAL(openSettingsWindow()),
                      this, SLOT(openSettingsWindow()));
     QObject *deleteButton = m_MainWindow->findChild<QObject *>("delete_button");
-    QObject::connect(deleteButton, SIGNAL(deleteFiles()), this,
-                     SLOT(updateDeletionHistory()));
+
+    QObject::connect(m_FileSystemModel, QOverload<const QList<QString> &, const QString &>::of(&FileSystemModel::fileDeletionFinished),
+                     this, &MainWindowController::updateDeletionHistory);
+
     QObject *folderDialog =
             m_MainWindow->findChild<QObject *>("folder_dialog");
     QObject::connect(folderDialog, SIGNAL(activePathChanged(QString)),
@@ -57,10 +60,10 @@ void MainWindowController::openSettingsWindow() {
     qDebug() << "MainWindowController: openSettingsWindow func called";
 }
 
-void MainWindowController::updateDeletionHistory() {
+void MainWindowController::updateDeletionHistory(const QList<QString> &deletedFilesList, const QString &fileDeletionReason) {
     m_FileDeletionHistoryManager.updateHistory(
-                QList<QString>{"test file 1.docx", "test file 2.pdf"},
-                "reason",
+                deletedFilesList,
+                fileDeletionReason,
                 gSettingsController->getHistoryPath()+"/filesDeletionHistory"+" - "+QDate::currentDate().toString("dd.MM.yyyy")+".json");
 }
 

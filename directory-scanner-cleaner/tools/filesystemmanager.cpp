@@ -194,3 +194,22 @@ void FileSystemManager::getDirectorySizeAsync(QPromise<quint64> &promise, const 
         promise.addResult(size);
     }
 }
+
+bool FileSystemManager::deleteFile(const QString &filename)
+{
+    QFileInfo fileToDeleteInfo(filename);
+    if (!fileToDeleteInfo.exists())
+        return false;
+
+    bool isRemoved = false;
+    if (fileToDeleteInfo.isDir())
+    {
+        QDir directoryToDelete(filename);
+        isRemoved = directoryToDelete.removeRecursively();
+    } else {
+        QFile fileToDelete(filename);
+        isRemoved = fileToDelete.remove();
+    }
+
+    return isRemoved;
+}

@@ -45,7 +45,7 @@ void FileSystemController::setCurrentlySelectedIndex(QModelIndex currentRow) {
     m_CurrentRow = currentRow;
     emit currentlySelectedIndexChanged();
 
-    m_FileSystemModel.selectFile(m_CurrentRow);
+    m_FileSystemModel.selectFileManually(m_CurrentRow);
 
     m_isSelectionStateChanged = true;
     emit selectionStateChanged();

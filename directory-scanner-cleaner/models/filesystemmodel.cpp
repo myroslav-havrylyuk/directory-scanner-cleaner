@@ -2,9 +2,18 @@
 
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr),
-      m_FilesystemRootElement(nullptr)
+      m_FilesystemRootElement(nullptr),
+      m_DeletionReasonsStringModel(this)
 {
     m_ItemSelectionModel.setModel(this);
+
+    m_DeletionReasons[DeletionReason::FILE_SIZE] = "File size";
+    m_DeletionReasons[DeletionReason::FILE_OLDNESS] = "File oldness";
+    m_DeletionReasons[DeletionReason::OTHER] = "Other";
+
+    m_DeletionReasonsStringModel.setStringList(m_DeletionReasons.values());
+
+    QObject::connect(&m_DeleteFilesFutureWatcher, &QFutureWatcher< QList<QString> >::finished, this, &FileSystemModel::handleDeleteSelectedFilesFinished);
 }
 
 //Probably should not be used, as it may cause unhandled signals.
@@ -104,6 +113,19 @@ QVariant FileSystemModel::data(const QModelIndex &index, int role) const
                                         : fileTreeElement->getData(role);
 }
 
+bool FileSystemModel::removeRow(int row, const QModelIndex &parent)
+{
+    FileTreeElement *parentItem = indexToFileTreeElement(parent);
+    if (!parentItem)
+        return false;
+
+    beginRemoveRows(parent, row, row);
+    parentItem->removeChildAt(row);
+    endRemoveRows();
+
+    return true;
+}
+
 bool FileSystemModel::hasChildren(const QModelIndex &parent) const
 {
 
@@ -128,8 +150,11 @@ QString FileSystemModel::getRootPath()
     return m_FilesystemRootElement ? m_FilesystemRootElement->fileName() : QString();
 }
 
-void FileSystemModel::selectFile(QModelIndex index)
+void FileSystemModel::selectFileManually(QModelIndex index)
 {
+    m_DeletionReasonsStringModel.
+            setInitialDeletionReason(m_DeletionReasons[DeletionReason::OTHER]);
+
     m_ItemSelectionModel.select(index, QItemSelectionModel::Toggle);
 }
 
@@ -170,6 +195,11 @@ QItemSelectionModel *FileSystemModel::getItemSelectionModel() {
     return &m_ItemSelectionModel;
 }
 
+DeletionReasonsStringModel *FileSystemModel::getDeletionReasonsStringModel()
+{
+    return &m_DeletionReasonsStringModel;
+}
+
 void FileSystemModel::fileTreeGeneratedHandler(FileTreeElement *fileTreeRoot)
 {
     qDebug() << QTime::currentTime() << "handled fileTreeGenerated signal in FileSystemModel";
@@ -202,4 +232,78 @@ FileTreeElement *FileSystemModel::indexToFileTreeElement(const QModelIndex &inde
         return m_FileTreeRoot;
 
     return static_cast<FileTreeElement *>(index.internalPointer());
+}
+
+void FileSystemModel::handleDeleteSelectedFilesFinished()
+{
+    QList<QString> filesDeleted = m_DeleteFilesFuture.results().front();
+    emit fileDeletionFinished(filesDeleted, m_DeletionReasonsStringModel.getActiveDeletionReason());
+    emit fileDeletionFinished();
+}
+
+void FileSystemModel::mockHandler()
+{
+}
+
+void FileSystemModel::deleteSelectedFiles()
+{
+    if (m_FileSystemManager == nullptr)
+        return;
+
+    // Fixes unpecified signal catching for QAbstractItemModel which is not thread-safe by default.
+    // If bad timing occurs(which happens pretty often) we will end up with invalid tree view displayed.
+    // Sole purpose of that connect is to ensure handling of signal emmited by beginRemoveRows() in UI thread
+    // before the next line executes which deletes data from model.
+    connect(this, &QAbstractItemModel::rowsAboutToBeRemoved,
+            this, &FileSystemModel::mockHandler,
+            static_cast<Qt::ConnectionType>(Qt::BlockingQueuedConnection | Qt::UniqueConnection));
+
+    m_DeleteFilesFuture = QtConcurrent::run(QOverload<QPromise<QList<QString>> &>::of(&FileSystemModel::deleteSelectedFiles), this);
+    m_DeleteFilesFutureWatcher.setFuture(m_DeleteFilesFuture);
+}
+
+void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString>> &promise)
+{
+    QList<QString> deletedFilenames;
+
+    if (!m_ItemSelectionModel.hasSelection())
+    {
+        promise.addResult(deletedFilenames);
+        return;
+    }
+
+    emit fileDeletionStarted();
+
+    for (int selectedIndexId = 0; selectedIndexId < m_ItemSelectionModel.selectedIndexes().size(); )
+    {
+        QModelIndex selectedIndex = m_ItemSelectionModel.selectedIndexes().at(selectedIndexId);
+        if (!selectedIndex.isValid())
+            continue;
+
+        FileTreeElement *selectedTreeElement =
+                static_cast<FileTreeElement *>(selectedIndex.internalPointer());
+        if (selectedTreeElement == nullptr)
+            continue;
+
+        if (!selectedIndex.parent().isValid())
+            deletedFilenames = selectedTreeElement->getAllFilenamesUnder();
+
+        QString selectedTreeElementAbsolutePath =
+                selectedTreeElement->getAbsoluteFilename();
+
+        qDebug() << "About to delete file: " << selectedTreeElementAbsolutePath;
+
+        if (m_FileSystemManager->deleteFile(selectedTreeElementAbsolutePath))
+        {
+            qDebug() << "File was deleted: " << selectedTreeElementAbsolutePath;
+            deletedFilenames.append(selectedTreeElementAbsolutePath);
+
+            // Implicitly cleans up that model index from the selection model
+            removeRow(selectedIndex.row(),  selectedIndex.parent());
+        } else {
+            ++selectedIndexId;
+        }
+    }
+
+    promise.addResult(deletedFilenames);
 }

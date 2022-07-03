@@ -118,3 +118,50 @@ int FileTreeElement::row() const
 
     return m_ParentElement->getChildElements().indexOf(this);
 }
+
+QString FileTreeElement::getPathPrefix() const
+{
+    FileTreeElement *parentElement = m_ParentElement;
+    QString filePrefix = "";
+
+    while (parentElement->m_ParentElement)
+    {
+        filePrefix.prepend(parentElement->fileName() + "/");
+        parentElement = parentElement->m_ParentElement;
+    }
+
+    return filePrefix;
+}
+
+QString FileTreeElement::getAbsoluteFilename() const
+{
+    return getPathPrefix() + fileName();
+}
+
+QList<QString> FileTreeElement::getAllFilenamesUnder() const
+{
+    QList<QString> filenames;
+
+    fillFilenameList(this, filenames);
+
+    return filenames;
+}
+
+void FileTreeElement::fillFilenameList(const FileTreeElement *parent, QList<QString> &filenameList) const
+{
+    if (parent == nullptr)
+        return;
+
+    for (int i = 0; i < parent->m_ChildFiles.size(); ++i)
+    {
+        filenameList.append(parent->m_ChildFiles[i]->getAbsoluteFilename());
+        fillFilenameList(parent->m_ChildFiles[i], filenameList);
+    }
+}
+
+
+void FileTreeElement::removeChildAt(int index)
+{
+    if (index >= 0 && index < m_ChildFiles.size())
+        m_ChildFiles.removeAt(index);
+}
