@@ -9,15 +9,23 @@ find_package(Qt6 6.3 COMPONENTS Quick REQUIRED QuickControls2 )
 
 qt_add_executable(appdirectory-scanner-cleaner
 	main.cpp
+	tools/filesystemmanager.h
 	tools/filesystemmanager.cpp
+	tools/configfilehandler.h
 	tools/configfilehandler.cpp
 	tools/filesdeletionhistorymanager.h
 	tools/filesdeletionhistorymanager.cpp
+	controllers/filesystemcontroller.h
 	controllers/filesystemcontroller.cpp
+	controllers/settingscontroller.h
 	controllers/settingscontroller.cpp
+	controllers/mainwindowcontroller.h
 	controllers/mainwindowcontroller.cpp
+	controllers/settingswindowcontroller.h
 	controllers/settingswindowcontroller.cpp
+	models/filesystemmodel.h
 	models/filesystemmodel.cpp
+	models/filetreeelement.h
 	models/filetreeelement.cpp
 )
 

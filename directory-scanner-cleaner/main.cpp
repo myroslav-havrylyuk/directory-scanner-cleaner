@@ -1,4 +1,3 @@
-
 #include "controllers/mainwindowcontroller.h"
 #include "tools/configfilehandler.h"
 
@@ -16,18 +15,11 @@ SettingsController *gSettingsController;
 int main(int argc, char *argv[])
 {
     gApp = new QGuiApplication(argc, argv);
-
-    qDebug() << "Main thread: " << QThread::currentThread();
-    QQuickStyle::setStyle("Fusion");
-
     gEngine = new QQmlApplicationEngine();
-
-
     ConfigFileHandler *handler = new ConfigFileHandler();
     gSettingsController = new SettingsController(*handler);
+    qDebug() << "Main thread: " << QThread::currentThread();
+    QQuickStyle::setStyle("Fusion");
     MainWindowController mainWindowController;
-
-    //gEngine->load(url);
-
     return gApp->exec();
 }
