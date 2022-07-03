@@ -8,7 +8,7 @@ ApplicationWindow {
     id: settings_window
     visible: true
     width: 700
-    height: 300
+    height: 230
     title: qsTr("Settings")
     modality: Qt.ApplicationModal
     palette.buttonText: "black"
@@ -32,7 +32,7 @@ ApplicationWindow {
     GridLayout {
         anchors.fill: parent
         anchors.margins: 39
-        rows: 5
+        rows: 4
         columns: 2
         columnSpacing: 25
         rowSpacing: 10
@@ -144,11 +144,6 @@ ApplicationWindow {
                 SettingsController.recursionDepth = recursion_depth.text
                 save_button.saveSettings();
             }
-        }
-        Item{
-            //placeholder
-            Layout.row: 4
-            Layout.fillHeight: true
         }
     }
 

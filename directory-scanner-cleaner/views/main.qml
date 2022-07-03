@@ -60,7 +60,7 @@ ApplicationWindow {
                 property bool clicked: false
                 text: "Settings..."
                 font {
-                    pixelSize: 10
+                    pixelSize: 12
                 }
 
                 signal openSettingsWindow()
