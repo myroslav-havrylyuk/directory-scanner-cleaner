@@ -15,6 +15,15 @@ ApplicationWindow {
     //palette.highlight: "violet"
     palette.buttonText: "black"
 
+
+    Connections {
+        target: FileSystemController
+        function onActivePathInvalid(){
+            console.log("active path invalid");
+            warning_dialog.open();
+        }
+    }
+
     Connections {
         target: FileSystemModel
         function onModelSetupStarted(){
