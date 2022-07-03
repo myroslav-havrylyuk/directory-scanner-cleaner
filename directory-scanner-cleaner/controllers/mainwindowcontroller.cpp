@@ -44,7 +44,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     QObject *deleteButton = m_MainWindow->findChild<QObject *>("delete_button");
 
     QObject::connect(m_FileSystemModel, QOverload<const QList<QString> &, const QString &>::of(&FileSystemModel::fileDeletionFinished),
-                     this, &MainWindowController::updateDeletionHistory);
+                     this, &MainWindowController::updateDeletionHistory, Qt::BlockingQueuedConnection);
 
     QObject *folderDialog =
             m_MainWindow->findChild<QObject *>("folder_dialog");

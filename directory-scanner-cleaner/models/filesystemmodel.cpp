@@ -236,8 +236,6 @@ FileTreeElement *FileSystemModel::indexToFileTreeElement(const QModelIndex &inde
 
 void FileSystemModel::handleDeleteSelectedFilesFinished()
 {
-    QList<QString> filesDeleted = m_DeleteFilesFuture.results().front();
-    emit fileDeletionFinished(filesDeleted, m_DeletionReasonsStringModel.getActiveDeletionReason());
     emit fileDeletionFinished();
 }
 
@@ -305,5 +303,5 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString>> &promise)
         }
     }
 
-    promise.addResult(deletedFilenames);
+    emit fileDeletionFinished(deletedFilenames, m_DeletionReasonsStringModel.getActiveDeletionReason());
 }
