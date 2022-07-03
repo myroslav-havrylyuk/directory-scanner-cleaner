@@ -104,3 +104,4 @@ build*
 *.dll
 *.exe
 *.txt.user
+directory-scanner-cleaner/log/
