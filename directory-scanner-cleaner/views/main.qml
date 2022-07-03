@@ -417,6 +417,9 @@ ApplicationWindow {
                     text: "Delete"
 
                     onClicked: {
+                        if (!tree_view.model.itemSelectionModel.hasSelection)
+                            return
+
                         deletion_reason_dialog.open()
                     }
                 }
