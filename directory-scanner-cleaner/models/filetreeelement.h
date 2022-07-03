@@ -37,6 +37,7 @@ public:
     QString formattedSize() const;
     void setLastModificationDate(QDate lastModificationDate);
     QDate getLastModificationDate();
+    int row() const;
 
 private:
     QString m_FileName;

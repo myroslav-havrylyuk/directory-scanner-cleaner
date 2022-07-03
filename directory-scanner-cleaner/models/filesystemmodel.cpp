@@ -43,6 +43,9 @@ QModelIndex FileSystemModel::index(int row, int column, const QModelIndex &paren
         return QModelIndex();
 
     FileTreeElement *fileTreeElement = indexToFileTreeElement(parent);
+    if (fileTreeElement == nullptr)
+        return QModelIndex();
+
     FileTreeElement *childFileTreeElement = fileTreeElement->getChildAt(row);
     if (childFileTreeElement == nullptr)
         return QModelIndex();
@@ -55,7 +58,7 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
     if (!child.isValid())
         return QModelIndex();
 
-    FileTreeElement *childTreeElement = indexToFileTreeElement(child);
+    FileTreeElement *childTreeElement = static_cast<FileTreeElement *>(child.internalPointer());
     if (childTreeElement == nullptr)
         return QModelIndex();
 
@@ -63,8 +66,7 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
     if (parentTreeElement == nullptr || parentTreeElement == m_FileTreeRoot)
             return QModelIndex();
 
-    int rows = parentTreeElement->getChildsCount();
-    return createIndex(rows, 0, parentTreeElement);
+    return createIndex(parentTreeElement->row(), 0, parentTreeElement);
 }
 
 int FileSystemModel::rowCount(const QModelIndex &parent) const

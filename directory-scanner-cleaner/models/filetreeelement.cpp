@@ -110,3 +110,11 @@ QDate FileTreeElement::getLastModificationDate()
 {
     return m_LastModificationDate;
 }
+
+int FileTreeElement::row() const
+{
+    if (m_ParentElement == nullptr)
+        return 0;
+
+    return m_ParentElement->getChildElements().indexOf(this);
+}
