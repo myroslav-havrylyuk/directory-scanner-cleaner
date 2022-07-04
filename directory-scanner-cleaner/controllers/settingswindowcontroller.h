@@ -20,7 +20,6 @@ private:
   QObject *m_SettingsWindow = nullptr;
   QQmlComponent *m_SettingsWindowComponent = nullptr;
   QQmlContext *m_SettingsQmlContext = nullptr;
-  ConfigFileHandler *m_Handler = nullptr;
 
 public:
   explicit SettingsWindowController(QObject *parent = nullptr);
