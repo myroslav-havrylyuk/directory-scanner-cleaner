@@ -155,8 +155,6 @@ void FileSystemModel::selectFilesBySizeIfAsync(UnaryPredicate pred)
     *m_SelectionBySizeFuture = QtConcurrent::run(&FileSystemModel::selectFilesIf<UnaryPredicate>, this, root, pred);
     QObject::connect(m_SelectionBySizeWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::selectionBySizeFinished);
     m_SelectionBySizeWatcher->setFuture(*m_SelectionBySizeFuture);
-
-
 }
 
 template<typename UnaryPredicate>
@@ -172,7 +170,7 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
         {
             if(hasChildren(element))
                 selectFilesIf(promise, element, pred);
-            else if(QFileInfo(indexToFileTreeElement(element)->fileName()).isFile())
+            else if(QFileInfo(indexToFileTreeElement(element)->getAbsoluteFilePath()).isFile())
             {
                 mutex.lock();
                 m_ItemSelectionModel.select(element, QItemSelectionModel::Select);
