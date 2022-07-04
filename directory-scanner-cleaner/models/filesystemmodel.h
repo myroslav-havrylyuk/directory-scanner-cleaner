@@ -26,10 +26,29 @@ class FileSystemModel : public QAbstractItemModel
 
     Q_PROPERTY(QItemSelectionModel* itemSelectionModel READ getItemSelectionModel NOTIFY itemSelectionModelChanged)
 
+private:
+    QItemSelectionModel m_ItemSelectionModel;
+    FileSystemManager *m_FileSystemManager = nullptr;
+    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
+    FileTreeElement *m_FilesystemRootElement;
+    FileTreeElement *m_FileTreeRoot;
+    void connectToFileSystemManager();
+    QItemSelectionModel *getItemSelectionModel();
+
+    QFutureWatcher<void> *m_SelectionBySizeWatcher = nullptr;
+    QFuture<void> *m_SelectionBySizeFuture = nullptr;
+    QFutureWatcher<void> *m_SelectionByDateWatcher = nullptr;
+    QFuture<void> *m_SelectionByDateFuture = nullptr;
+
+    DeletionReasonsStringModel m_DeletionReasonsStringModel;
+    QFuture<QList<QString> > m_DeleteFilesFuture;
+    QFutureWatcher<QList<QString> > m_DeleteFilesFutureWatcher;
+    QMap<DeletionReason, QString> m_DeletionReasons;
+
+    QMutex mutex;
+
 public:
     FileSystemModel();
-    //FileSystemModel(const QString &rootPath);
-
     ~FileSystemModel();
 
     // QAbstractItemModel interface
@@ -57,27 +76,6 @@ public:
     void selectFilesBySizeIfAsync(UnaryPredicate pred);
     template<typename UnaryPredicate>
     void selectFilesByDateIfAsync(UnaryPredicate pred);
-
-private:
-    QItemSelectionModel m_ItemSelectionModel;
-    FileSystemManager *m_FileSystemManager = nullptr;
-    FileTreeElement *indexToFileTreeElement(const QModelIndex &index) const;
-    FileTreeElement *m_FilesystemRootElement;
-    FileTreeElement *m_FileTreeRoot;
-    void connectToFileSystemManager();
-    QItemSelectionModel *getItemSelectionModel();
-
-    QFutureWatcher<void> *m_SelectionBySizeWatcher = nullptr;
-    QFuture<void> *m_SelectionBySizeFuture = nullptr;
-    QFutureWatcher<void> *m_SelectionByDateWatcher = nullptr;
-    QFuture<void> *m_SelectionByDateFuture = nullptr;
-
-    DeletionReasonsStringModel m_DeletionReasonsStringModel;
-    QFuture<QList<QString> > m_DeleteFilesFuture;
-    QFutureWatcher<QList<QString> > m_DeleteFilesFutureWatcher;
-    QMap<DeletionReason, QString> m_DeletionReasons;
-
-    QMutex mutex;
 
 signals:
     void modelSetupStarted(const QString &rootPath);

@@ -19,10 +19,6 @@ void FileSystemController::setActivePath(const QString &newActivePath, uint recu
     QString validActivePath = newActivePath;
     validActivePath.remove(QRegularExpression("file:///"));
     validActivePath = QDir::cleanPath(validActivePath);
-    //better ask user if he really want to scan the same directory again, as if
-    //he canceled scanning last time, he wouldn't be able to scan this directory
-    //again because of this check
-    //if(m_ActivePath != validActivePath){
         qDebug() << "New active path has been set: " << newActivePath;
         qDebug() << "Edited active path has been set: " << validActivePath;
 

@@ -19,8 +19,8 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath, uint recu
     m_FileTreeRoot = new FileTreeElement("", 0, QDate(), nullptr);
     m_FilesystemRootElement = new FileTreeElement(normalizedRootPath, 0, QDate(), m_FileTreeRoot);
     m_FileTreeRoot->appendChild(m_FilesystemRootElement);
-    //getting inner files of root
 
+    //getting inner files of root
     if(m_GetInnerFilesFuture != nullptr){
         delete m_GetInnerFilesFuture;
         m_GetInnerFilesFuture = nullptr;

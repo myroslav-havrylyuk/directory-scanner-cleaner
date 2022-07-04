@@ -13,14 +13,6 @@
 class FileSystemManager : public QObject
 {
     Q_OBJECT
-public:
-    explicit FileSystemManager(QObject *parent = nullptr);
-
-    void generateFileTreeAsync(const QString &rootPath, uint recursionDepth);
-    quint64 getDirectorySize(const QString &directory);
-    void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);
-    bool deleteFile(const QString &filename);
-
 private:
     class FILE_TREE_GENERATION_FLAGS{
     private:
@@ -57,11 +49,20 @@ private:
     void getInnerFilesAsync(QPromise<FileTreeElement *> &promise, const QDir &currenDir, FileTreeElement *parent, uint recursionDepth);
     FileTreeElement *generateFileTreeElementAsync(const QString &rootPath);
     void waitForCancelation(QPromise<void> &promise);
+
+public:
+    explicit FileSystemManager(QObject *parent = nullptr);
+    void generateFileTreeAsync(const QString &rootPath, uint recursionDepth);
+    quint64 getDirectorySize(const QString &directory);
+    void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);
+    bool deleteFile(const QString &filename);
+
 public slots:
     void handleGetInnerFilesFinished();
     void handleGetRootElementSizeFinished();
     void handleWaitForCancelationFinished();
     void cancelSetupModelHandler();
+
 signals:
     void fileTreeGenerated(FileTreeElement * fileTreeRoot);
     void setupModelCanceled();

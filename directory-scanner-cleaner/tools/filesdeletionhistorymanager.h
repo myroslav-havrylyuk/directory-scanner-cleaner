@@ -14,7 +14,6 @@ class FilesDeletionHistoryManager : public QObject {
 
   Q_OBJECT
 
-private:
 public:
   explicit FilesDeletionHistoryManager(QObject *parent = nullptr);
 

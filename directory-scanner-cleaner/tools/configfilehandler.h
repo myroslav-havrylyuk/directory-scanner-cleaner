@@ -7,6 +7,15 @@
 
 class ConfigFileHandler
 {
+private:
+QString m_Organization;
+QString m_Application;
+QSettings::Scope m_Scope;
+QSettings::Format m_Format;
+
+QString m_DeletionFilePath;
+uint m_RecursionDepth;
+
 public:
     ConfigFileHandler(const QString &organization = "Some Organization",
                       const QString &application = "Directory Scanner & Cleaner",
@@ -20,14 +29,6 @@ public:
     void readSettings();
     void writeSettings();
 
-private:
-QString m_Organization;
-QString m_Application;
-QSettings::Scope m_Scope;
-QSettings::Format m_Format;
-
-QString m_DeletionFilePath;
-uint m_RecursionDepth;
 };
 
 #endif // CONFIGFILEHANDLER_H

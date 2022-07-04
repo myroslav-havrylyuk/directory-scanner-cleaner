@@ -16,20 +16,6 @@ FileSystemModel::FileSystemModel()
     QObject::connect(&m_DeleteFilesFutureWatcher, &QFutureWatcher< QList<QString> >::finished, this, &FileSystemModel::handleDeleteSelectedFilesFinished);
 }
 
-//Probably should not be used, as it may cause unhandled signals.
-//Instead, use setActivePath() function of FileSystemController class after connecting to
-//signals of this class.
-/*FileSystemModel::FileSystemModel(const QString &rootPath)
-{
-    connectToFileSystemManager();
-    QString normalizedRootPath = QDir::cleanPath(rootPath);
-    if (!QFile::exists(normalizedRootPath)){
-        qDebug() << "rootPath for FileSystemModel does not exist";
-        return;
-    }
-    setupModel(rootPath);
-}*/
-
 FileSystemModel::~FileSystemModel()
 {
     if (m_FileTreeRoot != nullptr)
@@ -169,9 +155,6 @@ void FileSystemModel::setupModel(const QString &rootPath, uint recursionDepth)
     emit modelSetupStarted(normalizedRootPath);
     if (m_FileTreeRoot != nullptr)
     {
-        /*if (m_FileTreeRoot->fileName() == normalizedRootPath){
-            return;
-        }*/
         delete m_FileTreeRoot;
         m_FileTreeRoot = nullptr;
     }

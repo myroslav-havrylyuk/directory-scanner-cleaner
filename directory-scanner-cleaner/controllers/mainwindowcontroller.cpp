@@ -25,9 +25,6 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     m_MainQmlContext->setContextProperty("FileSystemController", m_FileSystemController);
     m_MainQmlContext->setContextProperty("MainWindowController", this);
 
-    // QObject *test = mainQmlContext->objectForName("SettingsController");
-    // qDebug() << ((SettingsController *)test)->getHistoryPath();
-
     const QUrl url(u"qrc:/directory-scanner-cleaner/views/main.qml"_qs);
     QQmlComponent mainWindowComponent(gEngine, url);
 

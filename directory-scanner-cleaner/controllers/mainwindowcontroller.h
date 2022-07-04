@@ -30,16 +30,13 @@ private:
     FilesDeletionHistoryManager m_FileDeletionHistoryManager;
     FileSystemModel *m_FileSystemModel;
     FileSystemController *m_FileSystemController;
+
 public:
     explicit MainWindowController(QObject *parent = nullptr);
-
-
     QQmlContext *getMainQmlContext() const;
     void setMainQmlContext(QQmlContext *newMainQmlContext);
 
     const FilesDeletionHistoryManager &getFileDeletionHistoryManager() const;
-
-signals:
 
 public slots:
     void openSettingsWindow();

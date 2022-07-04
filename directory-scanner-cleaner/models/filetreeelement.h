@@ -14,6 +14,14 @@ enum FileTreeElementRole {
 
 class FileTreeElement
 {
+private:
+    QString m_FileName;
+    quint64 m_FileSize;
+    QDate m_LastModificationDate;
+    QList<FileTreeElement *> m_ChildFiles;
+    FileTreeElement *m_ParentElement;
+    void fillFilenameList(const FileTreeElement *parent, QList<QString> &filenameList) const;
+
 public:
     FileTreeElement(const QString &fileName,
                     quint64 fileSize,
@@ -43,15 +51,6 @@ public:
     QList<QString> getAllFilenamesUnder() const;
     void removeChildAt(int index);
 
-private:
-    void fillFilenameList(const FileTreeElement *parent, QList<QString> &filenameList) const;
-
-private:
-    QString m_FileName;
-    quint64 m_FileSize;
-    QDate m_LastModificationDate;
-    QList<FileTreeElement *> m_ChildFiles;
-    FileTreeElement *m_ParentElement;
 };
 
 #endif // FILETREEELEMENT_H

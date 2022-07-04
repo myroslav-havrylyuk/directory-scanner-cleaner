@@ -6,7 +6,6 @@
 #include <QString>
 #include <QModelIndex>
 
-//class FileSystemModel;
 #include "models/filesystemmodel.h"
 
 class FileSystemController : public QQuickItem

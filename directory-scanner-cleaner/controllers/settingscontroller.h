@@ -11,6 +11,12 @@ class SettingsController : public QQuickItem
 
         Q_PROPERTY(QString historyPath READ HistoryPathToView WRITE setHistoryPath NOTIFY historyPathChanged)
         Q_PROPERTY(QString recursionDepth READ RecursionDepthToView WRITE setRecursionDepth NOTIFY recursionDepthChanged)
+
+private:
+    QString m_HistoryPath;
+    uint m_RecursionDepth;
+    ConfigFileHandler &m_ConfigFileModel;
+
     public:
         SettingsController(ConfigFileHandler &configFileHandler);
 
@@ -30,10 +36,6 @@ signals:
 public slots:
         void saveSettings();
 
-    private:
-        QString m_HistoryPath;
-        uint m_RecursionDepth;
-        ConfigFileHandler &m_ConfigFileModel;
 };
 
 #endif // SETTINGSCONTROLLER_H
