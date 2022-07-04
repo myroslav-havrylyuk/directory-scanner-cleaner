@@ -41,8 +41,6 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
             m_MainWindow->findChild<QObject *>("settings_menu_item");
     QObject::connect(settingsMenuItem, SIGNAL(openSettingsWindow()), this,
                      SLOT(openSettingsWindow()));
-    QObject *deleteButton = m_MainWindow->findChild<QObject *>("delete_button");
-
     QObject::connect(m_FileSystemModel,
                      QOverload<const QList<QString> &, const QString &>::of(
                          &FileSystemModel::fileDeletionFinished),
@@ -55,6 +53,9 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     QObject *filterButton = m_MainWindow->findChild<QObject *>("filter_button");
     QObject::connect(filterButton, SIGNAL(selectByFilter()),
                      m_FileSystemController, SLOT(selectByFilter()));
+    QObject *reloadButton = m_MainWindow->findChild<QObject *>("reload_button");
+    QObject::connect(reloadButton, SIGNAL(reloadFileSystem(QString)),
+                     this, SLOT(setActivePath(QString)));
 }
 
 MainWindowController::~MainWindowController() {
@@ -87,4 +88,5 @@ void MainWindowController::updateDeletionHistory(
 void MainWindowController::setActivePath(QString activePath) {
     m_FileSystemController->setActivePath(
                 activePath, gSettingsController->getRecursionDepth());
+    qDebug() << "MainWindowController: setActivePath slot has been called";
 }

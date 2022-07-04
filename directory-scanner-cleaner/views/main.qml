@@ -396,7 +396,7 @@ ApplicationWindow {
             Button {
                 id: filter_button
                 objectName: "filter_button"
-                width: 90
+                width: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Select"
                 signal selectByFilter()
@@ -412,7 +412,7 @@ ApplicationWindow {
             Button {
                 id: delete_button
                 objectName: "delete_button"
-                width: 90
+                width: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Delete"
 
@@ -421,6 +421,17 @@ ApplicationWindow {
                         return
 
                     deletion_reason_dialog.open()
+                }
+            }
+            Button {
+                id: reload_button
+                objectName: "reload_button"
+                width: 120
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Reload file system"
+                signal reloadFileSystem(string path);
+                onClicked: {
+                    reload_button.reloadFileSystem(current_directory_path_text_edit.text)
                 }
             }
         }
