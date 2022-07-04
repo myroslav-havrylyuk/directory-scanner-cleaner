@@ -21,8 +21,10 @@ private:
   QQmlComponent *m_SettingsWindowComponent = nullptr;
   QQmlContext *m_SettingsQmlContext = nullptr;
 
+
 public:
   explicit SettingsWindowController(QObject *parent = nullptr);
+  ~SettingsWindowController();
 
 signals:
 };

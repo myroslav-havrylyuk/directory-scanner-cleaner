@@ -12,3 +12,10 @@ SettingsWindowController::SettingsWindowController(QObject *parent)
   QObject::connect(saveButton, SIGNAL(saveSettings()), gSettingsController,
                    SLOT(saveSettings()));
 }
+
+SettingsWindowController::~SettingsWindowController()
+{
+    delete m_SettingsWindow;
+    delete m_SettingsWindowComponent;
+    delete m_SettingsQmlContext;
+}

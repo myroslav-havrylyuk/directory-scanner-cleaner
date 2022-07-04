@@ -30,6 +30,7 @@ private:
     FilesDeletionHistoryManager m_FileDeletionHistoryManager;
     FileSystemModel *m_FileSystemModel;
     FileSystemController *m_FileSystemController;
+    SettingsWindowController *m_SettingsWindowController = nullptr;
 
 public:
     explicit MainWindowController(QObject *parent = nullptr);

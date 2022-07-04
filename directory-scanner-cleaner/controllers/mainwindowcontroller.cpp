@@ -53,7 +53,13 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
 }
 
 void MainWindowController::openSettingsWindow() {
-    SettingsWindowController *settingsWindowController = new SettingsWindowController();
+    if(m_SettingsWindowController == nullptr){
+        m_SettingsWindowController = new SettingsWindowController();
+    } else {
+        delete m_SettingsWindowController;
+        m_SettingsWindowController = nullptr;
+        m_SettingsWindowController = new SettingsWindowController();
+    }
     qDebug() << "MainWindowController: openSettingsWindow func called";
 }
 
