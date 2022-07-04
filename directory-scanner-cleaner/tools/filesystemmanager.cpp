@@ -25,6 +25,7 @@ void FileSystemManager::generateFileTreeAsync(const QString &rootPath,
     m_FilesystemRootElement =
             new FileTreeElement(normalizedRootPath, 0, QDate(), m_FileTreeRoot);
     m_FileTreeRoot->appendChild(m_FilesystemRootElement);
+    m_FilesystemRootElement->setAbsoluteFilePath(normalizedRootPath);
 
     // getting inner files of root
     if (m_GetInnerFilesFuture != nullptr) {
@@ -97,7 +98,7 @@ FileSystemManager::getInnerFiles(QPromise<FileTreeElement *> &promise,
                 fileTreeElement->setFileSize(
                             getDirectorySize(fileElement.absoluteFilePath()));
             }
-
+            fileTreeElement->setAbsoluteFilePath(fileElement.absoluteFilePath());
             innerFiles.append(fileTreeElement);
         }
     }
@@ -134,7 +135,9 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
             fileTreeElement->setChildElements(innerFiles);
             fileTreeElement->setFileSize(
                         getDirectorySize(fileElement.absoluteFilePath()));
+            qDebug() << fileElement.absoluteFilePath();
         }
+        fileTreeElement->setAbsoluteFilePath(fileElement.absoluteFilePath());
         promise.addResult(fileTreeElement);
         qDebug() << "files/folders read:" << ++counter;
     }

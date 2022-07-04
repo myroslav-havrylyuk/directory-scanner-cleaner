@@ -16,6 +16,8 @@ class FileTreeElement
 {
 private:
     QString m_FileName;
+    QString m_AbsoluteFilePath;
+    uint m_InnerFilesCount;
     quint64 m_FileSize;
     QDate m_LastModificationDate;
     QList<FileTreeElement *> m_ChildFiles;
@@ -43,6 +45,11 @@ public:
     void setFileSize(quint64 fileSize);
     quint64 getFileSize() const;
     QString formattedSize() const;
+    void setAbsoluteFilePath(QString path);
+    QString getAbsoluteFilePath() const;
+    void setInnerFilesCount();
+    uint getInnerFilesCount() const;
+    QString formattedInnerFilesCount() const;
     void setLastModificationDate(QDate lastModificationDate);
     QDate getLastModificationDate();
     int row() const;

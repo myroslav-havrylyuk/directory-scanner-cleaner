@@ -41,7 +41,7 @@ QVariant FileTreeElement::getData(int role) const
     case FileTreeElementRole::FILE_NAME_ROLE:
         return m_FileName;
     case FileTreeElementRole::FILE_INNER_FILES_ROLE:
-        return this->getChildsCount();
+        return this->formattedInnerFilesCount();
     case FileTreeElementRole::FILE_SIZE_ROLE:
         return this->formattedSize();
     default:
@@ -164,4 +164,31 @@ void FileTreeElement::removeChildAt(int index)
 {
     if (index >= 0 && index < m_ChildFiles.size())
         m_ChildFiles.removeAt(index);
+}
+
+void FileTreeElement::setAbsoluteFilePath(QString path)
+{
+    m_AbsoluteFilePath = path;
+    setInnerFilesCount();
+}
+
+QString FileTreeElement::getAbsoluteFilePath() const
+{
+    return m_AbsoluteFilePath;
+}
+
+void FileTreeElement::setInnerFilesCount()
+{
+    if(QFileInfo(m_AbsoluteFilePath).isDir())
+        m_InnerFilesCount = QDir(m_AbsoluteFilePath).entryInfoList().size() - 2;
+}
+
+uint FileTreeElement::getInnerFilesCount() const
+{
+    return m_InnerFilesCount;
+}
+
+QString FileTreeElement::formattedInnerFilesCount() const
+{
+    return QFileInfo(m_AbsoluteFilePath).isFile() ? "" : QVariant(m_InnerFilesCount).toString();
 }
