@@ -1,4 +1,5 @@
 #include "filesystemmodel.h"
+#include "tools/filetreereversebreadthiterator.h"
 
 FileSystemModel::FileSystemModel()
     : m_FileTreeRoot(nullptr),
@@ -261,21 +262,17 @@ void FileSystemModel::deleteSelectedFiles()
     m_DeleteFilesFutureWatcher.setFuture(m_DeleteFilesFuture);
 }
 
-void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString>> &promise)
+void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
 {
     QList<QString> deletedFilenames;
 
     if (!m_ItemSelectionModel.hasSelection())
-    {
-        promise.addResult(deletedFilenames);
         return;
-    }
 
     emit fileDeletionStarted();
 
-    for (int selectedIndexId = 0; selectedIndexId < m_ItemSelectionModel.selectedIndexes().size(); )
-    {
-        QModelIndex selectedIndex = m_ItemSelectionModel.selectedIndexes().at(selectedIndexId);
+    while (!m_ItemSelectionModel.selectedIndexes().empty()) {
+        QModelIndex selectedIndex = m_ItemSelectionModel.selectedIndexes().front();
         if (!selectedIndex.isValid())
             continue;
 
@@ -284,27 +281,36 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString>> &promise)
         if (selectedTreeElement == nullptr)
             continue;
 
-        if (!selectedIndex.parent().isValid())
-            deletedFilenames = selectedTreeElement->getAllFilenamesUnder();
+        FileTreeElementReverseBreadthIterator it(selectedTreeElement);
 
-        QString selectedTreeElementAbsolutePath =
-                selectedTreeElement->getAbsoluteFilename();
-
-        qDebug() << "About to delete file: " << selectedTreeElementAbsolutePath;
-
-        if (m_FileSystemManager->deleteFile(selectedTreeElementAbsolutePath))
+        while (it.hasNext())
         {
-            qDebug() << "File was deleted: " << selectedTreeElementAbsolutePath;
-            deletedFilenames.append(selectedTreeElementAbsolutePath);
+            FileTreeElement *fileElementToDelete = it.next();
 
-            // Implicitly cleans up that model index from the selection model
-            removeRow(selectedIndex.row(),  selectedIndex.parent());
-        } else {
-            ++selectedIndexId;
+            QModelIndex fileElementToDeleteModelIndex =
+                    createIndex(fileElementToDelete->row(), 0, fileElementToDelete);
+
+            m_ItemSelectionModel.select(fileElementToDeleteModelIndex, QItemSelectionModel::Deselect);
+
+            // Reverse iterator first try to delete all of the inner files in the directory.
+            // When we iterate right to the holding folder and find it empty we can just simply delete it.
+            // In case it still contains some files that means some its inner files` deletion operation failed.
+            if (fileElementToDelete->hasChildElements())
+                continue;
+
+            QString fileElementAbsolutePath =
+                    fileElementToDelete->getAbsoluteFilePath();
+
+            if (m_FileSystemManager->deleteFile(fileElementAbsolutePath))
+            {
+                deletedFilenames.append(fileElementAbsolutePath);
+
+                removeRow(fileElementToDeleteModelIndex.row(), fileElementToDeleteModelIndex.parent());
+            }
         }
     }
 
-    emit fileDeletionFinished(deletedFilenames, m_DeletionReasonsStringModel.getActiveDeletionReason());
+    emit fileDeletionFinished(deletedFilenames,  m_DeletionReasonsStringModel.getActiveDeletionReason());
 }
 
 void FileSystemModel::deselectFilesAsync()

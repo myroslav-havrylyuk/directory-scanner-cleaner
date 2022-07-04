@@ -15,6 +15,8 @@ qt_add_executable(appdirectory-scanner-cleaner
 	tools/configfilehandler.cpp
 	tools/filesdeletionhistorymanager.h
 	tools/filesdeletionhistorymanager.cpp
+        tools/filetreereversebreadthiterator.h
+        tools/filetreereversebreadthiterator.cpp
 	controllers/filesystemcontroller.h
 	controllers/filesystemcontroller.cpp
 	controllers/settingscontroller.h

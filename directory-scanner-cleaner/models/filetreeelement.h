@@ -57,7 +57,7 @@ public:
     QString getAbsoluteFilename() const;
     QList<QString> getAllFilenamesUnder() const;
     void removeChildAt(int index);
-
+    bool hasChildElements() const;
 };
 
 #endif // FILETREEELEMENT_H

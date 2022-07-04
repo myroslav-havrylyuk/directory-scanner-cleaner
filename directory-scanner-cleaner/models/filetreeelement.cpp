@@ -166,6 +166,11 @@ void FileTreeElement::removeChildAt(int index)
         m_ChildFiles.removeAt(index);
 }
 
+bool FileTreeElement::hasChildElements() const
+{
+    return m_ChildFiles.size();
+}
+
 void FileTreeElement::setAbsoluteFilePath(QString path)
 {
     m_AbsoluteFilePath = path;
