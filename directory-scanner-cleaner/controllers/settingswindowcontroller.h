@@ -14,17 +14,16 @@ extern SettingsController *gSettingsController;
 extern QQmlApplicationEngine *gEngine;
 
 class SettingsWindowController : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 
 private:
-  QObject *m_SettingsWindow = nullptr;
-  QQmlComponent *m_SettingsWindowComponent = nullptr;
-  QQmlContext *m_SettingsQmlContext = nullptr;
-
+    QObject *m_SettingsWindow = nullptr;
+    QQmlComponent *m_SettingsWindowComponent = nullptr;
+    QQmlContext *m_SettingsQmlContext = nullptr;
 
 public:
-  explicit SettingsWindowController(QObject *parent = nullptr);
-  ~SettingsWindowController();
+    explicit SettingsWindowController(QObject *parent = nullptr);
+    ~SettingsWindowController();
 
 signals:
 };

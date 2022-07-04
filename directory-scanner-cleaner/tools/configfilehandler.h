@@ -8,13 +8,13 @@
 class ConfigFileHandler
 {
 private:
-QString m_Organization;
-QString m_Application;
-QSettings::Scope m_Scope;
-QSettings::Format m_Format;
+    QString m_Organization;
+    QString m_Application;
+    QSettings::Scope m_Scope;
+    QSettings::Format m_Format;
 
-QString m_DeletionFilePath;
-uint m_RecursionDepth;
+    QString m_DeletionFilePath;
+    uint m_RecursionDepth;
 
 public:
     ConfigFileHandler(const QString &organization = "Some Organization",

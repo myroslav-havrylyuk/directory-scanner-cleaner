@@ -1,14 +1,14 @@
 #ifndef DELETIONREASONSSTRINGMODEL_H
 #define DELETIONREASONSSTRINGMODEL_H
 
-#include <QStringListModel>
 #include <QObject>
+#include <QStringListModel>
 
-class DeletionReasonsStringModel : public QStringListModel
-{
+class DeletionReasonsStringModel : public QStringListModel {
     Q_OBJECT
 
-    Q_PROPERTY(QString activeDeletionReason READ getActiveDeletionReason WRITE setActiveDeletionReason)
+    Q_PROPERTY(QString activeDeletionReason READ getActiveDeletionReason WRITE
+               setActiveDeletionReason)
 
 private:
     QString m_ActiveDeletionReason;
@@ -19,7 +19,6 @@ public:
     void setInitialDeletionReason(const QString &deletionReason);
     void setActiveDeletionReason(const QString &newDeletionReason);
     QString getActiveDeletionReason() const;
-
 };
 
 #endif // DELETIONREASONSSTRINGMODEL_H

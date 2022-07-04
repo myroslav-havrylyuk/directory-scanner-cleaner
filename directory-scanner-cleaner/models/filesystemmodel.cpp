@@ -77,7 +77,7 @@ QModelIndex FileSystemModel::parent(const QModelIndex &child) const
 
     FileTreeElement *parentTreeElement = childTreeElement->getParent();
     if (parentTreeElement == nullptr || parentTreeElement == m_FileTreeRoot)
-            return QModelIndex();
+        return QModelIndex();
 
     return createIndex(parentTreeElement->row(), 0, parentTreeElement);
 }

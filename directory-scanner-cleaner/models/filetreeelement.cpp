@@ -1,10 +1,10 @@
 #include "filetreeelement.h"
 
 FileTreeElement::FileTreeElement(const QString &fileName,
-                quint64 fileSize,
-                QDate lastModificationDate,
-                FileTreeElement *parentElement,
-                QList<FileTreeElement *> childFiles)
+                                 quint64 fileSize,
+                                 QDate lastModificationDate,
+                                 FileTreeElement *parentElement,
+                                 QList<FileTreeElement *> childFiles)
     : m_FileName(fileName),
       m_FileSize(fileSize),
       m_LastModificationDate(lastModificationDate),
@@ -38,14 +38,14 @@ QVariant FileTreeElement::getData(int role) const
 
     switch(role)
     {
-        case FileTreeElementRole::FILE_NAME_ROLE:
-            return m_FileName;
-        case FileTreeElementRole::FILE_INNER_FILES_ROLE:
-            return this->getChildsCount();
-        case FileTreeElementRole::FILE_SIZE_ROLE:
-            return this->formattedSize();
-        default:
-            return "Unknown role for file tree element";
+    case FileTreeElementRole::FILE_NAME_ROLE:
+        return m_FileName;
+    case FileTreeElementRole::FILE_INNER_FILES_ROLE:
+        return this->getChildsCount();
+    case FileTreeElementRole::FILE_SIZE_ROLE:
+        return this->formattedSize();
+    default:
+        return "Unknown role for file tree element";
     }
 }
 

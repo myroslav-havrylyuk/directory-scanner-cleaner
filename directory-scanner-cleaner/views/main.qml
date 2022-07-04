@@ -342,88 +342,88 @@ ApplicationWindow {
                 }
             }
 
-                Rectangle {
-                    width: parent.width
-                    height: 24
-                    clip: true
+            Rectangle {
+                width: parent.width
+                height: 24
+                clip: true
 
-                    TextInput {
-                        id: size_filter
-                        anchors {
-                            fill: parent
-                            leftMargin: 3
-                            topMargin: 3
-                        }
-                        selectByMouse: true
-                        text: FileSystemController.sizeFilter
-                        validator: DoubleValidator {
-                            bottom: 0
-                            top: 500
-                            notation: DoubleValidator.StandardNotation
-                            decimals: 2
-                        }
+                TextInput {
+                    id: size_filter
+                    anchors {
+                        fill: parent
+                        leftMargin: 3
+                        topMargin: 3
                     }
-                }
-
-                Text {
-                    text: "Older than (in days): "
-                    font {
-                        pixelSize: 14
-                    }
-                }
-
-                Rectangle {
-                    width: parent.width
-                    height: 24
-                    clip: true
-
-                    TextInput {
-                        id: modification_days_filter
-                        anchors {
-                            fill: parent
-                            leftMargin: 3
-                            topMargin: 3
-                        }
-                        selectByMouse: true
-                        text: FileSystemController.daysAfterModificationFilter
-                        validator: IntValidator {
-                            bottom: 0
-                            top: 1000
-                        }
-                    }
-                }
-
-                Button {
-                    id: filter_button
-                    objectName: "filter_button"
-                    width: 90
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "Select"
-                    signal selectByFilter()
-                    onClicked: {
-                        FileSystemController.sizeFilter = size_filter.text
-                        FileSystemController.daysAfterModificationFilter = modification_days_filter.text
-                        console.log(size_filter.text)
-                        filter_button.selectByFilter()
-                        console.log(modification_days_filter.text)
-                    }
-                }
-
-                Button {
-                    id: delete_button
-                    objectName: "delete_button"
-                    width: 90
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    text: "Delete"
-
-                    onClicked: {
-                        if (!tree_view.model.itemSelectionModel.hasSelection)
-                            return
-
-                        deletion_reason_dialog.open()
+                    selectByMouse: true
+                    text: FileSystemController.sizeFilter
+                    validator: DoubleValidator {
+                        bottom: 0
+                        top: 500
+                        notation: DoubleValidator.StandardNotation
+                        decimals: 2
                     }
                 }
             }
+
+            Text {
+                text: "Older than (in days): "
+                font {
+                    pixelSize: 14
+                }
+            }
+
+            Rectangle {
+                width: parent.width
+                height: 24
+                clip: true
+
+                TextInput {
+                    id: modification_days_filter
+                    anchors {
+                        fill: parent
+                        leftMargin: 3
+                        topMargin: 3
+                    }
+                    selectByMouse: true
+                    text: FileSystemController.daysAfterModificationFilter
+                    validator: IntValidator {
+                        bottom: 0
+                        top: 1000
+                    }
+                }
+            }
+
+            Button {
+                id: filter_button
+                objectName: "filter_button"
+                width: 90
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Select"
+                signal selectByFilter()
+                onClicked: {
+                    FileSystemController.sizeFilter = size_filter.text
+                    FileSystemController.daysAfterModificationFilter = modification_days_filter.text
+                    console.log(size_filter.text)
+                    filter_button.selectByFilter()
+                    console.log(modification_days_filter.text)
+                }
+            }
+
+            Button {
+                id: delete_button
+                objectName: "delete_button"
+                width: 90
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Delete"
+
+                onClicked: {
+                    if (!tree_view.model.itemSelectionModel.hasSelection)
+                        return
+
+                    deletion_reason_dialog.open()
+                }
+            }
+        }
 
         Dialog {
             id: warning_dialog
@@ -528,10 +528,10 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignHCenter
 
                     Button {
-                       text: "Cancel"
-                       onClicked: {
-                           deletion_reason_dialog.close()
-                       }
+                        text: "Cancel"
+                        onClicked: {
+                            deletion_reason_dialog.close()
+                        }
                     }
 
                     Button {

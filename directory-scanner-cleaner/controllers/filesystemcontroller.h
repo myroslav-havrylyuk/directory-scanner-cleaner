@@ -1,22 +1,28 @@
 #ifndef FILESYSTEMCONTROLLER_H
 #define FILESYSTEMCONTROLLER_H
 
+#include <QModelIndex>
 #include <QObject>
 #include <QQuickItem>
 #include <QString>
-#include <QModelIndex>
 
 #include "models/filesystemmodel.h"
 
-class FileSystemController : public QQuickItem
-{
+class FileSystemController : public QQuickItem {
     Q_OBJECT
 
     Q_PROPERTY(QString activePath READ ActivePath NOTIFY activePathChanged)
-    Q_PROPERTY(QModelIndex currentlySelectedIndex READ getCurrentlySelectedIndex WRITE setCurrentlySelectedIndex NOTIFY currentlySelectedIndexChanged)
-    Q_PROPERTY(bool isSelectionStateChanged MEMBER m_isSelectionStateChanged NOTIFY selectionStateChanged)
-    Q_PROPERTY(QString sizeFilter READ getSizeFilter WRITE setSizeFilter NOTIFY sizeFilterChanged)
-    Q_PROPERTY(QString daysAfterModificationFilter READ getDaysAfterModificationFilter WRITE setDaysAfterModificationFilter NOTIFY daysAfterModificationFilterChanged)
+    Q_PROPERTY(
+            QModelIndex currentlySelectedIndex READ getCurrentlySelectedIndex WRITE
+            setCurrentlySelectedIndex NOTIFY currentlySelectedIndexChanged)
+    Q_PROPERTY(bool isSelectionStateChanged MEMBER m_isSelectionStateChanged
+               NOTIFY selectionStateChanged)
+    Q_PROPERTY(QString sizeFilter READ getSizeFilter WRITE setSizeFilter NOTIFY
+               sizeFilterChanged)
+    Q_PROPERTY(
+            QString daysAfterModificationFilter READ getDaysAfterModificationFilter
+            WRITE setDaysAfterModificationFilter NOTIFY
+            daysAfterModificationFilterChanged)
 
 public:
     FileSystemController(FileSystemModel &fileSystemModel);
