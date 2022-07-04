@@ -312,7 +312,7 @@ ApplicationWindow {
             Layout.row: 1
             Layout.column: 1
             Layout.alignment: Qt.AlignHCenter
-            implicitWidth: 90
+            implicitWidth: 120
             text: "Browse folder"
             onClicked: {
                 folder_dialog.currentFolder = current_directory_path.directory_path
