@@ -306,3 +306,30 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString>> &promise)
 
     emit fileDeletionFinished(deletedFilenames, m_DeletionReasonsStringModel.getActiveDeletionReason());
 }
+
+void FileSystemModel::deselectFilesAsync()
+{
+    if(m_DeselectionFuture != nullptr){
+        delete m_DeselectionFuture;
+        m_DeselectionFuture = nullptr;
+    }
+    if(m_DeselectionWatcher != nullptr){
+        delete m_DeselectionWatcher;
+        m_DeselectionWatcher = nullptr;
+    }
+
+    emit deselectionStarted();
+    m_DeselectionFuture = new QFuture<void>();
+    m_DeselectionWatcher = new QFutureWatcher<void>();
+    *m_DeselectionFuture = QtConcurrent::run(&FileSystemModel::deselectFiles, this);
+    QObject::connect(m_DeselectionWatcher, &QFutureWatcher<void>::finished, this, &FileSystemModel::deselectionFinished);
+    m_DeselectionWatcher->setFuture(*m_DeselectionFuture);
+}
+
+void FileSystemModel::deselectFiles(QPromise<void> &promise)
+{
+    for(auto element : m_ItemSelectionModel.selectedIndexes())
+    {
+        m_ItemSelectionModel.select(element, QItemSelectionModel::Deselect);
+    }
+}

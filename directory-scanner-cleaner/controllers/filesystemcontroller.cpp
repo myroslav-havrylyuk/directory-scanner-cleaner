@@ -82,6 +82,9 @@ void FileSystemController::connectToFileSystemModel() {
     QObject::connect(&m_FileSystemModel,
                      &FileSystemModel::selectionByDateFinished, this,
                      &FileSystemController::selectionByDateEndedHandler);
+    QObject::connect(&m_FileSystemModel,
+                     &FileSystemModel::deselectionFinished, this,
+                     &FileSystemController::deselectionEndedHandler);
 }
 
 void FileSystemController::selectionBySizeEndedHandler() {
@@ -131,4 +134,16 @@ QString FileSystemController::getDaysAfterModificationFilter() {
 void FileSystemController::selectByFilter() {
     selectBySize();
     selectByDate();
+}
+
+void FileSystemController::deselectFiles() {
+    m_FileSystemModel.deselectFilesAsync();
+}
+
+void FileSystemController::deselectionEndedHandler() {
+    qDebug() << QTime::currentTime()
+             << "handled deselectionEnded signal in FileSystemModel";
+
+    m_isSelectionStateChanged = true;
+    emit selectionStateChanged();
 }

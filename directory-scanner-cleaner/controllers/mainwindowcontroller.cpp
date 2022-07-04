@@ -53,6 +53,9 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
     QObject *filterButton = m_MainWindow->findChild<QObject *>("filter_button");
     QObject::connect(filterButton, SIGNAL(selectByFilter()),
                      m_FileSystemController, SLOT(selectByFilter()));
+    QObject *deselectButton = m_MainWindow->findChild<QObject *>("deselect_button");
+    QObject::connect(deselectButton, SIGNAL(deselectFiles()),
+                     m_FileSystemController, SLOT(deselectFiles()));
     QObject *reloadButton = m_MainWindow->findChild<QObject *>("reload_button");
     QObject::connect(reloadButton, SIGNAL(reloadFileSystem(QString)),
                      this, SLOT(setActivePath(QString)));

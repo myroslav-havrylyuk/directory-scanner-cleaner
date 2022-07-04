@@ -45,6 +45,9 @@ private:
     QFutureWatcher<QList<QString> > m_DeleteFilesFutureWatcher;
     QMap<DeletionReason, QString> m_DeletionReasons;
 
+    QFutureWatcher<void> *m_DeselectionWatcher = nullptr;
+    QFuture<void> *m_DeselectionFuture = nullptr;
+
     QMutex mutex;
 
 public:
@@ -68,14 +71,17 @@ public:
     void deleteSelectedFiles(QPromise<QList<QString> > &promise);
     void handleDeleteSelectedFilesFinished();
     DeletionReasonsStringModel *getDeletionReasonsStringModel();
-
+    void deselectFilesAsync();
     FileSystemManager *getFileSystemManager() const;
-    template<typename UnaryPredicate>
-    void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
     template<typename UnaryPredicate>
     void selectFilesBySizeIfAsync(UnaryPredicate pred);
     template<typename UnaryPredicate>
     void selectFilesByDateIfAsync(UnaryPredicate pred);
+
+private:
+    void deselectFiles(QPromise<void> &promise);
+    template<typename UnaryPredicate>
+    void selectFilesIf(QPromise<void> &promise, QModelIndex root, UnaryPredicate pred);
 
 signals:
     void modelSetupStarted(const QString &rootPath);
@@ -91,6 +97,8 @@ signals:
     void fileDeletionStarted();
     void fileDeletionFinished();
     void fileDeletionFinished(const QList<QString> &filesDeleted, const QString &fileDeletionReason);
+    void deselectionStarted();
+    void deselectionFinished();
 
 public slots:
     void fileTreeGeneratedHandler(FileTreeElement * fileTreeRoot);

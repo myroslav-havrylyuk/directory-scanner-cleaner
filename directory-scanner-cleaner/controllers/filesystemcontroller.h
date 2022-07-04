@@ -61,6 +61,8 @@ public slots:
     void selectionBySizeEndedHandler();
     void selectionByDateEndedHandler();
     void selectByFilter();
+    void deselectionEndedHandler();
+    void deselectFiles();
 };
 
 #endif // FILESYSTEMCONTROLLER_H

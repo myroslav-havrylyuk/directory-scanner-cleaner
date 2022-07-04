@@ -57,6 +57,14 @@ ApplicationWindow {
             deletion_dialog.close()
             console.log('closed deletion dialog');
         }
+        function onDeselectionStarted(){
+            deselection_progress_dialog.open();
+            console.log('opened deselection progress dialog');
+        }
+        function onDeselectionFinished(){
+            deselection_progress_dialog.close();
+            console.log('closed deselection progress dialog');
+        }
     }
 
     MenuBar{
@@ -410,6 +418,23 @@ ApplicationWindow {
             }
 
             Button {
+                id: deselect_button
+                objectName: "deselect_button"
+                width: 90
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Deselect"
+                signal deselectFiles()
+                onClicked: {
+                    if (!tree_view.model.itemSelectionModel.hasSelection)
+                        return
+
+                    deselect_button.deselectFiles()
+                    console.log("deselection")
+
+                }
+            }
+
+            Button {
                 id: delete_button
                 objectName: "delete_button"
                 width: 120
@@ -465,6 +490,17 @@ ApplicationWindow {
             anchors.centerIn: parent
             closePolicy: Popup.CloseOnEscape
             title: qsTr("Selecting file...")
+            contentItem: ProgressBar {
+                indeterminate: true
+            }
+            modal: true
+        }
+
+        Dialog {
+            id: deselection_progress_dialog
+            anchors.centerIn: parent
+            closePolicy: Popup.CloseOnEscape
+            title: qsTr("Deselecting file...")
             contentItem: ProgressBar {
                 indeterminate: true
             }
