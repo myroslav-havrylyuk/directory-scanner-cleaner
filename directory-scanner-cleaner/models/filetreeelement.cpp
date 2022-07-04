@@ -137,6 +137,8 @@ void FileTreeElement::removeChildAt(int index)
 {
     if (index >= 0 && index < m_ChildFiles.size())
         m_ChildFiles.removeAt(index);
+
+    m_InnerFilesCount -= 1;
 }
 
 bool FileTreeElement::hasChildElements() const
