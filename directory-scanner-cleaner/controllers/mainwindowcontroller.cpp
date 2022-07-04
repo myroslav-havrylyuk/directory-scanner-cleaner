@@ -52,6 +52,15 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
                      SLOT(selectByFilter()));
 }
 
+MainWindowController::~MainWindowController()
+{
+    delete m_MainWindow;
+    delete m_MainQmlContext;
+    delete m_FileSystemModel;
+    delete m_FileSystemController;
+    delete m_SettingsWindowController;
+}
+
 void MainWindowController::openSettingsWindow() {
     if(m_SettingsWindowController == nullptr){
         m_SettingsWindowController = new SettingsWindowController();

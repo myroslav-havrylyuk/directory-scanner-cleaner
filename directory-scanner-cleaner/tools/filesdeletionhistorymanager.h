@@ -16,6 +16,7 @@ class FilesDeletionHistoryManager : public QObject {
 
 public:
   explicit FilesDeletionHistoryManager(QObject *parent = nullptr);
+    ~FilesDeletionHistoryManager();
 
 public slots:
   void updateHistory(QList<QString> files, QString reason,

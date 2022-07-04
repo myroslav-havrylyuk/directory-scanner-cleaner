@@ -18,6 +18,24 @@ FileSystemModel::FileSystemModel()
 
 FileSystemModel::~FileSystemModel()
 {
+    if (m_FileSystemManager != nullptr)
+        delete m_FileSystemManager;
+    if (m_FilesystemRootElement != nullptr)
+        delete m_FilesystemRootElement;
+    if (m_FileTreeRoot != nullptr)
+        delete m_FileTreeRoot;
+    if (m_SelectionBySizeWatcher != nullptr)
+        delete m_SelectionBySizeWatcher;
+    if (m_SelectionBySizeFuture != nullptr)
+        delete m_SelectionBySizeFuture;
+    if (m_SelectionByDateWatcher != nullptr)
+        delete m_SelectionByDateWatcher;
+    if (m_SelectionByDateFuture != nullptr)
+        delete m_SelectionByDateFuture;
+    if (m_FileTreeRoot != nullptr)
+        delete m_FileTreeRoot;
+    if (m_FileTreeRoot != nullptr)
+        delete m_FileTreeRoot;
     if (m_FileTreeRoot != nullptr)
         delete m_FileTreeRoot;
 }

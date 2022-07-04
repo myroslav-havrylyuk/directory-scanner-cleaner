@@ -13,6 +13,11 @@ FileSystemController::FileSystemController(FileSystemModel &fileSystemModel)
     connectToFileSystemModel();
 }
 
+FileSystemController::~FileSystemController()
+{
+
+}
+
 void FileSystemController::setActivePath(const QString &newActivePath, uint recursionDepth)
 {
     qDebug() << "setActivePath function has been called";

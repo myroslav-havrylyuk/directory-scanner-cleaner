@@ -34,6 +34,7 @@ private:
 
 public:
     explicit MainWindowController(QObject *parent = nullptr);
+    ~MainWindowController();
     QQmlContext *getMainQmlContext() const;
     void setMainQmlContext(QQmlContext *newMainQmlContext);
 

@@ -9,6 +9,16 @@ FileSystemManager::FileSystemManager(QObject *parent)
 
 }
 
+FileSystemManager::~FileSystemManager()
+{
+    delete m_GetInnerFilesWatcher;
+    delete m_GetRootElementSizeWatcher;
+    delete m_CancelationWatcher;
+    delete m_GetInnerFilesFuture;
+    delete m_GetRootElementSizeFuture;
+    delete m_CancelationFuture;
+}
+
 void FileSystemManager::generateFileTreeAsync(const QString &rootPath, uint recursionDepth)
 {
     QString normalizedRootPath = QDir::cleanPath(rootPath);

@@ -20,6 +20,7 @@ class FileSystemController : public QQuickItem
 
 public:
     FileSystemController(FileSystemModel &fileSystemModel);
+    ~FileSystemController();
 
     QString ActivePath() const;
     void setActivePath(const QString &newActivePath, uint recursionDepth);

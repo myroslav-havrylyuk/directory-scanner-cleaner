@@ -52,6 +52,7 @@ private:
 
 public:
     explicit FileSystemManager(QObject *parent = nullptr);
+    ~FileSystemManager();
     void generateFileTreeAsync(const QString &rootPath, uint recursionDepth);
     quint64 getDirectorySize(const QString &directory);
     void getDirectorySizeAsync(QPromise<quint64> &promise, const QString &directory);

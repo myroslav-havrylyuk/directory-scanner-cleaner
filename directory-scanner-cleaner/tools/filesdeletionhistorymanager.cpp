@@ -3,6 +3,11 @@
 FilesDeletionHistoryManager::FilesDeletionHistoryManager(QObject *parent)
     : QObject{parent} {}
 
+FilesDeletionHistoryManager::~FilesDeletionHistoryManager()
+{
+
+}
+
 void FilesDeletionHistoryManager::updateHistory(QList<QString> files,
                                                 QString reason,
                                                 QString filePath) {
