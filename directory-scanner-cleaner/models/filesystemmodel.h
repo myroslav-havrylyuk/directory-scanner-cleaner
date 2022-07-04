@@ -70,6 +70,7 @@ public:
     Q_INVOKABLE void deleteSelectedFiles();
     void deleteSelectedFiles(QPromise<QList<QString> > &promise);
     void handleDeleteSelectedFilesFinished();
+    Q_INVOKABLE void cancelDeletionOfSelectedFiles();
     DeletionReasonsStringModel *getDeletionReasonsStringModel();
     void deselectFilesAsync();
     FileSystemManager *getFileSystemManager() const;
@@ -96,6 +97,7 @@ signals:
     void selectionByDateFinished();
     void fileDeletionStarted();
     void fileDeletionFinished();
+    void fileDeletionCancelingOperationFinished();
     void fileDeletionFinished(const QList<QString> &filesDeleted, const QString &fileDeletionReason);
     void deselectionStarted();
     void deselectionFinished();

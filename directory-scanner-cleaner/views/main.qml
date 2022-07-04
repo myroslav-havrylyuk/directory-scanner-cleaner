@@ -57,6 +57,10 @@ ApplicationWindow {
             deletion_dialog.close()
             console.log('closed deletion dialog');
         }
+        function onFileDeletionCancelingOperationFinished(){
+            cancelation_dialog.close()
+            console.log('closed cencelation dialog');
+        }
         function onDeselectionStarted(){
             deselection_progress_dialog.open();
             console.log('opened deselection progress dialog');
@@ -544,9 +548,24 @@ ApplicationWindow {
             anchors.centerIn: parent
             closePolicy: Popup.NoAutoClose
             title: qsTr("Deleting files...")
-            contentItem: ProgressBar {
-                indeterminate: true
+            contentItem: Item {
+                ColumnLayout {
+                    ProgressBar {
+                        indeterminate: true
+                    }
+                    Button {
+                        Layout.alignment: Qt.AlignHCenter
+
+                        text: "Cancel"
+                        onClicked: {
+                            deletion_dialog.close()
+                            cancelation_dialog.open()
+                            FileSystemModel.cancelDeletionOfSelectedFiles()
+                        }
+                    }
+                }
             }
+
             modal: true
         }
 

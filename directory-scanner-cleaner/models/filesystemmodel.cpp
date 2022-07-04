@@ -241,6 +241,11 @@ void FileSystemModel::handleDeleteSelectedFilesFinished()
     emit fileDeletionFinished();
 }
 
+void FileSystemModel::cancelDeletionOfSelectedFiles()
+{
+    m_DeleteFilesFuture.cancel();
+}
+
 void FileSystemModel::mockHandler()
 {
 }
@@ -290,8 +295,6 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
             QModelIndex fileElementToDeleteModelIndex =
                     createIndex(fileElementToDelete->row(), 0, fileElementToDelete);
 
-            m_ItemSelectionModel.select(fileElementToDeleteModelIndex, QItemSelectionModel::Deselect);
-
             // Reverse iterator first try to delete all of the inner files in the directory.
             // When we iterate right to the holding folder and find it empty we can just simply delete it.
             // In case it still contains some files that means some its inner files` deletion operation failed.
@@ -300,6 +303,17 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
 
             QString fileElementAbsolutePath =
                     fileElementToDelete->getAbsoluteFilePath();
+
+            if (promise.isCanceled())
+            {
+                // Maybe we can even omit opening "Waiting for cancelation" window
+                // as canceling operation perfrorms pretty fast anyways
+                emit fileDeletionFinished(deletedFilenames, m_DeletionReasonsStringModel.getActiveDeletionReason());
+                emit fileDeletionCancelingOperationFinished();
+                return;
+            }
+
+            m_ItemSelectionModel.select(fileElementToDeleteModelIndex, QItemSelectionModel::Deselect);
 
             if (m_FileSystemManager->deleteFile(fileElementAbsolutePath))
             {
@@ -310,7 +324,7 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
         }
     }
 
-    emit fileDeletionFinished(deletedFilenames,  m_DeletionReasonsStringModel.getActiveDeletionReason());
+    emit fileDeletionFinished(deletedFilenames, m_DeletionReasonsStringModel.getActiveDeletionReason());
 }
 
 void FileSystemModel::deselectFilesAsync()
