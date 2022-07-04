@@ -420,7 +420,7 @@ ApplicationWindow {
             Button {
                 id: deselect_button
                 objectName: "deselect_button"
-                width: 90
+                width: 120
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "Deselect"
                 signal deselectFiles()
