@@ -156,13 +156,6 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
 {
     int row = 0;
 
-    if(pred(indexToFileTreeElement(root)))
-    {
-        mutex.lock();
-        m_ItemSelectionModel.select(root, QItemSelectionModel::Select);
-        mutex.unlock();
-    }
-
     QModelIndex element = index(row, 0, root);
 
     while(element.isValid())
@@ -171,7 +164,7 @@ void FileSystemModel::selectFilesIf(QPromise<void> &promise, QModelIndex root, U
         {
             if(hasChildren(element))
                 selectFilesIf(promise, element, pred);
-            else
+            else if(QFileInfo(indexToFileTreeElement(element)->fileName()).isFile())
             {
                 mutex.lock();
                 m_ItemSelectionModel.select(element, QItemSelectionModel::Select);
