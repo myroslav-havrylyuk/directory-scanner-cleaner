@@ -71,7 +71,6 @@ void FileSystemController::selectBySize() {
         quint64 value = m_SizeFilter * 1024 * 1024;
         m_FileSystemModel.selectFilesBySizeIfAsync(
                     [value](FileTreeElement *x) { return x->getFileSize() > value; });
-        selectionFlag = true;
     }
 }
 

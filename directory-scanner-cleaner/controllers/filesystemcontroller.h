@@ -55,7 +55,6 @@ private:
     bool m_isSelectionStateChanged = false;
     double m_SizeFilter = 0;
     int m_DaysAfterModificationFilter = 0;
-    bool selectionFlag = false;
 
 public slots:
     void selectionBySizeEndedHandler();
