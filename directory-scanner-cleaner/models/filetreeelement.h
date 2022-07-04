@@ -22,7 +22,6 @@ private:
     QDate m_LastModificationDate;
     QList<FileTreeElement *> m_ChildFiles;
     FileTreeElement *m_ParentElement;
-    void fillFilenameList(const FileTreeElement *parent, QList<QString> &filenameList) const;
 
 public:
     FileTreeElement(const QString &fileName,
@@ -54,8 +53,6 @@ public:
     QDate getLastModificationDate();
     int row() const;
     QString getPathPrefix() const;
-    QString getAbsoluteFilename() const;
-    QList<QString> getAllFilenamesUnder() const;
     void removeChildAt(int index);
     bool hasChildElements() const;
 };
