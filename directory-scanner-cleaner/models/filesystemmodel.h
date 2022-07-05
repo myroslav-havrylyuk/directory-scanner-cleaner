@@ -95,7 +95,6 @@ signals:
     void selectionBySizeFinished();
     void selectionByDateStarted();
     void selectionByDateFinished();
-    void fileDeletionStarted();
     void fileDeletionFinished();
     void fileDeletionCancelingOperationFinished();
     void fileDeletionFinished(const QList<QString> &filesDeleted, const QString &fileDeletionReason);

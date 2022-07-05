@@ -49,10 +49,6 @@ ApplicationWindow {
             selection_by_date_progress_dialog.close();
             console.log('closed selection progress dialog');
         }
-        function onFileDeletionStarted(){
-            deletion_dialog.open()
-            console.log('opened deletion dialog');
-        }
         function onFileDeletionFinished(){
             deletion_dialog.close()
             console.log('closed deletion dialog');
@@ -606,6 +602,7 @@ ApplicationWindow {
                             console.log(deletion_reason_combobox.currentText)
                             DeletionReasonsStringModel.activeDeletionReason = deletion_reason_combobox.currentText
                             deletion_reason_dialog.close()
+                            deletion_dialog.open()
                             FileSystemModel.deleteSelectedFiles()
                         }
                     }

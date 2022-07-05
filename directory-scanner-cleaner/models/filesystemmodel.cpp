@@ -277,8 +277,6 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
     if (!m_ItemSelectionModel.hasSelection())
         return;
 
-    emit fileDeletionStarted();
-
     while (!m_ItemSelectionModel.selectedIndexes().empty()) {
         QModelIndex selectedIndex = m_ItemSelectionModel.selectedIndexes().front();
         if (!selectedIndex.isValid())

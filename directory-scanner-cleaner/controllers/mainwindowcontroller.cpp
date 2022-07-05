@@ -45,7 +45,7 @@ MainWindowController::MainWindowController(QObject *parent) : QObject{parent} {
                      QOverload<const QList<QString> &, const QString &>::of(
                          &FileSystemModel::fileDeletionFinished),
                      this, &MainWindowController::updateDeletionHistory,
-                     Qt::BlockingQueuedConnection);
+                     Qt::DirectConnection);
 
     QObject *folderDialog = m_MainWindow->findChild<QObject *>("folder_dialog");
     QObject::connect(folderDialog, SIGNAL(activePathChanged(QString)), this,
