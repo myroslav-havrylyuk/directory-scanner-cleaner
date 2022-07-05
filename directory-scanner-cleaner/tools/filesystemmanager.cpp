@@ -124,15 +124,18 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
                                     fileElement.lastModified().date(), parent);
         qDebug() << "currently reading:" << fileTreeElement->fileName();
 
-        if (recursionDepth > 0 && fileElement.isDir()) {
-            bool wasCanceled;
-            QList<FileTreeElement *> innerFiles = getInnerFiles(
-                        promise, wasCanceled, QDir(fileElement.absoluteFilePath()),
-                        fileTreeElement, recursionDepth, 1);
-            if (wasCanceled) {
-                break;
+        if (fileElement.isDir()) {
+            QList<FileTreeElement *> innerFiles;
+            if(recursionDepth > 0){
+                bool wasCanceled;
+                innerFiles = getInnerFiles(
+                            promise, wasCanceled, QDir(fileElement.absoluteFilePath()),
+                            fileTreeElement, recursionDepth, 1);
+                if (wasCanceled) {
+                    break;
+                }
+                fileTreeElement->setChildElements(innerFiles);
             }
-            fileTreeElement->setChildElements(innerFiles);
             fileTreeElement->setFileSize(
                         getDirectorySize(fileElement.absoluteFilePath()));
             qDebug() << fileElement.absoluteFilePath();
