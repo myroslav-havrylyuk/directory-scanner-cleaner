@@ -298,15 +298,6 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
             QModelIndex fileElementToDeleteModelIndex =
                     createIndex(fileElementToDelete->row(), 0, fileElementToDelete);
 
-            // Reverse iterator first try to delete all of the inner files in the directory.
-            // When we iterate right to the holding folder and find it empty we can just simply delete it.
-            // In case it still contains some files that means some its inner files` deletion operation failed.
-            if (fileElementToDelete->hasChildElements())
-                continue;
-
-            QString fileElementAbsolutePath =
-                    fileElementToDelete->getAbsoluteFilePath();
-
             if (promise.isCanceled())
             {
                 // Maybe we can even omit opening "Waiting for cancelation" window
@@ -317,6 +308,15 @@ void FileSystemModel::deleteSelectedFiles(QPromise<QList<QString> > &promise)
             }
 
             m_ItemSelectionModel.select(fileElementToDeleteModelIndex, QItemSelectionModel::Deselect);
+
+            // Reverse iterator first try to delete all of the inner files in the directory.
+            // When we iterate right to the holding folder and find it empty we can just simply delete it.
+            // In case it still contains some files that means some its inner files` deletion operation failed.
+            if (fileElementToDelete->hasChildElements())
+                continue;
+
+            QString fileElementAbsolutePath =
+                    fileElementToDelete->getAbsoluteFilePath();
 
             if (m_FileSystemManager->deleteFile(fileElementAbsolutePath))
             {
