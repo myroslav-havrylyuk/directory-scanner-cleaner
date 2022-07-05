@@ -126,11 +126,11 @@ void FileSystemManager::getInnerFilesAsync(QPromise<FileTreeElement *> &promise,
 
         if (fileElement.isDir()) {
             QList<FileTreeElement *> innerFiles;
-            if(recursionDepth > 0){
+            if (recursionDepth > 0) {
                 bool wasCanceled;
-                innerFiles = getInnerFiles(
-                            promise, wasCanceled, QDir(fileElement.absoluteFilePath()),
-                            fileTreeElement, recursionDepth, 1);
+                innerFiles = getInnerFiles(promise, wasCanceled,
+                                           QDir(fileElement.absoluteFilePath()),
+                                           fileTreeElement, recursionDepth, 1);
                 if (wasCanceled) {
                     break;
                 }

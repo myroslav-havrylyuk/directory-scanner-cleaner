@@ -81,9 +81,8 @@ void FileSystemController::connectToFileSystemModel() {
     QObject::connect(&m_FileSystemModel,
                      &FileSystemModel::selectionByDateFinished, this,
                      &FileSystemController::selectionByDateEndedHandler);
-    QObject::connect(&m_FileSystemModel,
-                     &FileSystemModel::deselectionFinished, this,
-                     &FileSystemController::deselectionEndedHandler);
+    QObject::connect(&m_FileSystemModel, &FileSystemModel::deselectionFinished,
+                     this, &FileSystemController::deselectionEndedHandler);
 }
 
 void FileSystemController::selectionBySizeEndedHandler() {

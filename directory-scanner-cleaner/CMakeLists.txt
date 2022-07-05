@@ -15,8 +15,8 @@ qt_add_executable(appdirectory-scanner-cleaner
 	tools/configfilehandler.cpp
 	tools/filesdeletionhistorymanager.h
 	tools/filesdeletionhistorymanager.cpp
-        tools/filetreereversebreadthiterator.h
-        tools/filetreereversebreadthiterator.cpp
+	tools/filetreereversebreadthiterator.h
+	tools/filetreereversebreadthiterator.cpp
 	controllers/filesystemcontroller.h
 	controllers/filesystemcontroller.cpp
 	controllers/settingscontroller.h
@@ -29,28 +29,28 @@ qt_add_executable(appdirectory-scanner-cleaner
 	models/filesystemmodel.cpp
 	models/filetreeelement.h
 	models/filetreeelement.cpp
-        models/deletionreasonsstringmodel.h
-        models/deletionreasonsstringmodel.cpp
+	models/deletionreasonsstringmodel.h
+	models/deletionreasonsstringmodel.cpp
 )
 
 qt_add_qml_module(appdirectory-scanner-cleaner
-    URI directory-scanner-cleaner
-    VERSION 1.0
+	URI directory-scanner-cleaner
+	VERSION 1.0
 	QML_FILES
 	views/main.qml
 	views/settingswindow.qml
 )
 
 set_target_properties(appdirectory-scanner-cleaner PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+	MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	MACOSX_BUNDLE TRUE
+	WIN32_EXECUTABLE TRUE
 )
 
 target_compile_definitions(appdirectory-scanner-cleaner
-    PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+	PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(appdirectory-scanner-cleaner
 	PRIVATE Qt6::Quick
 	PRIVATE Qt6::QuickControls2)

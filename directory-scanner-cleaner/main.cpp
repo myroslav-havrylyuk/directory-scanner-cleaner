@@ -4,16 +4,15 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QThread>
 #include <QQuickStyle>
 #include <QQuickView>
+#include <QThread>
 
 QQmlApplicationEngine *gEngine;
 QGuiApplication *gApp;
 SettingsController *gSettingsController;
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     gApp = new QGuiApplication(argc, argv);
     gEngine = new QQmlApplicationEngine();
     ConfigFileHandler *handler = new ConfigFileHandler();

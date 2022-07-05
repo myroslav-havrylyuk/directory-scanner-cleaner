@@ -1,26 +1,25 @@
 #ifndef MAINWINDOWCONTROLLER_H
 #define MAINWINDOWCONTROLLER_H
 
-#include "models/filesystemmodel.h"
 #include "controllers/filesystemcontroller.h"
+#include "models/filesystemmodel.h"
 #include "settingscontroller.h"
 #include "settingswindowcontroller.h"
 #include "tools/configfilehandler.h"
 #include "tools/filesdeletionhistorymanager.h"
 
-#include <QObject>
 #include <QDebug>
+#include <QGuiApplication>
+#include <QObject>
 #include <QQmlApplicationEngine>
 #include <QQmlComponent>
 #include <QQmlContext>
-#include <QGuiApplication>
 
 extern QQmlApplicationEngine *gEngine;
 extern QGuiApplication *gApp;
 extern SettingsController *gSettingsController;
 
-class MainWindowController : public QObject
-{
+class MainWindowController : public QObject {
     Q_OBJECT
 
 private:
@@ -42,7 +41,8 @@ public:
 
 public slots:
     void openSettingsWindow();
-    void updateDeletionHistory(const QList<QString> &deletedFilesList, const QString &fileDeletionReason);
+    void updateDeletionHistory(const QList<QString> &deletedFilesList,
+                               const QString &fileDeletionReason);
     void setActivePath(QString activePath);
 };
 
