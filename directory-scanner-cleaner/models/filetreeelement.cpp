@@ -135,10 +135,24 @@ QString FileTreeElement::getPathPrefix() const
 
 void FileTreeElement::removeChildAt(int index)
 {
+    quint64 deletedFileSize = 0;
+
     if (index >= 0 && index < m_ChildFiles.size())
+    {
+        deletedFileSize = m_ChildFiles.at(index)->getFileSize();
         m_ChildFiles.removeAt(index);
+    }
 
     m_InnerFilesCount -= 1;
+
+    if (deletedFileSize == 0)
+        return;
+
+    m_FileSize -= deletedFileSize;
+
+    FileTreeElement *parentTreeElement = this;
+    while ( (parentTreeElement = parentTreeElement->getParent()) != nullptr)
+        parentTreeElement->setFileSize(parentTreeElement->getFileSize() - deletedFileSize);
 }
 
 bool FileTreeElement::hasChildElements() const

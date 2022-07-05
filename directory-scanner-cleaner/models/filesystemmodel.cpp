@@ -128,6 +128,9 @@ bool FileSystemModel::removeRow(int row, const QModelIndex &parent)
     parentItem->removeChildAt(row);
     endRemoveRows();
 
+    while ( (parentItem = parentItem->getParent()) != nullptr)
+        emit dataChanged(createIndex(0, 0, parentItem), createIndex(0, 0, parentItem));
+
     return true;
 }
 
