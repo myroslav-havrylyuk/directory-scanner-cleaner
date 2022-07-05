@@ -150,6 +150,7 @@ ApplicationWindow {
 
         Rectangle {
             Layout.row: 2
+            Layout.rowSpan: 2
             Layout.column: 0
             Layout.fillHeight: true
             Layout.fillWidth: true
@@ -332,6 +333,7 @@ ApplicationWindow {
             Layout.row: 2
             Layout.column: 1
             Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
             spacing: 10
             Layout.topMargin: 5
 
@@ -339,8 +341,8 @@ ApplicationWindow {
                 text: "Select files: "
                 font {
                     pixelSize: 16
+                    bold: true
                 }
-                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Text {
@@ -448,16 +450,19 @@ ApplicationWindow {
                     deletion_reason_dialog.open()
                 }
             }
-            Button {
-                id: reload_button
-                objectName: "reload_button"
-                width: 120
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: "Reload file system"
-                signal reloadFileSystem(string path);
-                onClicked: {
-                    reload_button.reloadFileSystem(current_directory_path_text_edit.text)
-                }
+        }
+
+        Button {
+            id: reload_button
+            objectName: "reload_button"
+            Layout.row: 3
+            Layout.column: 1
+            Layout.alignment: Qt.AlignHCenter
+            width: 120
+            text: "Reload file system"
+            signal reloadFileSystem(string path);
+            onClicked: {
+                reload_button.reloadFileSystem(current_directory_path_text_edit.text)
             }
         }
 
